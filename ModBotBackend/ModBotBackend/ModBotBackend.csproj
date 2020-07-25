@@ -8,10 +8,11 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>ModBotBackend</RootNamespace>
     <AssemblyName>ModBotBackend</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -51,14 +52,21 @@
     <Compile Include="JsonFile.cs" />
     <Compile Include="OperationBase.cs" />
     <Compile Include="Operations\ImageOperation.cs" />
+    <Compile Include="Operations\PostOperation.cs" />
     <Compile Include="Operations\TestOperation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ThirdParty\HttpContentParser.cs" />
+    <Compile Include="ThirdParty\HttpMultipartParser.cs" />
     <Compile Include="UploadedModsManager.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Website\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

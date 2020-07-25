@@ -4,21 +4,45 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ModBotBackend.JsonDataTypes;
+using System.IO;
 
 namespace ModBotBackend
 {
-	public class UploadedModsManager
+	public static class UploadedModsManager
 	{
-		string _dataPath;
+		public const string MOD_DATA_FILE_NAME = "ModData.json";
 
-		public UploadedModsManager(string dataPath)
+		static string _dataPath;
+
+		public static void Setup(string dataPath)
 		{
 			_dataPath = dataPath;
 		}
 
-		public void CreateMod(Mod modData)
+		public static void CreateMod(Mod modData, ref string error)
 		{
+			string modsFolderPath = createModsFolder();
 
+			string uuid = modData.UniqueID;
+			string newModFolderPath = Utils.CombinePaths(modsFolderPath, uuid);
+			if (Directory.Exists(newModFolderPath))
+			{
+				error = "Mod with the uuid \"" + uuid + "\" already exists";
+				return;
+			}
+
+			string jsonPath = Utils.CombinePaths(newModFolderPath, MOD_DATA_FILE_NAME);
+			File.WriteAllText(jsonPath, modData.Serilize());
+
+		}
+
+
+		static string createModsFolder()
+		{
+			string path = Utils.CombinePaths(_dataPath, "Mods/");
+			Directory.CreateDirectory(path);
+
+			return path;
 		}
 
 	}
