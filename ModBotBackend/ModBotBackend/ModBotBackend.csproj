@@ -34,31 +34,77 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\CloneDroneDlls\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\CloneDroneDlls\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="bolt">
+      <HintPath>..\CloneDroneDlls\bolt.dll</HintPath>
+    </Reference>
+    <Reference Include="bolt.user">
+      <HintPath>..\CloneDroneDlls\bolt.user.dll</HintPath>
+    </Reference>
+    <Reference Include="ModLibrary">
+      <HintPath>..\CloneDroneDlls\ModLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CloneDroneDlls\netstandard.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CloneDroneDlls\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\CloneDroneDlls\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\CloneDroneDlls\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModReport.cs" />
+    <Compile Include="Operations\CreateAccountOperation.cs" />
+    <Compile Include="Operations\GetSpecialModDataOperation.cs" />
+    <Compile Include="Operations\HasLikedOperation.cs" />
+    <Compile Include="Operations\IsValidSessionOperation.cs" />
+    <Compile Include="Operations\LikeOperation.cs" />
+    <Compile Include="Operations\SignInOperation.cs" />
+    <Compile Include="Operations\SignOutOperation.cs" />
+    <Compile Include="Report.cs" />
+    <Compile Include="SpecialModData.cs" />
+    <Compile Include="Users\Sessions\Session.cs" />
+    <Compile Include="Users\Sessions\SessionsManager.cs" />
+    <Compile Include="Users\UserManager.cs" />
     <Compile Include="HttpStream.cs" />
-    <Compile Include="JsonDataTypes\Mod.cs" />
     <Compile Include="JsonFile.cs" />
     <Compile Include="OperationBase.cs" />
-    <Compile Include="Operations\ImageOperation.cs" />
-    <Compile Include="Operations\PostOperation.cs" />
+    <Compile Include="Operations\DownloadModOperation.cs" />
+    <Compile Include="Operations\GetAllIdsOperation.cs" />
+    <Compile Include="Operations\GetAllModInfosOperation.cs" />
+    <Compile Include="Operations\GetImageOperation.cs" />
+    <Compile Include="Operations\GetModDataOperation.cs" />
     <Compile Include="Operations\TestOperation.cs" />
+    <Compile Include="Operations\UploadModOperation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThirdParty\HttpContentParser.cs" />
     <Compile Include="ThirdParty\HttpMultipartParser.cs" />
     <Compile Include="UploadedModsManager.cs" />
+    <Compile Include="Users\User.cs" />
+    <Compile Include="Users\UserReport.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

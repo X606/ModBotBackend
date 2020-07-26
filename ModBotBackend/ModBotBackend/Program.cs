@@ -7,6 +7,7 @@ using System.Net.WebSockets;
 using System.Net;
 using System.IO;
 using ModBotBackend.Operations;
+using ModBotBackend.Users;
 
 namespace ModBotBackend
 {
@@ -14,8 +15,12 @@ namespace ModBotBackend
 	{
 		static void Main(string[] args)
 		{
-			UploadedModsManager.Setup(DataPath);
+			Directory.CreateDirectory(UsersPath);
+			Directory.CreateDirectory(DataPath);
 
+			UploadedModsManager.Setup(DataPath);
+			UserManager.Init();
+			
 			HttpListener httpListener = new HttpListener();
 			httpListener.Prefixes.Add("http://*:80/");
 			httpListener.Start();
@@ -54,10 +59,7 @@ namespace ModBotBackend
 					}
 					catch
 					{
-						context.Response.Redirect("https://clonedronemodbot.com/error.html?error=an error occured");
-						HttpStream httpStream = new HttpStream(context.Response);
-						httpStream.Send("re-routed");
-						httpStream.Close();
+						Utils.RederectToErrorPage(context, "an error occured");
 					}
 				}
 				else
@@ -65,10 +67,7 @@ namespace ModBotBackend
 					if(operation == null)
 						operation = "null";
 
-					context.Response.Redirect("https://clonedronemodbot.com/error.html?error=invalid operation \"" + operation + "\"");
-					HttpStream httpStream = new HttpStream(context.Response);
-					httpStream.Send("re-routed");
-					httpStream.Close();
+					Utils.RederectToErrorPage(context, "invalid operation \"" + operation + "\"");
 				}
 			} else
 			{
@@ -108,12 +107,25 @@ namespace ModBotBackend
 		}
 
 		public static string DataPath => Directory.GetCurrentDirectory() + "/Data/";
+		public static string UsersPath => Directory.GetCurrentDirectory() + "/Users/";
+		public static string DiscordClientSecretPath => Directory.GetCurrentDirectory() + "/discordSecret.txt";
 
 		public static readonly Dictionary<string, OperationBase> Operations = new Dictionary<string, OperationBase>()
 		{
 			{ "test", new TestOperation() },
-			{ "img", new ImageOperation() },
-			{ "post", new PostOperation() }
+			{ "uploadMod", new UploadModOperation() },
+			{ "getModData", new GetModDataOperation() },
+			{ "getModImage", new GetImageOperation() },
+			{ "downloadMod", new DownloadModOperation() },
+			{ "getAllModIds", new GetAllModIdsOperation() },
+			{ "getAllModInfos", new GetAllModInfosOperation() },
+			{ "createAccout", new CreateAccountOperation() },
+			{ "signIn", new SignInOperation() },
+			{ "getSpecialModData", new GetSpecialModDataOperation() },
+			{ "like", new LikeOperation() },
+			{ "hasLiked", new HasLikedOperation() },
+			{ "isValidSession", new IsValidSessionOperation() },
+			{ "signOut", new SignOutOperation() }
 		};
 		
 
