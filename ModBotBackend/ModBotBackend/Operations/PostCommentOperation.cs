@@ -67,6 +67,8 @@ namespace ModBotBackend.Operations
 
 			string sanitized = request.commentBody.Replace("<", "&lt;").Replace(">", "&gt;");
 
+			sanitized = sanitized.Replace("\n", "<br>");
+
 			Comment comment = Comment.CreateNewComment(userId, sanitized);
 			specialModData.Comments.Add(comment);
 			specialModData.Save();
