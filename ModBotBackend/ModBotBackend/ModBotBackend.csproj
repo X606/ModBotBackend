@@ -77,10 +77,17 @@
   <ItemGroup>
     <Compile Include="ModReport.cs" />
     <Compile Include="Operations\CreateAccountOperation.cs" />
+    <Compile Include="Operations\DeleteCommentOperation.cs" />
+    <Compile Include="Operations\GetProfilePictureOperation.cs" />
+    <Compile Include="Operations\GetPublicUserDataOperation.cs" />
     <Compile Include="Operations\GetSpecialModDataOperation.cs" />
+    <Compile Include="Operations\HasLikedCommentOperation.cs" />
     <Compile Include="Operations\HasLikedOperation.cs" />
+    <Compile Include="Operations\IsMyCommentOperation.cs" />
     <Compile Include="Operations\IsValidSessionOperation.cs" />
+    <Compile Include="Operations\LikeCommentOperation.cs" />
     <Compile Include="Operations\LikeOperation.cs" />
+    <Compile Include="Operations\PostCommentOperation.cs" />
     <Compile Include="Operations\SignInOperation.cs" />
     <Compile Include="Operations\SignOutOperation.cs" />
     <Compile Include="Report.cs" />

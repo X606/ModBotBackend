@@ -82,6 +82,11 @@ namespace ModBotBackend
 				{
 					byte[] data = File.ReadAllBytes(path);
 
+					if (absolutePath.EndsWith(".js"))
+					{
+						context.Response.ContentType = "text/javascript";
+					}
+
 					context.Response.ContentLength64 = data.Length;
 					context.Response.OutputStream.Write(data, 0, data.Length);
 					context.Response.OutputStream.Close();
@@ -125,7 +130,14 @@ namespace ModBotBackend
 			{ "like", new LikeOperation() },
 			{ "hasLiked", new HasLikedOperation() },
 			{ "isValidSession", new IsValidSessionOperation() },
-			{ "signOut", new SignOutOperation() }
+			{ "signOut", new SignOutOperation() },
+			{ "postComment", new PostCommentOperation() },
+			{ "deleteComment", new DeleteCommentOperation() },
+			{ "likeComment", new LikeCommentOperation() },
+			{ "getUser", new GetPublicUserDataOperation() },
+			{ "getProfilePicture", new GetProfilePictureOperation() },
+			{ "hasLikedComment", new HasLikedCommentOperation() },
+			{ "isCommentMine", new IsMyCommentOperation() }
 		};
 		
 

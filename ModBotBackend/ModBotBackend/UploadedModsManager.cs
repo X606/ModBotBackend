@@ -133,6 +133,7 @@ namespace ModBotBackend
 				_loadedMods.Remove(loadedModInfo.UniqueID);
 
 			_loadedMods.Add(loadedModInfo.UniqueID, loadedModInfo);
+			_loadedModJsons.Add(loadedModInfo.UniqueID, JsonConvert.SerializeObject(loadedModInfo));
 
 			ZipMod(loadedModInfo.UniqueID);
 			CreateAndAddSpecialModDataFormMod(loadedModInfo.UniqueID, SessionsManager.GetPlayerIdFromSession(sessionID));

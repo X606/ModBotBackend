@@ -30,6 +30,31 @@ namespace ModBotBackend
 			return JsonConvert.DeserializeObject<SpecialModData>(json);
 		}
 
+		public Comment GetCommentWithCommentID(string commentID)
+		{
+			foreach(Comment comment in Comments)
+			{
+				if (comment.CommentID == commentID)
+					return comment;
+
+			}
+
+			return null;
+		}
+		public void DeleteCommentWithId(string commentID)
+		{
+			for(int i = Comments.Count - 1; i >= 0; i--)
+			{
+				if (Comments[i].CommentID == commentID)
+				{
+					Comments.RemoveAt(i);
+					break;
+				}
+			}
+			
+			
+		}
+
 		public void Save()
 		{
 			UploadedModsManager.SaveSpecialModData(this);
@@ -53,7 +78,21 @@ namespace ModBotBackend
 	[Serializable]
 	public class Comment
 	{
+		public static Comment CreateNewComment(string posterUserId, string commentBody)
+		{
+			Comment comment = new Comment();
+			comment.PosterUserId = posterUserId;
+			comment.CommentBody = commentBody;
+			comment.CommentID = Guid.NewGuid().ToString();
+
+			return comment;
+		}
+
 		public string PosterUserId;
 		public string CommentBody;
+
+		public string CommentID;
+
+		public List<string> UsersWhoLikedThis = new List<string>();
 	}
 }

@@ -16,11 +16,12 @@ namespace ModBotBackend.Users
 
 		public string Username;
 		public string PasswordHash;
-
-		public string ProfilePicture;
+		
 		public string Bio;
 
 		public string UserID;
+
+		public string DisplayColor;
 
 		public List<string> FollowedUsers = new List<string>();
 		public List<string> FavoritedMods = new List<string>();
@@ -81,6 +82,7 @@ namespace ModBotBackend.Users
 			user.UserID = Guid.NewGuid().ToString();
 			user.Bio = "";
 			user.SetPassword(password);
+			user.DisplayColor = "#ffffff";
 
 			UserManager.Users.Add(user);
 			return user;

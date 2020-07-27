@@ -12,6 +12,8 @@ namespace ModBotBackend.Users
 {
 	public static class UserManager
 	{
+		public static string ProfilePicturesPath = Program.UsersPath + "/ProfilePictures/";
+
 		public static string DiscordClientSecret;
 
 		public static List<User> Users = new List<User>();
@@ -31,6 +33,8 @@ namespace ModBotBackend.Users
 			DiscordClientSecret = File.ReadAllText(discordClientSecretPath);
 
 			LoadUsers();
+
+			Directory.CreateDirectory(ProfilePicturesPath);
 		}
 
 		public static void LoadUsers()

@@ -6,50 +6,47 @@ using System.Text;
 using System.Threading.Tasks;
 using ModLibrary;
 using System.IO;
+using ModBotBackend.Users;
 
 namespace ModBotBackend.Operations
 {
-	public class GetImageOperation : OperationBase
+	public class GetProfilePictureOperation : OperationBase
 	{
-		
+
 		public override void OnOperation(HttpListenerContext context)
 		{
 			string id = context.Request.QueryString["id"];
 
-			if (!UploadedModsManager.HasModWithIdBeenUploaded(id))
+			User user = UserManager.GetUserFromId(id);
+
+			if(user == null)
 			{
-				Utils.RederectToErrorPage(context, "No mod with the id \"" + id + "\" has been uploaded");
+				Utils.RederectToErrorPage(context, "No user with the id \"" + id + "\" has been found");
 				return;
 			}
 
-			ModInfo modInfo = UploadedModsManager.GetModInfoFromId(id);
+			string imageFilePath = UserManager.ProfilePicturesPath + id;
 
-			if (!modInfo.HasImage)
+			if (File.Exists(imageFilePath + ".png"))
 			{
-				Utils.RederectToErrorPage(context, "The mod with the id \"" + id + "\" has no image");
-				return;
-			}
-
-
-			string imageFilePath = UploadedModsManager.GetModPathFromID(id) + modInfo.ImageFileName;
-
-			string[] imageFilePathSplit = imageFilePath.Split('.');
-			string format = imageFilePathSplit[imageFilePathSplit.Length-1].ToLower();
-			if (format == "png")
-			{
+				imageFilePath += ".png";
 				context.Response.ContentType = "image/png";
 			}
-			else if(format == "jpg")
+			else if(File.Exists(imageFilePath + ".jpg"))
 			{
+				imageFilePath += ".jpg";
 				context.Response.ContentType = "image/jpeg";
 			}
-			else if(format == "gif")
+			else if(File.Exists(imageFilePath + ".gif"))
 			{
+				imageFilePath += ".gif";
 				context.Response.ContentType = "image/gif";
+			} else
+			{
+				imageFilePath = UserManager.ProfilePicturesPath + "DefaultAvatar.png";
 			}
-
+			
 			byte[] imageData = File.ReadAllBytes(imageFilePath);
-
 			
 			context.Response.ContentLength64 = imageData.LongLength;
 			context.Response.OutputStream.Write(imageData, 0, imageData.Length);
