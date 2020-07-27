@@ -85,7 +85,10 @@ namespace ModBotBackend
 					if (absolutePath.EndsWith(".js"))
 					{
 						context.Response.ContentType = "text/javascript";
-					}
+					} else if(absolutePath.EndsWith(".html"))
+                    {
+                        context.Response.ContentType = "text/html";
+                    }
 
 					context.Response.ContentLength64 = data.Length;
 					context.Response.OutputStream.Write(data, 0, data.Length);
