@@ -73,6 +73,7 @@ namespace ModBotBackend
 			{
 				if (absolutePath == "" || absolutePath == "/")
 				{
+					context.Response.ContentType = "text/html";
 					absolutePath = "/index.html";
 				}
 
@@ -140,7 +141,8 @@ namespace ModBotBackend
 			{ "getUser", new GetPublicUserDataOperation() },
 			{ "getProfilePicture", new GetProfilePictureOperation() },
 			{ "hasLikedComment", new HasLikedCommentOperation() },
-			{ "isCommentMine", new IsMyCommentOperation() }
+			{ "isCommentMine", new IsMyCommentOperation() },
+			{ "getCurrentUser", new GetCurrentUserOperation() }
 		};
 		
 
