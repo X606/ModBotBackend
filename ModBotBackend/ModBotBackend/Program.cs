@@ -64,6 +64,11 @@ namespace ModBotBackend
 						string error = e.ToString();
 
 						error = error.Replace("\"", "\\\"");
+						
+						if (!context.Response.OutputStream.CanWrite)
+						{
+							return;
+						}
 
 						HttpStream httpStream = new HttpStream(context.Response);
 						httpStream.Send("{\"isError\":\"true\",\"message\":\"" +  error + "\",\"error=\":\"" + error + "\"}");
