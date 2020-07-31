@@ -61,19 +61,24 @@ namespace ModBotBackend
 					}
 					catch(Exception e)
 					{
-						string error = e.ToString();
-
-						error = error.Replace("\"", "\\\"");
-						
-						if (!context.Response.OutputStream.CanWrite)
+						try
 						{
+							string error = e.ToString();
+
+							error = error.Replace("\"", "\\\"");
+
+
+							HttpStream httpStream = new HttpStream(context.Response);
+							httpStream.Send("{\"isError\":\"true\",\"message\":\"" +  error + "\",\"error=\":\"" + error + "\"}");
+							httpStream.Close();
+
+						}
+						catch
+						{
+							context.Response.Abort();
+							// At this point just forget it and move on
 							return;
 						}
-
-						HttpStream httpStream = new HttpStream(context.Response);
-						httpStream.Send("{\"isError\":\"true\",\"message\":\"" +  error + "\",\"error=\":\"" + error + "\"}");
-						httpStream.Close();
-
 						//Utils.RederectToErrorPage(context, "an error occured");
 					}
 				}

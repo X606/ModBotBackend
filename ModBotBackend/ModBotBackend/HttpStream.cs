@@ -88,8 +88,7 @@ namespace ModBotBackend
 
 		public void Close()
 		{
-			_output.Dispose();
-			//_output.Close();
+			_response.Close();
 		}
 
 	}
