@@ -78,6 +78,9 @@
     <Compile Include="ModReport.cs" />
     <Compile Include="Operations\CreateAccountOperation.cs" />
     <Compile Include="Operations\DeleteCommentOperation.cs" />
+    <Compile Include="Operations\DownloadTempFileOperation.cs" />
+    <Compile Include="Operations\GetCurrentUserOperation.cs" />
+    <Compile Include="Operations\GetModTemplateOperation.cs" />
     <Compile Include="Operations\GetProfilePictureOperation.cs" />
     <Compile Include="Operations\GetPublicUserDataOperation.cs" />
     <Compile Include="Operations\GetSpecialModDataOperation.cs" />
@@ -92,6 +95,7 @@
     <Compile Include="Operations\SignOutOperation.cs" />
     <Compile Include="Report.cs" />
     <Compile Include="SpecialModData.cs" />
+    <Compile Include="TemporaryFilesMananger.cs" />
     <Compile Include="Users\Sessions\Session.cs" />
     <Compile Include="Users\Sessions\SessionsManager.cs" />
     <Compile Include="Users\UserManager.cs" />

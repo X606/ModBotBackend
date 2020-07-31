@@ -20,7 +20,7 @@ namespace ModBotBackend
 		static Dictionary<string, ModInfo> _loadedMods = new Dictionary<string, ModInfo>();
 		static Dictionary<string, string> _loadedModJsons = new Dictionary<string, string>();
 
-		static List<SpecialModData> _loadedSpecialModData = new List<SpecialModData>();
+		static Dictionary<string, SpecialModData> _loadedSpecialModData = new Dictionary<string, SpecialModData>();
 
 		public static void Setup(string dataPath)
 		{
@@ -66,7 +66,7 @@ namespace ModBotBackend
 			{
 				string json = File.ReadAllText(specialModDatFile);
 				SpecialModData specialModData = SpecialModData.FromJson(json);
-				_loadedSpecialModData.Add(specialModData);
+				_loadedSpecialModData.Add(specialModData.ModId, specialModData);
 			}
 
 			foreach(KeyValuePair<string, ModInfo> loadedMod in _loadedMods)
@@ -91,7 +91,23 @@ namespace ModBotBackend
 				File.WriteAllBytes(tempZipPath, zipData);
 				ZipFile.ExtractToDirectory(tempZipPath, tempModPath);
 
-				string json = File.ReadAllText(tempModPath + ModsManager.MOD_INFO_FILE_NAME);
+
+				string[] directories = Directory.GetDirectories(tempModPath);
+				if(Directory.GetFiles(tempModPath).Length == 0 && directories.Length == 1) // if there is a single folder and no files then the mod is probably in that folder
+				{
+					tempModPath = directories[0];
+				}
+
+				string modInfoPath = tempModPath + ModsManager.MOD_INFO_FILE_NAME;
+
+				if (!File.Exists(modInfoPath))
+				{
+					error = "Could not find the " + ModsManager.MOD_INFO_FILE_NAME + " file :/";
+					modInfo = null;
+					return false;
+				}
+
+				string json = File.ReadAllText(modInfoPath);
 				try
 				{
 					loadedModInfo = JsonConvert.DeserializeObject<ModInfo>(json);
@@ -110,6 +126,19 @@ namespace ModBotBackend
 				}
 				loadedModInfo.FixFieldValues();
 
+				string playerId = SessionsManager.GetPlayerIdFromSession(sessionID);
+				
+				SpecialModData oldModWithSameID = GetSpecialModInfoFromId(loadedModInfo.UniqueID);
+				if (oldModWithSameID != null)
+				{
+					if (oldModWithSameID.OwnerID != playerId)
+					{
+						error = "You cannot override a mod that you do not own";
+						modInfo = null;
+						return false;
+					}
+				}
+
 				string newFolderPath = GetOrCreateModsFolder() + loadedModInfo.UniqueID + "/";
 				if(Directory.Exists(newFolderPath))
 					Utils.RecursivelyDeleteFolder(newFolderPath);
@@ -124,13 +153,17 @@ namespace ModBotBackend
 			catch(Exception e)
 			{
 				modInfo = null;
-				error = "something went wrong while handeling the zip file";
-				Console.WriteLine(e.Message);
+				error = "something went wrong while handaling the zip file";
+				Console.WriteLine(e.ToString());
 				return false;
 			}
 
 			if (_loadedMods.ContainsKey(loadedModInfo.UniqueID))
 				_loadedMods.Remove(loadedModInfo.UniqueID);
+			if(_loadedModJsons.ContainsKey(loadedModInfo.UniqueID))
+				_loadedModJsons.Remove(loadedModInfo.UniqueID);
+			if(_loadedSpecialModData.ContainsKey(loadedModInfo.UniqueID))
+				_loadedSpecialModData.Remove(loadedModInfo.UniqueID);
 
 			_loadedMods.Add(loadedModInfo.UniqueID, loadedModInfo);
 			_loadedModJsons.Add(loadedModInfo.UniqueID, JsonConvert.SerializeObject(loadedModInfo));
@@ -160,13 +193,10 @@ namespace ModBotBackend
 
 		public static SpecialModData GetSpecialModInfoFromId(string id)
 		{
-			foreach(SpecialModData modData in _loadedSpecialModData)
-			{
-				if(modData.ModId == id)
-					return modData;
-			}
+			if(!_loadedSpecialModData.ContainsKey(id))
+				return null;
 
-			return null;
+			return _loadedSpecialModData[id];
 		}
 		public static string GetSpecialModInfoJsonFromId(string id)
 		{
@@ -225,7 +255,7 @@ namespace ModBotBackend
 			ModInfo modInfo = GetModInfoFromId(modID);
 			SpecialModData specialModData = SpecialModData.CreateNewSpecialModData(modInfo, ownerID);
 
-			_loadedSpecialModData.Add(specialModData);
+			_loadedSpecialModData.Add(specialModData.ModId, specialModData);
 
 			SaveSpecialModData(specialModData);
 		}

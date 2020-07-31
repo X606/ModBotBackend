@@ -20,7 +20,9 @@ namespace ModBotBackend
 
 			UploadedModsManager.Setup(DataPath);
 			UserManager.Init();
-			
+
+			TemporaryFilesMananger.Init();
+
 			HttpListener httpListener = new HttpListener();
 			httpListener.Prefixes.Add("http://*:80/");
 			httpListener.Start();
@@ -57,9 +59,17 @@ namespace ModBotBackend
 					{
 						selectedOperation.OnOperation(context);
 					}
-					catch
+					catch(Exception e)
 					{
-						Utils.RederectToErrorPage(context, "an error occured");
+						string error = e.ToString();
+
+						error = error.Replace("\"", "\\\"");
+
+						HttpStream httpStream = new HttpStream(context.Response);
+						httpStream.Send("{\"isError\":\"true\",\"message\":\"" +  error + "\",\"error=\":\"" + error + "\"}");
+						httpStream.Close();
+
+						//Utils.RederectToErrorPage(context, "an error occured");
 					}
 				}
 				else
@@ -77,8 +87,17 @@ namespace ModBotBackend
 					absolutePath = "/index.html";
 				}
 
-				string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/Website" + absolutePath;
-				
+
+				string path = Directory.GetCurrentDirectory() + "/Website";
+				string overrideFilePath = Directory.GetCurrentDirectory() + "/Website.txt";
+				if (File.Exists(overrideFilePath))
+				{
+					path = File.ReadAllText(overrideFilePath);
+					path = path.TrimEnd('/', '\\');
+				}
+
+				path += absolutePath;
+
 				if(File.Exists(path))
 				{
 					byte[] data = File.ReadAllBytes(path);
@@ -119,6 +138,9 @@ namespace ModBotBackend
 		public static string UsersPath => Directory.GetCurrentDirectory() + "/Users/";
 		public static string DiscordClientSecretPath => Directory.GetCurrentDirectory() + "/discordSecret.txt";
 
+		public static string ModTemplateFilePath => Directory.GetCurrentDirectory() + "/ModTemplate/";
+		public static string TemporaryFiles => Directory.GetCurrentDirectory() + "/TemporaryFiles/";
+
 		public static readonly Dictionary<string, OperationBase> Operations = new Dictionary<string, OperationBase>()
 		{
 			{ "test", new TestOperation() },
@@ -142,7 +164,9 @@ namespace ModBotBackend
 			{ "getProfilePicture", new GetProfilePictureOperation() },
 			{ "hasLikedComment", new HasLikedCommentOperation() },
 			{ "isCommentMine", new IsMyCommentOperation() },
-			{ "getCurrentUser", new GetCurrentUserOperation() }
+			{ "getCurrentUser", new GetCurrentUserOperation() },
+			{ "getModTemplate", new GetModTemplateOperation() },
+			{ "downloadTempFile", new DownloadTempFileOperation() }
 		};
 		
 
