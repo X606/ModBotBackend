@@ -24,7 +24,7 @@ namespace ModBotBackend
 			TemporaryFilesMananger.Init();
 
 			HttpListener httpListener = new HttpListener();
-			httpListener.Prefixes.Add("http://*:80/");
+			httpListener.Prefixes.Add("http://+:80/");
 			httpListener.Start();
 			listen(httpListener);
 

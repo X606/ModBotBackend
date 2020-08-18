@@ -18,6 +18,9 @@ namespace ModBotBackend
 		public string OwnerID;
 		public string ModId;
 
+		public ulong PostedDate;
+		public ulong UpdatedDate;
+
 		public List<Comment> Comments = new List<Comment>();
 		public List<ModReport> Reports = new List<ModReport>();
 
@@ -67,6 +70,8 @@ namespace ModBotBackend
 			specialModData.Downloads = 0;
 			specialModData.ModId = mod.UniqueID;
 			specialModData.OwnerID = ownerID;
+			specialModData.PostedDate = (ulong)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+			specialModData.UpdatedDate = specialModData.PostedDate;
 
 			specialModData.Comments = new List<Comment>();
 			specialModData.Reports = new List<ModReport>();
@@ -84,6 +89,7 @@ namespace ModBotBackend
 			comment.PosterUserId = posterUserId;
 			comment.CommentBody = commentBody;
 			comment.CommentID = Guid.NewGuid().ToString();
+			comment.PostedUTCTime = (ulong)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
 			return comment;
 		}
@@ -92,6 +98,8 @@ namespace ModBotBackend
 		public string CommentBody;
 
 		public string CommentID;
+
+		public ulong PostedUTCTime;
 
 		public List<string> UsersWhoLikedThis = new List<string>();
 	}

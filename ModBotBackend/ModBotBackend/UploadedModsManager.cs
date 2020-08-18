@@ -162,14 +162,19 @@ namespace ModBotBackend
 				_loadedMods.Remove(loadedModInfo.UniqueID);
 			if(_loadedModJsons.ContainsKey(loadedModInfo.UniqueID))
 				_loadedModJsons.Remove(loadedModInfo.UniqueID);
-			if(_loadedSpecialModData.ContainsKey(loadedModInfo.UniqueID))
-				_loadedSpecialModData.Remove(loadedModInfo.UniqueID);
-
+			
 			_loadedMods.Add(loadedModInfo.UniqueID, loadedModInfo);
 			_loadedModJsons.Add(loadedModInfo.UniqueID, JsonConvert.SerializeObject(loadedModInfo));
 
 			ZipMod(loadedModInfo.UniqueID);
-			CreateAndAddSpecialModDataFormMod(loadedModInfo.UniqueID, SessionsManager.GetPlayerIdFromSession(sessionID));
+			
+			if(_loadedSpecialModData.ContainsKey(loadedModInfo.UniqueID))
+			{
+				_loadedSpecialModData[loadedModInfo.UniqueID].UpdatedDate = (ulong)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+			} else
+			{
+				CreateAndAddSpecialModDataFormMod(loadedModInfo.UniqueID, SessionsManager.GetPlayerIdFromSession(sessionID));
+			}
 
 			modInfo = loadedModInfo;
 			error = null;
