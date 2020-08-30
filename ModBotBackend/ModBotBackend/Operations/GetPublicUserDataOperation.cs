@@ -14,6 +14,8 @@ namespace ModBotBackend.Operations
 	{
 		public override void OnOperation(HttpListenerContext context)
 		{
+			context.Response.ContentType = "application/json";
+
 			string id = context.Request.QueryString["id"];
 
 			User user = UserManager.GetUserFromId(id);
@@ -30,10 +32,12 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
+			string bio = user.Bio.Replace("\n", "<br>");
+
 			PublicUserDataResponse publicUserData = new PublicUserDataResponse()
 			{
 				username = user.Username,
-				bio = user.Bio,
+				bio = bio,
 				userID = user.UserID,
 				favoritedMods = user.FavoritedMods,
 				color = user.DisplayColor,
@@ -42,7 +46,6 @@ namespace ModBotBackend.Operations
 				message = ""
 			};
 
-			context.Response.ContentType = "text/plain";
 			HttpStream httpStream = new HttpStream(context.Response);
 			httpStream.Send(publicUserData.ToJson());
 			httpStream.Close();

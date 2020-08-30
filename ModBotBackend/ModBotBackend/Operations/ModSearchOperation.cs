@@ -25,8 +25,6 @@ namespace ModBotBackend.Operations
 			KeyValuePair<SpecialModData, ModInfo>[] mods = UploadedModsManager.GetAllUploadedMods();
 			List<string> selectedModIds = new List<string>();
 
-			Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(request));
-
 			for(int i = 0; i < mods.Length; i++)
 			{
 				bool include = Search(mods[i], request);
@@ -93,12 +91,8 @@ namespace ModBotBackend.Operations
 				string name = item.Value.DisplayName.ToLower();
 				string description = item.Value.Description.ToLower();
 
-				Console.WriteLine(name + ", " + description + ", " + searchString);
-
 				bool nameContains = name.Contains(searchString);
 				bool descriptionContains = description.Contains(searchString);
-
-				Console.WriteLine(nameContains + ", " + descriptionContains);
 
 				shouldIncludeItem = nameContains || descriptionContains;
 			}

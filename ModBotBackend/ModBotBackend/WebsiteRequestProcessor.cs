@@ -99,6 +99,17 @@ namespace ModBotBackend
 				return;
 			}
 
+			if (is404 && Utils.FileExistsCached(GetWebsiteFilePath() + "/404.html"))
+			{
+				context.Response.ContentType = "text/html";
+
+				string data404 = Utils.FileReadAllTextCached(GetWebsiteFilePath() + "/404.html");
+				HttpStream stream404 = new HttpStream(context.Response);
+				stream404.Send(data404);
+				stream404.Close();
+				return;
+			}
+
 			if(is404)
 			{
 				context.Response.ContentType = "text/plain";

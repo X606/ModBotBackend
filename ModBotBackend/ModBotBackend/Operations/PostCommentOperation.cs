@@ -18,7 +18,7 @@ namespace ModBotBackend.Operations
 
 		public override void OnOperation(HttpListenerContext context)
 		{
-			context.Response.ContentType = "text/plain";
+			context.Response.ContentType = "application/json";
 
 			byte[] data = Misc.ToByteArray(context.Request.InputStream);
 			string json = Encoding.UTF8.GetString(data);

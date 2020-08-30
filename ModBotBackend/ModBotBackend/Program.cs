@@ -69,7 +69,10 @@ namespace ModBotBackend
 
 
 							HttpStream httpStream = new HttpStream(context.Response);
-							httpStream.Send("{\"isError\":\"true\",\"message\":\"" +  error + "\",\"error=\":\"" + error + "\"}");
+
+							Console.WriteLine(e.ToString());
+
+							httpStream.Send("{\"isError\":true}");
 							httpStream.Close();
 
 						}
