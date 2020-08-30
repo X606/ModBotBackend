@@ -25,6 +25,8 @@ namespace ModBotBackend.Operations
 			KeyValuePair<SpecialModData, ModInfo>[] mods = UploadedModsManager.GetAllUploadedMods();
 			List<string> selectedModIds = new List<string>();
 
+			Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(request));
+
 			for(int i = 0; i < mods.Length; i++)
 			{
 				bool include = Search(mods[i], request);
@@ -82,26 +84,34 @@ namespace ModBotBackend.Operations
 
 		static bool Search(KeyValuePair<SpecialModData, ModInfo> item, ModSearchMessage request)
 		{
-			bool shouldIncludeItem = false;
+			bool shouldIncludeItem = true;
 
 			if (request.searchString != null)
 			{
-				string name = item.Value.DisplayName.ToLower();
-				if(stringIncludesString(name, request.searchString.ToLower()))
-					shouldIncludeItem = true;
+				string searchString = request.searchString.ToLower();
 
-				if (request.includeDescriptionsInSearch)
-				{
-					string description = item.Value.Description.ToLower();
-					if(stringIncludesString(description, request.searchString.ToLower()))
-						shouldIncludeItem = true;
-				}
+				string name = item.Value.DisplayName.ToLower();
+				string description = item.Value.Description.ToLower();
+
+				Console.WriteLine(name + ", " + description + ", " + searchString);
+
+				bool nameContains = name.Contains(searchString);
+				bool descriptionContains = description.Contains(searchString);
+
+				Console.WriteLine(nameContains + ", " + descriptionContains);
+
+				shouldIncludeItem = nameContains || descriptionContains;
 			}
 			
 			if (request.userID != null)
 			{
-				if(request.userID == item.Key.OwnerID)
-					shouldIncludeItem = true;
+				if(request.userID != item.Key.OwnerID)
+					shouldIncludeItem = false;
+			}
+			if (request.modID != null)
+			{
+				if(request.userID != item.Key.ModId)
+					shouldIncludeItem = false;
 			}
 
 			return shouldIncludeItem;
@@ -117,6 +127,7 @@ namespace ModBotBackend.Operations
 			public string searchString = null;
 			public bool includeDescriptionsInSearch = false;
 			public string userID = null;
+			public string modID = null;
 
 			public string sortOrder = "liked";
 		}
