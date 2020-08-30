@@ -59,7 +59,46 @@ namespace ModBotBackend
 			}
 
 			Directory.Delete(folder);
-		} 
+		}
+
+		static Dictionary<string, bool> _fileExistsCache = new Dictionary<string, bool>();
+		public static bool FileExistsCached(string path)
+		{
+#if !DEBUG
+			if (_fileExistsCache.TryGetValue(path, out bool fileExits))
+			{
+				return fileExits;
+			}
+
+			fileExits = File.Exists(path);
+			_fileExistsCache.Add(path, fileExits);
+			return fileExits;
+#else
+			return File.Exists(path);
+#endif
+		}
+		static Dictionary<string, byte[]> _cachedFileData = new Dictionary<string, byte[]>();
+		public static byte[] FileReadAllBytesCached(string path)
+		{
+#if !DEBUG
+			if(_cachedFileData.TryGetValue(path, out byte[] fileData))
+			{
+				return fileData;
+			}
+
+			fileData = File.ReadAllBytes(path);
+			_cachedFileData.Add(path, fileData);
+			return fileData;
+#else
+			return File.ReadAllBytes(path);
+#endif
+		}
+
+		public static string FileReadAllTextCached(string path)
+		{
+			byte[] data = FileReadAllBytesCached(path);
+			return Encoding.UTF8.GetString(data);
+		}
 
 	}
 }

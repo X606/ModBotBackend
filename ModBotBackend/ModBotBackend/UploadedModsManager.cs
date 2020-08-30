@@ -76,6 +76,23 @@ namespace ModBotBackend
 			
 		}
 		
+		public static KeyValuePair<SpecialModData, ModInfo>[] GetAllUploadedMods()
+		{
+			if(_loadedSpecialModData.Count != _loadedMods.Count)
+				throw new Exception("the length of special mod datas is diffrent than the length of normal mod datas");
+
+			SpecialModData[] a = _loadedSpecialModData.Values.ToArray();
+			ModInfo[] b = _loadedMods.Values.ToArray();
+
+			List<KeyValuePair<SpecialModData, ModInfo>> mods = new List<KeyValuePair<SpecialModData, ModInfo>>();
+			for(int i = 0; i < a.Length; i++)
+			{
+				mods.Add(new KeyValuePair<SpecialModData, ModInfo>(a[i], b[i]));
+			}
+
+			return mods.ToArray();
+		}
+
 		public static bool TryUploadModFromZip(byte[] zipData, string sessionID, out ModInfo modInfo, out string error)
 		{
 			ModInfo loadedModInfo;

@@ -21,7 +21,15 @@ namespace ModBotBackend
 
 		public void Send(string responseString)
 		{
-			byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+			byte[] buffer;
+			if (responseString != null)
+			{
+				buffer = Encoding.UTF8.GetBytes(responseString);
+			} else
+			{
+				buffer = Encoding.UTF8.GetBytes("null");
+			}
+			 
 			// Get a response stream and write the response to it.
 			_response.ContentLength64 += buffer.Length;
 			_output.Write(buffer, 0, buffer.Length);

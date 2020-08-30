@@ -90,6 +90,7 @@
     <Compile Include="Operations\IsValidSessionOperation.cs" />
     <Compile Include="Operations\LikeCommentOperation.cs" />
     <Compile Include="Operations\LikeOperation.cs" />
+    <Compile Include="Operations\ModSearchOperation.cs" />
     <Compile Include="Operations\PostCommentOperation.cs" />
     <Compile Include="Operations\SignInOperation.cs" />
     <Compile Include="Operations\SignOutOperation.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Users\User.cs" />
     <Compile Include="Users\UserReport.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="WebsiteRequestProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

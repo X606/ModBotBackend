@@ -91,55 +91,16 @@ namespace ModBotBackend
 				}
 			} else
 			{
-				if (absolutePath == "" || absolutePath == "/")
+				try
 				{
-					context.Response.ContentType = "text/html";
-					absolutePath = "/index.html";
+					WebsiteRequestProcessor.OnRequest(context);
+				} catch(Exception e)
+				{
+#if DEBUG
+					Console.WriteLine("\n" + e.ToString());
+#endif
 				}
-
-
-				string path = Directory.GetCurrentDirectory() + "/Website";
-				string overrideFilePath = Directory.GetCurrentDirectory() + "/Website.txt";
-				if (File.Exists(overrideFilePath))
-				{
-					path = File.ReadAllText(overrideFilePath);
-					path = path.TrimEnd('/', '\\');
-				}
-
-				path += absolutePath;
-
-				if(File.Exists(path))
-				{
-					byte[] data = File.ReadAllBytes(path);
-
-					if (absolutePath.EndsWith(".js"))
-					{
-						context.Response.ContentType = "text/javascript";
-					} else if(absolutePath.EndsWith(".html"))
-                    {
-                        context.Response.ContentType = "text/html";
-                    }
-
-					context.Response.ContentLength64 = data.Length;
-					context.Response.OutputStream.Write(data, 0, data.Length);
-					context.Response.OutputStream.Close();
-				} else
-				{
-					string pageNotFoundPage = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/Website/404.html";
-					if (File.Exists(pageNotFoundPage))
-					{
-						context.Response.Redirect("404.html");
-						HttpStream httpStream = new HttpStream(context.Response);
-						httpStream.Send("re-routed");
-						httpStream.Close();
-					} else
-					{
-						HttpStream httpStream = new HttpStream(context.Response);
-						httpStream.Send("404 :(");
-						httpStream.Close();
-					}
-					
-				}
+				
 				
 			}
 		}
@@ -176,7 +137,8 @@ namespace ModBotBackend
 			{ "isCommentMine", new IsMyCommentOperation() },
 			{ "getCurrentUser", new GetCurrentUserOperation() },
 			{ "getModTemplate", new GetModTemplateOperation() },
-			{ "downloadTempFile", new DownloadTempFileOperation() }
+			{ "downloadTempFile", new DownloadTempFileOperation() },
+			{ "search", new ModSearchOperation() }
 		};
 		
 
