@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
 
 namespace ModBotBackend
 {
@@ -98,6 +99,22 @@ namespace ModBotBackend
 		{
 			byte[] data = FileReadAllBytesCached(path);
 			return Encoding.UTF8.GetString(data);
+		}
+
+		const string CHARACTERS_TO_USE_IN_KEYS = "abcdefghijklmopqrstuvwxyz";
+
+		public static string GenerateSecureKey()
+		{
+			byte[] buffer = new byte[16];
+			new RNGCryptoServiceProvider().GetBytes(buffer);
+			string generatedKey = "";
+			for(int i = 0; i < 16; i++)
+			{
+				int index = buffer[i] % CHARACTERS_TO_USE_IN_KEYS.Length;
+				generatedKey += CHARACTERS_TO_USE_IN_KEYS[index];
+			}
+
+			return generatedKey;
 		}
 
 	}

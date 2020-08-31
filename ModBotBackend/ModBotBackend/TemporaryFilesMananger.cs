@@ -29,21 +29,12 @@ namespace ModBotBackend
 
 		static Dictionary<string, TempFile> _tempFiles = new Dictionary<string, TempFile>();
 
-		static readonly char[] charactersToUse = "abcdefghijklmnop".ToCharArray();
-
 		public static void CreateTemporaryFile(string path, out string key)
 		{
 			string[] subPaths = path.Split('/', '\\');
 			string fileName = subPaths[subPaths.Length-1];
-			
-			byte[] buffer = new byte[16];
-			new RNGCryptoServiceProvider().GetBytes(buffer);
-			string generatedKey = "";
-			for(int i = 0; i < 16; i++)
-			{
-				int index = buffer[i] % charactersToUse.Length;
-				generatedKey += charactersToUse[index];
-			}
+
+			string generatedKey = Utils.GenerateSecureKey();
 			
 			byte[] data = File.ReadAllBytes(path);
 
