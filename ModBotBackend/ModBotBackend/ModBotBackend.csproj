@@ -94,6 +94,7 @@
     <Compile Include="Operations\PostCommentOperation.cs" />
     <Compile Include="Operations\SignInOperation.cs" />
     <Compile Include="Operations\SignOutOperation.cs" />
+    <Compile Include="Operations\UpdateUserDataOperation.cs" />
     <Compile Include="Operations\UploadProfilePictureOperation.cs" />
     <Compile Include="Report.cs" />
     <Compile Include="SpecialModData.cs" />

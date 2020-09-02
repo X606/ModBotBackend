@@ -142,7 +142,8 @@ namespace ModBotBackend
 			{ "getModTemplate", new GetModTemplateOperation() },
 			{ "downloadTempFile", new DownloadTempFileOperation() },
 			{ "search", new ModSearchOperation() },
-			{ "uploadProfilePicture", new UploadProfilePictureOperation() }
+			{ "uploadProfilePicture", new UploadProfilePictureOperation() },
+			{ "updateUserData", new UpdateUserDataOperation() }
 		};
 		
 

@@ -22,6 +22,7 @@ namespace ModBotBackend.Users
 		public string UserID;
 
 		public string DisplayColor;
+		public BorderStyles BorderStyle;
 
 		public List<string> FollowedUsers = new List<string>();
 		public List<string> FavoritedMods = new List<string>();
@@ -61,6 +62,58 @@ namespace ModBotBackend.Users
 			return true;
 		}
 
+		const int MIN_USERNAME_LENGTH = 3;
+		const int MAX_USERNAME_LENGTH = 40;
+
+		const string ALLOWED_CHARACTERS_IN_USERNAMES = "abcdefghijklmnopqrstuvwxyzåäöABCDEFGIJKLMNOPQRSTUVWXYZÅÄÖ1234567890";
+		public static bool IsValidUsername(string username, out string error)
+		{
+			if(username.Length < MIN_USERNAME_LENGTH)
+			{
+				error = "invalid length, the username must be at least " + MIN_USERNAME_LENGTH + " characters long";
+				return false;
+			}
+			if(username.Length > MAX_USERNAME_LENGTH)
+			{
+				error = "invalid length, the username cannot be longer than " + MAX_USERNAME_LENGTH + " characters";
+				return false;
+			}
+
+			for(int i = 0; i < username.Length; i++)
+			{
+				if(!ALLOWED_CHARACTERS_IN_USERNAMES.Contains(username[i]))
+				{
+					error = "the character \"" + username[i] + "\" is not allowed in usernames";
+					return false;
+				}
+			}
+
+			if(UserManager.GetUserFromUsername(username) != null)
+			{
+				error = "username already taken";
+				return false;
+			}
+
+			error = string.Empty;
+			return true;
+		}
+		public static bool IsValidPassword(string password, out string error)
+		{
+			if(password.Length < 4)
+			{
+				error = "invalid length, the password must be at least 4 characters long";
+				return false;
+			}
+			if(password.Length > 100)
+			{
+				error = "invalid length, the password is too long, the max limit is 100 characters";
+				return false;
+			}
+
+			error = string.Empty;
+			return true;
+		}
+
 		public void Save()
 		{
 			string path = Program.UsersPath + UserID + ".json";
@@ -81,11 +134,18 @@ namespace ModBotBackend.Users
 			user.Username = username;
 			user.UserID = Guid.NewGuid().ToString();
 			user.Bio = "";
+			user.BorderStyle = BorderStyles.Runded;
 			user.SetPassword(password);
 			user.DisplayColor = "#ffffff";
 
 			UserManager.Users.Add(user);
 			return user;
 		}
+	}
+	public enum BorderStyles
+	{
+		Square,
+		Runded,
+		Round
 	}
 }
