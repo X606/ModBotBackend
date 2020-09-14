@@ -42,8 +42,9 @@ namespace ModBotBackend.Operations
 				favoritedMods = user.FavoritedMods,
 				color = user.DisplayColor,
 				borderStyle = user.BorderStyle,
+                showFull = user.ShowFull,
 
-				isError = false,
+                isError = false,
 				message = ""
 			};
 
@@ -61,6 +62,7 @@ namespace ModBotBackend.Operations
 			public List<string> favoritedMods = new List<string>();
 			public string color;
 			public BorderStyles borderStyle;
+            public bool showFull;
 
 			public bool isError = false;
 			public string message;
