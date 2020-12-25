@@ -59,8 +59,10 @@ namespace ModBotBackend.Operations
 				request.bio = null;
 			if(user.BorderStyle == request.borderStyle)
 				request.borderStyle = null;
+            /*if (user.ShowFull == request.showFull)
+                request.showFull = null;*/
 
-			if (request.username != null)
+            if (request.username != null)
 			{
 				if(!User.IsValidUsername(request.username, out string error))
 				{
@@ -92,8 +94,12 @@ namespace ModBotBackend.Operations
 			{
 				user.BorderStyle = request.borderStyle.Value;
 			}
+            if (request.showFull != null)
+            {
+                user.ShowFull = request.showFull;
+            }
 
-			HttpStream resopnseStream = new HttpStream(context.Response);
+            HttpStream resopnseStream = new HttpStream(context.Response);
 			resopnseStream.Send(new Response().ToJson());
 			resopnseStream.Close();
 		}
@@ -104,8 +110,9 @@ namespace ModBotBackend.Operations
 			public string bio;
 			public string newPassword;
 			public BorderStyles? borderStyle;
+            public bool showFull;
 
-			public string sessionID;
+            public string sessionID;
 			public string password;
 
 			public bool IsValidRequest()

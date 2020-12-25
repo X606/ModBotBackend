@@ -23,6 +23,7 @@ namespace ModBotBackend.Users
 
 		public string DisplayColor;
 		public BorderStyles BorderStyle;
+        public bool ShowFull;
 
 		public List<string> FollowedUsers = new List<string>();
 		public List<string> FavoritedMods = new List<string>();
@@ -135,6 +136,7 @@ namespace ModBotBackend.Users
 			user.UserID = Guid.NewGuid().ToString();
 			user.Bio = "";
 			user.BorderStyle = BorderStyles.Runded;
+            user.ShowFull = false;
 			user.SetPassword(password);
 			user.DisplayColor = "#ffffff";
 
