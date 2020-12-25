@@ -79,6 +79,7 @@
     <Compile Include="Operations\CreateAccountOperation.cs" />
     <Compile Include="Operations\DeleteCommentOperation.cs" />
     <Compile Include="Operations\DownloadTempFileOperation.cs" />
+    <Compile Include="Operations\FavoriteModOperation.cs" />
     <Compile Include="Operations\GetCurrentUserOperation.cs" />
     <Compile Include="Operations\GetModTemplateOperation.cs" />
     <Compile Include="Operations\GetProfilePictureOperation.cs" />
