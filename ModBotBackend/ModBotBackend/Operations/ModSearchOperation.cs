@@ -60,7 +60,7 @@ namespace ModBotBackend.Operations
 					SpecialModData specialAData = UploadedModsManager.GetSpecialModInfoFromId(a);
 					SpecialModData specialBData = UploadedModsManager.GetSpecialModInfoFromId(b);
 
-					return (int)(specialAData.PostedDate - specialBData.PostedDate);
+					return (int)(specialBData.PostedDate - specialAData.PostedDate);
 				});
 			}
 			else if(request.sortOrder == "editedDate")
@@ -70,7 +70,7 @@ namespace ModBotBackend.Operations
 					SpecialModData specialAData = UploadedModsManager.GetSpecialModInfoFromId(a);
 					SpecialModData specialBData = UploadedModsManager.GetSpecialModInfoFromId(b);
 
-					return (int)(specialAData.UpdatedDate - specialBData.UpdatedDate);
+					return (int)(specialBData.UpdatedDate - specialAData.UpdatedDate);
 				});
 			}
 
@@ -87,24 +87,27 @@ namespace ModBotBackend.Operations
 			if (request.searchString != null)
 			{
 				string searchString = request.searchString.ToLower();
-
-				string name = item.Value.DisplayName.ToLower();
-				string description = item.Value.Description.ToLower();
-
+				string name = item.Value.DisplayName != null ? item.Value.DisplayName.ToLower() : "";
+				string description = item.Value.Description != null ? item.Value.Description.ToLower() : "";
 				bool nameContains = name.Contains(searchString);
 				bool descriptionContains = description.Contains(searchString);
 
-				shouldIncludeItem = nameContains || descriptionContains;
+				shouldIncludeItem = nameContains;
+
+				if (request.includeDescriptionsInSearch)
+				{
+					shouldIncludeItem |= descriptionContains;
+				}
 			}
-			
+
 			if (request.userID != null)
 			{
-				if(request.userID != item.Key.OwnerID)
+				if (request.userID != item.Key.OwnerID)
 					shouldIncludeItem = false;
 			}
 			if (request.modID != null)
 			{
-				if(request.userID != item.Key.ModId)
+				if (request.userID != item.Key.ModId)
 					shouldIncludeItem = false;
 			}
 
