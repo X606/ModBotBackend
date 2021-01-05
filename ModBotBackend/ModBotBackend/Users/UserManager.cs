@@ -26,7 +26,7 @@ namespace ModBotBackend.Users
 			{
 				File.WriteAllText(discordClientSecretPath, "<Your Client Secret Here>");
 				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("Please fill out your client secret :)");
+				OutputConsole.WriteLine("Please fill out your client secret :)");
 				return;
 			}
 

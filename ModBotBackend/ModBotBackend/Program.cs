@@ -33,7 +33,7 @@ namespace ModBotBackend
 			httpListener.Start();
 			listen(httpListener);
 
-			Console.WriteLine("Listening...");
+			OutputConsole.WriteLine("Listening...");
 			
 			while (true)
 				System.Threading.Thread.Sleep(1000 * 60 * 60);
@@ -98,7 +98,7 @@ namespace ModBotBackend
 
 							HttpStream httpStream = new HttpStream(context.Response);
 
-							Console.WriteLine(e.ToString());
+							//OutputConsole.WriteLine(e.ToString());
 
 							httpStream.Send("{\"isError\":true}");
 							httpStream.Close();
@@ -128,7 +128,7 @@ namespace ModBotBackend
 				} catch(Exception e)
 				{
 #if DEBUG
-					Console.WriteLine("\n" + e.ToString());
+					//OutputConsole.WriteLine("\n" + e.ToString());
 #endif
 				}
 				

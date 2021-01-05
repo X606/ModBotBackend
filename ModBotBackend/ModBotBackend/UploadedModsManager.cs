@@ -46,12 +46,12 @@ namespace ModBotBackend
 				}
 				catch(JsonException e)
 				{
-					Console.WriteLine("Failed to read mod data file for mod: " + folder);
+					OutputConsole.WriteLine("Failed to read mod data file for mod: " + folder);
 					continue;
 				}
 				if(!loadedModInfo.AreAllEssentialFieldsAssigned(out string msg))
 				{
-					Console.WriteLine("Missing fields for mod: " + folder + ", " + msg);
+					OutputConsole.WriteLine("Missing fields for mod: " + folder + ", " + msg);
 					continue;
 				}
 				loadedModInfo.FixFieldValues();
@@ -171,7 +171,7 @@ namespace ModBotBackend
 			{
 				modInfo = null;
 				error = "something went wrong while handaling the zip file";
-				Console.WriteLine(e.ToString());
+				OutputConsole.WriteLine(e.ToString());
 				return false;
 			}
 
