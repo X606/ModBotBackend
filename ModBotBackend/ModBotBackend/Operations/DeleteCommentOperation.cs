@@ -79,7 +79,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if (userId != comment.PosterUserId)
+			if (userId != comment.PosterUserId && !authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.Admin))
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send(new DeleteCommentResponse()
