@@ -12,7 +12,7 @@ namespace ModBotBackend.Operations
 {
 	public class GetPublicUserDataOperation : OperationBase
 	{
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "application/json";
 

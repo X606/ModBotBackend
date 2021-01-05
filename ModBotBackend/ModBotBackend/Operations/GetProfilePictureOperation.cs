@@ -13,7 +13,7 @@ namespace ModBotBackend.Operations
 	public class GetProfilePictureOperation : OperationBase
 	{
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			string id = context.Request.QueryString["id"];
 

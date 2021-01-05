@@ -16,7 +16,7 @@ namespace ModBotBackend.Operations
 	public class LikeCommentOperation : OperationBase
 	{
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/plain";
 
@@ -37,12 +37,12 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if(!SessionsManager.VerifyKey(request.sessionId, out Session session))
+			if(!authentication.IsSignedIn)
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send(new LikeCommentRequestResponse()
 				{
-					message = "Outdated or invalid session id",
+					message = "You are not signed in.",
 					isError = true
 				}.ToJson());
 				stream.Close();
@@ -61,7 +61,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			string userId = session.OwnerUserID;
+			string userId = authentication.UserID;
 
 			User user = UserManager.GetUserFromId(userId);
 			SpecialModData modData = UploadedModsManager.GetSpecialModInfoFromId(request.modId);
@@ -121,14 +121,13 @@ namespace ModBotBackend.Operations
 		[Serializable]
 		private class LikeCommentRequestData
 		{
-			public string sessionId;
 			public bool likeState;
 			public string modId;
 			public string commentId;
 
 			public bool IsValidRequest()
 			{
-				return !string.IsNullOrWhiteSpace(sessionId) && !string.IsNullOrWhiteSpace(modId) && !string.IsNullOrWhiteSpace(commentId);
+				return !string.IsNullOrWhiteSpace(modId) && !string.IsNullOrWhiteSpace(commentId);
 			}
 		}
 		[Serializable]

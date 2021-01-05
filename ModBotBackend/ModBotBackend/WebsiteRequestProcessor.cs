@@ -132,13 +132,15 @@ namespace ModBotBackend
 
 		public static string GetWebsiteFilePath()
 		{
-			string path = Directory.GetCurrentDirectory() + "/Website";
-			string overrideFilePath = Directory.GetCurrentDirectory() + "/Website.txt";
+			string path = Program.WebsitePath;
+			string overrideFilePath = Program.WebsiteFile;
 			if(Utils.FileExistsCached(overrideFilePath))
 			{
 				path = Utils.FileReadAllTextCached(overrideFilePath);
-				path = path.TrimEnd('/', '\\');
+				
 			}
+
+			path = path.TrimEnd('/', '\\');
 
 			return path;
 		}

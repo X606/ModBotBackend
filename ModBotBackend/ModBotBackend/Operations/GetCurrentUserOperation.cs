@@ -16,24 +16,14 @@ namespace ModBotBackend.Operations
 	public class GetCurrentUserOperation : OperationBase
 	{
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/plain";
 
 			byte[] data = Misc.ToByteArray(context.Request.InputStream);
 			string json = Encoding.UTF8.GetString(data);
 
-			GetCurrentUserOperationRequest request = JsonConvert.DeserializeObject<GetCurrentUserOperationRequest>(json);
-
-			if(!request.IsValidRequest())
-			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send("null");
-				stream.Close();
-				return;
-			}
-
-			if(!SessionsManager.VerifyKey(request.sessionId, out Session session))
+			if(!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.BasicUser))
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send("null");
@@ -42,19 +32,9 @@ namespace ModBotBackend.Operations
 			}
 			
 			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(session.OwnerUserID);
+			httpStream.Send(authentication.UserID);
 			httpStream.Close();
 		}
 
-		[Serializable]
-		private class GetCurrentUserOperationRequest
-		{
-			public string sessionId;
-
-			public bool IsValidRequest()
-			{
-				return !string.IsNullOrWhiteSpace(sessionId);
-			}
-		}
 	}
 }

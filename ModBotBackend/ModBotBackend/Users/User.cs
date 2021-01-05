@@ -25,6 +25,8 @@ namespace ModBotBackend.Users
 		public BorderStyles BorderStyle;
         public bool ShowFull;
 
+		public AuthenticationLevel AuthenticationLevel = AuthenticationLevel.BasicUser;
+
 		public List<string> FollowedUsers = new List<string>();
 		public List<string> FavoritedMods = new List<string>();
 		public List<string> LikedMods = new List<string>();
@@ -149,5 +151,14 @@ namespace ModBotBackend.Users
 		Square,
 		Runded,
 		Round
+	}
+
+	public enum AuthenticationLevel
+	{
+		None,
+		BasicUser,
+		VerifiedUser,
+		Modder,
+		Admin
 	}
 }

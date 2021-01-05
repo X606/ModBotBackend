@@ -12,7 +12,7 @@ namespace ModBotBackend.Operations
 	public class DownloadTempFileOperation : OperationBase
 	{
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			string key = context.Request.QueryString["key"];
 			

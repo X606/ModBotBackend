@@ -15,7 +15,7 @@ namespace ModBotBackend.Operations
 {
 	public class UpdateUserDataOperation : OperationBase
 	{
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "application/json";
 
@@ -33,7 +33,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if (!SessionsManager.VerifyKey(request.sessionID, out Session session))
+			if (!authentication.IsSignedIn)
 			{
 				HttpStream invalidRequestStream = new HttpStream(context.Response);
 				invalidRequestStream.Send(new Response(true, "The provided session id was invalid or outdated").ToJson());
@@ -42,7 +42,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			User user = UserManager.GetUserFromId(session.OwnerUserID);
+			User user = UserManager.GetUserFromId(authentication.UserID);
 
 			if (!user.VeryfyPassword(request.password))
 			{
@@ -99,6 +99,8 @@ namespace ModBotBackend.Operations
                 user.ShowFull = request.showFull;
             }
 
+			user.Save();
+
             HttpStream resopnseStream = new HttpStream(context.Response);
 			resopnseStream.Send(new Response().ToJson());
 			resopnseStream.Close();
@@ -112,12 +114,11 @@ namespace ModBotBackend.Operations
 			public BorderStyles? borderStyle;
             public bool showFull;
 
-            public string sessionID;
 			public string password;
 
 			public bool IsValidRequest()
 			{
-				return password != null && sessionID != null;
+				return password != null;
 			}
 		}
 		public class Response

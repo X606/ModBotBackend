@@ -13,7 +13,7 @@ namespace ModBotBackend.Operations
 {
 	public class GetAllModInfosOperation : OperationBase
 	{
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			string[] ids = UploadedModsManager.GetAllUploadedIds();
 

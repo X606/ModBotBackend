@@ -17,7 +17,7 @@ namespace ModBotBackend.Operations
 	public class GetModTemplateOperation : OperationBase
 	{
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/plain";
 
@@ -38,19 +38,19 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if(!SessionsManager.VerifyKey(request.sessionId, out Session session))
+			if(!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.BasicUser))
 			{
 				HttpStream http = new HttpStream(context.Response);
 				http.Send(new GetModTemplateRequestResponse()
 				{
 					isError = false,
-					message = "The provided session id was either outdated or invalid"
+					message = "You are not signed in"
 				}.ToJson());
 				http.Close();
 				return;
 			}
 
-			string creatorUsername = UserManager.GetUserFromId(session.OwnerUserID).Username;
+			string creatorUsername = UserManager.GetUserFromId(authentication.UserID).Username;
 
 			ModInfoCopy modInfo = new ModInfoCopy()
 			{
@@ -106,14 +106,13 @@ namespace ModBotBackend.Operations
 		[Serializable]
 		private class GetModTemplateRequestData
 		{
-			public string sessionId;
 			public string modName;
 			public string description;
 			public string[] tags;
 
 			public bool IsValidRequest()
 			{
-				return !string.IsNullOrWhiteSpace(sessionId) && !string.IsNullOrWhiteSpace(modName) && !string.IsNullOrWhiteSpace(description);
+				return !string.IsNullOrWhiteSpace(modName) && !string.IsNullOrWhiteSpace(description);
 			}
 		}
 		[Serializable]

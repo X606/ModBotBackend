@@ -15,40 +15,26 @@ namespace ModBotBackend.Operations
 	public class SignOutOperation : OperationBase
 	{
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/plain";
 
 			byte[] data = Misc.ToByteArray(context.Request.InputStream);
 			string json = Encoding.UTF8.GetString(data);
 
-			SignOutData request = Newtonsoft.Json.JsonConvert.DeserializeObject<SignOutData>(json);
-
-			if(!request.IsValidRequest())
+			if (!authentication.IsSignedIn)
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send(new SignOutResponse()
 				{
-					message = "All fields were not filled out",
+					message = "You are not signed in.",
 					isError = true
 				}.ToJson());
 				stream.Close();
 				return;
 			}
 
-			if (!SessionsManager.VerifyKey(request.sessionID, out Session session))
-			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new SignOutResponse()
-				{
-					message = "The provided session id was invalid or outdated",
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
-			}
-
-			SessionsManager.RemoveSession(request.sessionID);
+			SessionsManager.RemoveSession(authentication.SessionID);
 
 			HttpStream httpStream = new HttpStream(context.Response);
 			httpStream.Send(new SignOutResponse()
@@ -59,16 +45,6 @@ namespace ModBotBackend.Operations
 			httpStream.Close();
 		}
 
-		[Serializable]
-		private class SignOutData
-		{
-			public string sessionID;
-
-			public bool IsValidRequest()
-			{
-				return !string.IsNullOrWhiteSpace(sessionID);
-			}
-		}
 		[Serializable]
 		private class SignOutResponse
 		{

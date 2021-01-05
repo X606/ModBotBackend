@@ -15,7 +15,7 @@ namespace ModBotBackend.Operations
 	public class SignInOperation : OperationBase
 	{
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/plain";
 

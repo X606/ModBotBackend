@@ -75,6 +75,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authentication.cs" />
     <Compile Include="ModReport.cs" />
     <Compile Include="Operations\CreateAccountOperation.cs" />
     <Compile Include="Operations\DeleteCommentOperation.cs" />

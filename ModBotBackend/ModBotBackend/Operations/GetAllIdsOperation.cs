@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 using System.IO;
 using HttpUtils;
 using Newtonsoft.Json;
+using ModBotBackend.Users;
 
 namespace ModBotBackend.Operations
 {
 	public class GetAllModIdsOperation : OperationBase
 	{
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			string[] ids = UploadedModsManager.GetAllUploadedIds();
 

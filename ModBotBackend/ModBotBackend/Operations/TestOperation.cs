@@ -11,7 +11,7 @@ namespace ModBotBackend.Operations
 	{
 		static int i = 1;
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			//context.Response.Redirect("https://clonedronemodbot.com/error.html?error=test works&notError=true");
 			HttpStream httpStream = new HttpStream(context.Response);

@@ -16,7 +16,7 @@ namespace ModBotBackend.Operations
 	public class HasLikedCommentOperation : OperationBase
 	{
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/plain";
 
@@ -33,7 +33,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if(!SessionsManager.VerifyKey(request.sessionId, out Session session))
+			if(!authentication.IsSignedIn)
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send("false");
@@ -59,8 +59,8 @@ namespace ModBotBackend.Operations
 				stream.Close();
 				return;
 			}
-			
-			string userId = session.OwnerUserID;
+
+			string userId = authentication.UserID;
 
 			bool hasLiked = comment.UsersWhoLikedThis.Contains(userId);
 
@@ -72,13 +72,12 @@ namespace ModBotBackend.Operations
 		[Serializable]
 		private class LikeCommentRequestData
 		{
-			public string sessionId;
 			public string modId;
 			public string commentId;
 
 			public bool IsValidRequest()
 			{
-				return !string.IsNullOrWhiteSpace(sessionId) && !string.IsNullOrWhiteSpace(modId) && !string.IsNullOrWhiteSpace(commentId);
+				return !string.IsNullOrWhiteSpace(modId) && !string.IsNullOrWhiteSpace(commentId);
 			}
 		}
 	}

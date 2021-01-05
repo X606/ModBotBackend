@@ -14,7 +14,7 @@ namespace ModBotBackend.Operations
 {
 	public class FavoriteModOperation : OperationBase
 	{
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "application/json";
 
@@ -30,10 +30,10 @@ namespace ModBotBackend.Operations
 				stream.Close();
 				return;
 			}
-			if (!SessionsManager.VerifyKey(request.sessionID, out Session session))
+			if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.BasicUser))
 			{
 				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new Response("The provided session id was either outdated or invalid.").ToJson());
+				stream.Send(new Response("You are not signed in").ToJson());
 				stream.Close();
 				return;
 			}
@@ -45,7 +45,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			User user = UserManager.GetUserFromId(session.OwnerUserID);
+			User user = UserManager.GetUserFromId(authentication.UserID);
 			bool isFavorited = user.FavoritedMods.Contains(request.modID);
 			
 			if ((isFavorited && request.favorite) || (!isFavorited && !request.favorite))
@@ -71,13 +71,12 @@ namespace ModBotBackend.Operations
 
 		class Request
 		{
-			public string sessionID;
 			public string modID;
 			public bool favorite;
 
 			public bool IsValidRequest()
 			{
-				return sessionID != null;
+				return true;
 			}
 		}
 		class Response

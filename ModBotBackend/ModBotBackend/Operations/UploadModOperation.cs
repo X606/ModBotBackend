@@ -14,7 +14,7 @@ namespace ModBotBackend.Operations
 	public class UploadModOperation : OperationBase
 	{
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			HttpMultipartParser httpMultipartParser = new HttpMultipartParser(context.Request.InputStream, "file");
 
@@ -30,14 +30,18 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			string sessionId = httpMultipartParser.Parameters["session"];
-
-			Session session;
-			if (!SessionsManager.VerifyKey(sessionId, out session))
+			if (!authentication.IsSignedIn)
 			{
-				Utils.RederectToErrorPage(context, "The session id provided is outdated or invalid");
+				Utils.RederectToErrorPage(context, "You are not signed in.");
 				return;
 			}
+			if (!authentication.HasAtLeastAuthenticationLevel(Users.AuthenticationLevel.VerifiedUser))
+			{
+				Utils.RederectToErrorPage(context, "You have to link a clone drone account to your account to upload mods, this is to prevent people from getting around bans.");
+				return;
+			}
+
+			string sessionId = authentication.SessionID;
 
 			ModInfo modInfo;
 			if (!UploadedModsManager.TryUploadModFromZip(httpMultipartParser.FileContents, sessionId, out modInfo, out string error)) {

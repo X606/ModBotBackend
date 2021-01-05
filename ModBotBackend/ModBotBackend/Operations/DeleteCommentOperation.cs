@@ -16,7 +16,7 @@ namespace ModBotBackend.Operations
 	public class DeleteCommentOperation : OperationBase
 	{
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/plain";
 
@@ -37,12 +37,12 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if(!SessionsManager.VerifyKey(request.sessionId, out Session session))
+			if(!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.BasicUser))
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send(new DeleteCommentResponse()
 				{
-					message = "The provided session id was either invalid or outdated",
+					message = "You are not signed in",
 					isError = true
 				}.ToJson());
 				stream.Close();
@@ -63,7 +63,7 @@ namespace ModBotBackend.Operations
 
 			SpecialModData specialModData = UploadedModsManager.GetSpecialModInfoFromId(request.targetModId);
 
-			string userId = session.OwnerUserID;
+			string userId = authentication.UserID;
 
 			Comment comment = specialModData.GetCommentWithCommentID(request.targetCommentId);
 			if (comment == null)
@@ -78,7 +78,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if (session.OwnerUserID != comment.PosterUserId)
+			if (userId != comment.PosterUserId)
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send(new DeleteCommentResponse()
@@ -106,12 +106,11 @@ namespace ModBotBackend.Operations
 		private class DeleteCommentRequest
 		{
 			public string targetModId;
-			public string sessionId;
 			public string targetCommentId;
 
 			public bool IsValidRequest()
 			{
-				return !string.IsNullOrWhiteSpace(sessionId) && !string.IsNullOrWhiteSpace(targetModId);
+				return !string.IsNullOrWhiteSpace(targetModId);
 			}
 		}
 		[Serializable]

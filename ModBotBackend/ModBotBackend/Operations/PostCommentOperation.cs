@@ -16,7 +16,7 @@ namespace ModBotBackend.Operations
 	public class PostCommentOperation : OperationBase
 	{
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "application/json";
 
@@ -37,12 +37,12 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if (!SessionsManager.VerifyKey(request.sessionId, out Session session))
+			if (!authentication.IsSignedIn)
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send(new PostCommentResponse()
 				{
-					message = "The provided session id was either invalid or outdated",
+					message = "You are not signed in.",
 					isError = true
 				}.ToJson());
 				stream.Close();
@@ -63,7 +63,7 @@ namespace ModBotBackend.Operations
 
 			SpecialModData specialModData = UploadedModsManager.GetSpecialModInfoFromId(request.targetModId);
 
-			string userId = session.OwnerUserID;
+			string userId = authentication.UserID;
 
 			string sanitized = request.commentBody.Replace("<", "&lt;").Replace(">", "&gt;");
 

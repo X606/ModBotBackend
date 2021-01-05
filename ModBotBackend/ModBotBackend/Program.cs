@@ -8,6 +8,7 @@ using System.Net;
 using System.IO;
 using ModBotBackend.Operations;
 using ModBotBackend.Users;
+using ModBotBackend.Users.Sessions;
 
 namespace ModBotBackend
 {
@@ -15,6 +16,8 @@ namespace ModBotBackend
 	{
 		static void Main(string[] args)
 		{
+			Directory.CreateDirectory(BasePath);
+
 			Directory.CreateDirectory(UsersPath);
 			Directory.CreateDirectory(DataPath);
 
@@ -28,10 +31,10 @@ namespace ModBotBackend
 			httpListener.Start();
 			listen(httpListener);
 
-
 			Console.WriteLine("Listening...");
-			Console.WriteLine("Press any key to exit...");
-			Console.ReadLine();
+			
+			while (true)
+				System.Threading.Thread.Sleep(1000 * 60 * 60);
 		}
 
 		static async void listen(HttpListener httpListener)
@@ -44,9 +47,31 @@ namespace ModBotBackend
 			}
 		}
 
+		static string GetCookie(HttpListenerRequest request, string cookieName)
+		{
+			for (int i = 0; i < request.Cookies.Count; i++)
+			{
+				if (request.Cookies[i].Name == cookieName)
+					return request.Cookies[i].Value;
+			}
+
+			return null;
+		}
+
 		static void processRequest(HttpListenerContext context)
 		{
 			HttpListenerRequest request = context.Request;
+
+			string sessionID = GetCookie(request,"SessionID");
+
+			Authentication authentication;
+			if (SessionsManager.VerifyKey(sessionID, out Session session))
+			{
+				authentication = new Authentication(session.AuthenticationLevel, session.OwnerUserID, sessionID);
+			} else
+			{
+				authentication = new Authentication(AuthenticationLevel.None, "", "");
+			}
 
 			string operation = request.QueryString.Get("operation");
 			
@@ -57,7 +82,8 @@ namespace ModBotBackend
 				{
 					try
 					{
-						selectedOperation.OnOperation(context);
+						selectedOperation.OnOperation(context, authentication);
+						
 					}
 					catch(Exception e)
 					{
@@ -108,12 +134,17 @@ namespace ModBotBackend
 			}
 		}
 
-		public static string DataPath => Directory.GetCurrentDirectory() + "/Data/";
-		public static string UsersPath => Directory.GetCurrentDirectory() + "/Users/";
-		public static string DiscordClientSecretPath => Directory.GetCurrentDirectory() + "/discordSecret.txt";
+		public static string BasePath => Directory.GetCurrentDirectory() + "/SiteData/";
 
-		public static string ModTemplateFilePath => Directory.GetCurrentDirectory() + "/ModTemplate/";
-		public static string TemporaryFiles => Directory.GetCurrentDirectory() + "/TemporaryFiles/";
+		public static string DataPath => BasePath + "/Data/";
+		public static string UsersPath => BasePath + "/Users/";
+		public static string DiscordClientSecretPath => BasePath + "/discordSecret.txt";
+
+		public static string ModTemplateFilePath => BasePath + "/ModTemplate/";
+		public static string TemporaryFiles => BasePath + "/TemporaryFiles/";
+
+		public static string WebsitePath => BasePath + "/Website/";
+		public static string WebsiteFile => BasePath + "/Website.txt";
 
 		public static readonly Dictionary<string, OperationBase> Operations = new Dictionary<string, OperationBase>()
 		{

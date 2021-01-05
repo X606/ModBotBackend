@@ -22,7 +22,7 @@ namespace ModBotBackend.Operations
 				".jpg"
 			};
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			HttpMultipartParser httpMultipartParser = new HttpMultipartParser(context.Request.InputStream, "file");
 
@@ -32,31 +32,22 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if(!httpMultipartParser.Parameters.ContainsKey("session"))
+			if(!authentication.IsSignedIn)
 			{
-				Utils.RederectToErrorPage(context, "You're not logged in");
-				return;
-			}
-
-			string sessionId = httpMultipartParser.Parameters["session"];
-
-			Session session;
-			if(!SessionsManager.VerifyKey(sessionId, out session))
-			{
-				Utils.RederectToErrorPage(context, "The session id provided is outdated or invalid");
+				Utils.RederectToErrorPage(context, "You are not signed in.");
 				return;
 			}
 
 			string extension = Path.GetExtension(httpMultipartParser.Filename);
 			byte[] imageData = httpMultipartParser.FileContents;
 
-			if (!_validFileExtensions.Contains(extension))
+			if (!_validFileExtensions.Contains(extension.ToLower()))
 			{
 				Utils.RederectToErrorPage(context, string.Format("The format \"{0}\" is not supported", extension));
 				return;
 			}
 
-			string path = UserManager.ProfilePicturesPath + session.OwnerUserID;
+			string path = UserManager.ProfilePicturesPath + authentication.UserID;
 
 			foreach(string ext in _validFileExtensions)
 			{

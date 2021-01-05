@@ -13,7 +13,7 @@ namespace ModBotBackend.Operations
 {
 	public class ModSearchOperation : OperationBase
 	{
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/plain";
 

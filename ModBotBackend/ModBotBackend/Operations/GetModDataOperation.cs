@@ -11,7 +11,7 @@ namespace ModBotBackend.Operations
 {
 	public class GetModDataOperation : OperationBase
 	{
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 		 	string id = context.Request.QueryString["id"];
 

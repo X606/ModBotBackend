@@ -16,7 +16,7 @@ namespace ModBotBackend.Operations
 	public class IsMyCommentOperation : OperationBase
 	{
 
-		public override void OnOperation(HttpListenerContext context)
+		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/plain";
 
@@ -33,7 +33,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if(!SessionsManager.VerifyKey(request.sessionId, out Session session))
+			if(!authentication.IsSignedIn)
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send("false");
@@ -60,7 +60,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			string userId = session.OwnerUserID;
+			string userId = authentication.UserID;
 
 			bool isUs = comment.PosterUserId == userId;
 
@@ -72,13 +72,12 @@ namespace ModBotBackend.Operations
 		[Serializable]
 		private class IsMyCommentRequestData
 		{
-			public string sessionId;
 			public string modId;
 			public string commentId;
 
 			public bool IsValidRequest()
 			{
-				return !string.IsNullOrWhiteSpace(sessionId) && !string.IsNullOrWhiteSpace(modId) && !string.IsNullOrWhiteSpace(commentId);
+				return !string.IsNullOrWhiteSpace(modId) && !string.IsNullOrWhiteSpace(commentId);
 			}
 		}
 	}
