@@ -11,6 +11,7 @@ using ModBotBackend.Users;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("getAllModIds")]
 	public class GetAllModIdsOperation : OperationBase
 	{
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)

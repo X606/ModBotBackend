@@ -13,6 +13,7 @@ using System.IO;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("uploadProfilePicture")]
 	public class UploadProfilePictureOperation : OperationBase
 	{
 		readonly string[] _validFileExtensions = new string[]

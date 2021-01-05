@@ -10,6 +10,7 @@ using ModBotBackend.Users;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("getUser")]
 	public class GetPublicUserDataOperation : OperationBase
 	{
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)

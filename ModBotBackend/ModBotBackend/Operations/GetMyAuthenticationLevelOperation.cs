@@ -4,23 +4,18 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
-using HttpUtils;
 
 namespace ModBotBackend.Operations
 {
-	[Operation("getModData")]
-	public class GetModDataOperation : OperationBase
+	[Operation("getMyAuth")]
+	public class GetMyAuthenticationLevelOperation : OperationBase
 	{
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
-		 	string id = context.Request.QueryString["id"];
-
 			context.Response.ContentType = "text/plain";
 			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(UploadedModsManager.GetModInfoJsonFromId(id));
+			httpStream.Send(authentication.AuthenticationLevel.ToString());
 			httpStream.Close();
 		}
-
 	}
 }

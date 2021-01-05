@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("createAccout")]
 	public class CreateAccountOperation : OperationBase
 	{
 

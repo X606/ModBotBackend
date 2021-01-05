@@ -11,6 +11,7 @@ using ModBotBackend.Users.Sessions;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("uploadMod")]
 	public class UploadModOperation : OperationBase
 	{
 

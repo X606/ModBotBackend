@@ -9,6 +9,7 @@ using System.IO;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("downloadTempFile")]
 	public class DownloadTempFileOperation : OperationBase
 	{
 

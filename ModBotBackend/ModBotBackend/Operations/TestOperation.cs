@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("test")]
 	public class TestOperation : OperationBase
 	{
 		static int i = 1;

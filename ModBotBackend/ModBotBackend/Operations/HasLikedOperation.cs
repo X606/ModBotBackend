@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("hasLiked")]
 	public class HasLikedOperation : OperationBase
 	{
 

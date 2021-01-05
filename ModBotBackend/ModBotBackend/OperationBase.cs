@@ -13,4 +13,13 @@ namespace ModBotBackend
 		public abstract void OnOperation(HttpListenerContext context, Authentication authentication);
 
 	}
+
+	public class OperationAttribute : Attribute
+	{
+		public OperationAttribute(string operationKey)
+		{
+			OperationKey = operationKey;
+		}
+		public string OperationKey;
+	}
 }

@@ -9,6 +9,8 @@ using System.IO;
 
 namespace ModBotBackend.Operations
 {
+	
+	[Operation("getModImage")]
 	public class GetImageOperation : OperationBase
 	{
 		

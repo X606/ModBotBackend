@@ -9,6 +9,7 @@ using HttpUtils;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("downloadMod")]
 	public class DownloadModOperation : OperationBase
 	{
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)

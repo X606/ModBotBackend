@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("search")]
 	public class ModSearchOperation : OperationBase
 	{
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)

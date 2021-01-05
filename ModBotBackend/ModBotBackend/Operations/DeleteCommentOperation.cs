@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("deleteComment")]
 	public class DeleteCommentOperation : OperationBase
 	{
 

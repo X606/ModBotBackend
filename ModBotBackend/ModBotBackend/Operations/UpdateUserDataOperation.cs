@@ -13,6 +13,7 @@ using HttpUtils;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("updateUserData")]
 	public class UpdateUserDataOperation : OperationBase
 	{
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)

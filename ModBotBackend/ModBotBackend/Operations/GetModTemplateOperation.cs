@@ -14,6 +14,7 @@ using System.IO.Compression;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("getModTemplate")]
 	public class GetModTemplateOperation : OperationBase
 	{
 

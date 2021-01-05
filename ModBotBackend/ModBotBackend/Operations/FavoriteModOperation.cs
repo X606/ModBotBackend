@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("favoriteMod")]
 	public class FavoriteModOperation : OperationBase
 	{
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)

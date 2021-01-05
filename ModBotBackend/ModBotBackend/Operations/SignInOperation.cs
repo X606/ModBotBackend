@@ -12,6 +12,7 @@ using ModBotBackend.Users.Sessions;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("signIn")]
 	public class SignInOperation : OperationBase
 	{
 

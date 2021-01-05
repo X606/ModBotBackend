@@ -83,6 +83,7 @@
     <Compile Include="Operations\FavoriteModOperation.cs" />
     <Compile Include="Operations\GetCurrentUserOperation.cs" />
     <Compile Include="Operations\GetModTemplateOperation.cs" />
+    <Compile Include="Operations\GetMyAuthenticationLevelOperation.cs" />
     <Compile Include="Operations\GetProfilePictureOperation.cs" />
     <Compile Include="Operations\GetPublicUserDataOperation.cs" />
     <Compile Include="Operations\GetSpecialModDataOperation.cs" />

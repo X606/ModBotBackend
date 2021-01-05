@@ -10,6 +10,7 @@ using ModBotBackend.Users;
 
 namespace ModBotBackend.Operations
 {
+	[Operation("getProfilePicture")]
 	public class GetProfilePictureOperation : OperationBase
 	{
 

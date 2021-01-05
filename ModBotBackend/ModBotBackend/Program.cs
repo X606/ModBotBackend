@@ -16,6 +16,8 @@ namespace ModBotBackend
 	{
 		static void Main(string[] args)
 		{
+			PopulateOperations();
+
 			Directory.CreateDirectory(BasePath);
 
 			Directory.CreateDirectory(UsersPath);
@@ -146,37 +148,25 @@ namespace ModBotBackend
 		public static string WebsitePath => BasePath + "/Website/";
 		public static string WebsiteFile => BasePath + "/Website.txt";
 
-		public static readonly Dictionary<string, OperationBase> Operations = new Dictionary<string, OperationBase>()
+		public static void PopulateOperations()
 		{
-			{ "test", new TestOperation() },
-			{ "uploadMod", new UploadModOperation() },
-			{ "getModData", new GetModDataOperation() },
-			{ "getModImage", new GetImageOperation() },
-			{ "downloadMod", new DownloadModOperation() },
-			{ "getAllModIds", new GetAllModIdsOperation() },
-			{ "getAllModInfos", new GetAllModInfosOperation() },
-			{ "createAccout", new CreateAccountOperation() },
-			{ "signIn", new SignInOperation() },
-			{ "getSpecialModData", new GetSpecialModDataOperation() },
-			{ "like", new LikeOperation() },
-			{ "hasLiked", new HasLikedOperation() },
-			{ "isValidSession", new IsValidSessionOperation() },
-			{ "signOut", new SignOutOperation() },
-			{ "postComment", new PostCommentOperation() },
-			{ "deleteComment", new DeleteCommentOperation() },
-			{ "likeComment", new LikeCommentOperation() },
-			{ "getUser", new GetPublicUserDataOperation() },
-			{ "getProfilePicture", new GetProfilePictureOperation() },
-			{ "hasLikedComment", new HasLikedCommentOperation() },
-			{ "isCommentMine", new IsMyCommentOperation() },
-			{ "getCurrentUser", new GetCurrentUserOperation() },
-			{ "getModTemplate", new GetModTemplateOperation() },
-			{ "downloadTempFile", new DownloadTempFileOperation() },
-			{ "search", new ModSearchOperation() },
-			{ "uploadProfilePicture", new UploadProfilePictureOperation() },
-			{ "updateUserData", new UpdateUserDataOperation() },
-			{ "favoriteMod", new FavoriteModOperation() }
-		};
+			Type[] loadedTypes = System.Reflection.Assembly.GetExecutingAssembly().GetTypes();
+			for (int i = 0; i < loadedTypes.Length; i++)
+			{
+				OperationAttribute operationAttribute = (OperationAttribute)Attribute.GetCustomAttribute(loadedTypes[i], typeof(OperationAttribute));
+				if (operationAttribute == null)
+					continue;
+
+				if (loadedTypes[i].BaseType != typeof(OperationBase))
+					continue;
+
+				Operations.Add(operationAttribute.OperationKey, (OperationBase)Activator.CreateInstance(loadedTypes[i]));
+			}
+
+
+		}
+
+		public static readonly Dictionary<string, OperationBase> Operations = new Dictionary<string, OperationBase>();
 		
 
 	}
