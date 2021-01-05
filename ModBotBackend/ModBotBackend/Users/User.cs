@@ -145,6 +145,21 @@ namespace ModBotBackend.Users
 			UserManager.Users.Add(user);
 			return user;
 		}
+
+		public override bool Equals(object obj) => obj is User user && user == this;
+
+		public override int GetHashCode() => UserID.GetHashCode();
+		public static bool operator !=(User a, User b) => !(a == b);
+
+		public static bool operator ==(User a, User b)
+		{
+			bool aIsNull = ReferenceEquals(a, null);
+			bool bIsNull = ReferenceEquals(b, null);
+			if (aIsNull || bIsNull)
+				return aIsNull && bIsNull;
+
+			return a.UserID == b.UserID;
+		}
 	}
 	public enum BorderStyles
 	{

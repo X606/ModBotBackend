@@ -30,6 +30,15 @@ namespace ModBotBackend.Operations.AdminOnly
 			Request request = JsonConvert.DeserializeObject<Request>(json);
 
 			string message = request.Message;
+			if (message.Length > 512)
+			{
+				context.Response.ContentType = "text/plain";
+				HttpStream httapStream = new HttpStream(context.Response);
+				httapStream.Send("This command is too long :/");
+				httapStream.Close();
+				return;
+			}
+
 			executeAdminCommand(message.Split(' '), authentication);
 
 			context.Response.ContentType = "text/plain";
@@ -61,23 +70,30 @@ namespace ModBotBackend.Operations.AdminOnly
 
 				string targetUserId = subStrings[1];
 				string targetData = subStrings[2].ToLower();
-				string newData = subStrings[3];
+				string newData = getAfterAsString(subStrings, 3);
 
 				User targetUser = UserManager.GetUserFromId(targetUserId);
+
 				if (targetUser == null)
 				{
 					OutputConsole.WriteLine("The target user could not be found");
 					return;
 				}
 
+				if (user.AuthenticationLevel <= targetUser.AuthenticationLevel && user != targetUser)
+				{
+					OutputConsole.WriteLine("You must have a higher authentication level than the target to preform this action");
+					return;
+				}
+
 				if (targetData == "authenticationlevel")
 				{
 					AuthenticationLevel authenticationLevel;
-					try
+					if (int.TryParse(newData, out int authLevel))
 					{
-						authenticationLevel = (AuthenticationLevel)Convert.ToInt32(newData);
+						authenticationLevel = (AuthenticationLevel)authLevel;
 					}
-					catch
+					else
 					{
 						OutputConsole.WriteLine("The provided new data was not a valid number");
 						return;
@@ -101,7 +117,13 @@ namespace ModBotBackend.Operations.AdminOnly
 					targetUser.Username = newData;
 					targetUser.Save();
 					OutputConsole.WriteLine("Updated " + targetUser.Username + "s username to " + newData);
-				} else
+				} 
+				else if (targetData == "password")
+				{
+					targetUser.SetPassword(newData);
+					OutputConsole.WriteLine("Updated " + targetUser.Username + " password.");
+				}
+				else
 				{
 					OutputConsole.WriteLine("The provided targetData was invalid");
 				}

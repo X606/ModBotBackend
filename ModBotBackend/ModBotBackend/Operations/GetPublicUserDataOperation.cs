@@ -44,6 +44,7 @@ namespace ModBotBackend.Operations
 				color = user.DisplayColor,
 				borderStyle = user.BorderStyle,
                 showFull = user.ShowFull,
+				authenticationLevel = (int)user.AuthenticationLevel,
 
                 isError = false,
 				message = ""
@@ -64,6 +65,7 @@ namespace ModBotBackend.Operations
 			public string color;
 			public BorderStyles borderStyle;
             public bool showFull;
+			public int authenticationLevel;
 
 			public bool isError = false;
 			public string message;

@@ -14,7 +14,7 @@ namespace ModBotBackend.Operations
 		{
 			context.Response.ContentType = "text/plain";
 			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(authentication.AuthenticationLevel.ToString());
+			httpStream.Send(((int)authentication.AuthenticationLevel).ToString());
 			httpStream.Close();
 		}
 	}

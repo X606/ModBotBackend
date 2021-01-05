@@ -30,6 +30,7 @@ namespace ModBotBackend
 
 			HttpListener httpListener = new HttpListener();
 			httpListener.Prefixes.Add("http://+:80/");
+			httpListener.Prefixes.Add("https://+:443/");
 			httpListener.Start();
 			listen(httpListener);
 
