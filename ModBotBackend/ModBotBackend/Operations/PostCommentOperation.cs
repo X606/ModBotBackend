@@ -87,12 +87,11 @@ namespace ModBotBackend.Operations
 		private class PostCommentRequest
 		{
 			public string targetModId;
-			public string sessionId;
 			public string commentBody;
 
 			public bool IsValidRequest()
 			{
-				return !string.IsNullOrWhiteSpace(sessionId) && !string.IsNullOrWhiteSpace(commentBody) && !string.IsNullOrWhiteSpace(targetModId);
+				return !string.IsNullOrWhiteSpace(commentBody) && !string.IsNullOrWhiteSpace(targetModId);
 			}
 		}
 		[Serializable]
