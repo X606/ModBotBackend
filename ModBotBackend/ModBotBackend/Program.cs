@@ -9,6 +9,8 @@ using System.IO;
 using ModBotBackend.Operations;
 using ModBotBackend.Users;
 using ModBotBackend.Users.Sessions;
+using PlayFab;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
 namespace ModBotBackend
 {
@@ -28,25 +30,52 @@ namespace ModBotBackend
 
 			TemporaryFilesMananger.Init();
 
-			HttpListener httpListener = new HttpListener();
-			httpListener.Prefixes.Add("http://+:80/");
-			httpListener.Prefixes.Add("https://+:443/");
-			httpListener.Start();
-			listen(httpListener);
+			HttpListener httpsListener = new HttpListener();
+			//httpListener.Prefixes.Add("http://+:80/");
+			httpsListener.Prefixes.Add("https://+:443/");
+			httpsListener.Start();
+			listenHttps(httpsListener);
 
 			OutputConsole.WriteLine("Listening...");
-			
+
+			HttpListener httpListener = new HttpListener();
+			httpListener.Prefixes.Add("http://+:80/");
+			httpListener.Start();
+			listenHttp(httpListener);
+
 			while (true)
 				System.Threading.Thread.Sleep(1000 * 60 * 60);
 		}
 
-		static async void listen(HttpListener httpListener)
+		static async void listenHttps(HttpListener httpListener)
 		{
 			while(true)
 			{
 				var context = await httpListener.GetContextAsync();
 				//Console.WriteLine("Client connected");
 				Task.Factory.StartNew(() => processRequest(context));
+			}
+		}
+		static async void listenHttp(HttpListener httpListener)
+		{
+			while (true)
+			{
+				var context = await httpListener.GetContextAsync();
+				//Console.WriteLine("Client connected");
+				Task.Factory.StartNew(() =>
+				{
+					UriBuilder builder = new UriBuilder(context.Request.Url);
+
+					builder.Scheme = "https";
+					builder.Port = 443;
+
+					string url = builder.Uri.ToString();
+
+					context.Response.Redirect(url);
+					HttpStream httpStream = new HttpStream(context.Response);
+					httpStream.Send("Re-rounted to https");
+					httpStream.Close();
+				});
 			}
 		}
 

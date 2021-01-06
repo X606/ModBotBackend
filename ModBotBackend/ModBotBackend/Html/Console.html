@@ -33,7 +33,7 @@
 		window.onload = async function() {
 			const input = document.getElementById('input');
 		
-			websocket = new WebSocket("ws://" + location.host + "/api?operation=openConsoleWebSocket");
+			websocket = new WebSocket("wss://" + location.host + "/api?operation=openConsoleWebSocket");
 			websocket.onmessage = function(e) {
 				WriteToConsole(e.data);
 			}
