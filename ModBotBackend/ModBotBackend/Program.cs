@@ -34,11 +34,27 @@ namespace ModBotBackend
 
 			TemporaryFilesMananger.Init();
 
+			if (args.Contains("-httpOnly"))
+			{
+				HttpListener httpMainListener = new HttpListener();
+				httpMainListener.Prefixes.Add("http://+:80/");
+				httpMainListener.Start();
+				listenMain(httpMainListener);
+
+				OutputConsole.WriteLine("Listening...");
+				OutputConsole.WriteLine("WARNING: You are currently running in http only mode, this is only intended for test use, do not do this in production.");
+
+				while (true)
+					System.Threading.Thread.Sleep(1000 * 60 * 60);
+
+			}
+
+
 			HttpListener httpsListener = new HttpListener();
 			//httpListener.Prefixes.Add("http://+:80/");
 			httpsListener.Prefixes.Add("https://+:443/");
 			httpsListener.Start();
-			listenHttps(httpsListener);
+			listenMain(httpsListener);
 
 			OutputConsole.WriteLine("Listening...");
 
@@ -51,7 +67,7 @@ namespace ModBotBackend
 				System.Threading.Thread.Sleep(1000 * 60 * 60);
 		}
 
-		static async void listenHttps(HttpListener httpListener)
+		static async void listenMain(HttpListener httpListener)
 		{
 			while(true)
 			{
