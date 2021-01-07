@@ -29,14 +29,22 @@ namespace ModBotBackend
 
 		static Dictionary<string, TempFile> _tempFiles = new Dictionary<string, TempFile>();
 
-		public static void CreateTemporaryFile(string path, out string key)
+		public static bool CreateTemporaryFile(string path, out string key)
 		{
 			string[] subPaths = path.Split('/', '\\');
 			string fileName = subPaths[subPaths.Length-1];
 
 			string generatedKey = Utils.GenerateSecureKey();
-			
-			byte[] data = File.ReadAllBytes(path);
+
+			byte[] data;
+			try
+			{
+				data = File.ReadAllBytes(path);
+			} catch
+			{
+				key = "";
+				return false;
+			}
 
 			string filename = generatedKey;
 			foreach(char c in Path.GetInvalidFileNameChars())
@@ -56,6 +64,8 @@ namespace ModBotBackend
 			Task.Factory.StartNew(() => deleteFileAfterSeconds(generatedKey, 30));
 
 			key = generatedKey;
+
+			return true;
 		}
 
 		static async void deleteFileAfterSeconds(string key, float seconds)

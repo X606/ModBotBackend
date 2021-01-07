@@ -43,16 +43,19 @@ namespace ModBotBackend.Operations.AdminOnly
 
 			HttpListenerWebSocketContext websocket = await context.AcceptWebSocketAsync(null);
 
-			Action<string> onWriteLine = null;
-			onWriteLine = delegate (string line)
+			Action<string, bool> onWriteLine = null;
+			onWriteLine = delegate (string line, bool dontHttpEncode)
 			{
 				if (websocket == null || websocket.WebSocket.State != WebSocketState.Open)
 				{
 					Console.WriteLine("error, websocket is not connected");
 					return;
 				}
-				
-				line = System.Web.HttpUtility.HtmlEncode(line);
+
+				if (!dontHttpEncode)
+				{
+					line = System.Web.HttpUtility.HtmlEncode(line);
+				}
 
 				line = line.Replace("\n", "<br>");
 

@@ -48,7 +48,9 @@ namespace ModBotBackend.Operations
 				stream.Close();
 				return;
 			}
-			
+
+			OutputConsole.WriteLine(request.username + " signed in");
+
 			HttpStream httpStream = new HttpStream(context.Response);
 			httpStream.Send(new SignInResponse()
 			{

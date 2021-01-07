@@ -14,11 +14,13 @@ namespace ModBotBackend.Operations.AdminOnly.AdminCommands
 		{
 			StringBuilder builder = new StringBuilder();
 			builder.Append("Signed up Users:\n");
-			foreach (User user in UserManager.Users) 
+			for (int i = 0; i < UserManager.Users.Count; i++) 
 			{
+				User user = UserManager.Users[i];
 				builder.Append(user.Username + " (UserId: " + user.UserID + ")");
 
-				builder.Append("\n");
+				if (i != (UserManager.Users.Count-1))
+					builder.Append("\n");
 			}
 			OutputConsole.WriteLine(builder.ToString());
 

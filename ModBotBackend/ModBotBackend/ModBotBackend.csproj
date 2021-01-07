@@ -81,6 +81,7 @@
     <Compile Include="ModReport.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommandOperation.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\DisplayAllUsersCommand.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\LogsCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\UsernameToUserIdCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\PrintCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\SayCommand.cs" />
