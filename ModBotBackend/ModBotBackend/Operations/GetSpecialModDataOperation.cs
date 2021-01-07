@@ -18,7 +18,7 @@ namespace ModBotBackend.Operations
 
 			context.Response.ContentType = "text/plain";
 			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(UploadedModsManager.GetSpecialModInfoJsonFromId(id));
+			httpStream.Send(UploadedModsManager.Instance.GetSpecialModInfoJsonFromId(id));
 			httpStream.Close();
 		}
 

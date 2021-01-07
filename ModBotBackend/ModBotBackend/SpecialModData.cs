@@ -60,7 +60,7 @@ namespace ModBotBackend
 
 		public void Save()
 		{
-			UploadedModsManager.SaveSpecialModData(this);
+			UploadedModsManager.Instance.SaveSpecialModData(this);
 		}
 
 		public static SpecialModData CreateNewSpecialModData(ModInfo mod, string ownerID)

@@ -24,7 +24,7 @@ namespace ModBotBackend.Operations.AdminOnly.AdminCommands
 			{
 				StringBuilder builder = new StringBuilder();
 				builder.Append("Saved logs:\n");
-				string[] logs = Directory.GetFiles(LogsManager.LogsFolderPath);
+				string[] logs = Directory.GetFiles(LogsManager.Instance.FolderPath);
 				for (int i = 0; i < logs.Length; i++)
 				{
 					FileInfo info = new FileInfo(logs[i]);
@@ -46,14 +46,14 @@ namespace ModBotBackend.Operations.AdminOnly.AdminCommands
 					return;
 				}
 				string log = arguments[1];
-				string path = LogsManager.LogsFolderPath + log;
+				string path = LogsManager.Instance.FolderPath + log;
 				if (!File.Exists(path))
 				{
 					OutputConsole.WriteLine("The log \"" + log + "\" could not be found");
 					return;
 				}
 
-				if (TemporaryFilesMananger.CreateTemporaryFile(path, out string key))
+				if (TemporaryFilesMananger.Instance.CreateTemporaryFile(path, out string key))
 				{
 					string download = "<a href='/api/?operation=downloadTempFile&key=" + key + "'>here</a>";
 					OutputConsole.WriteLine("Download the log " + download + " (link valid for 30 seconds)", true);

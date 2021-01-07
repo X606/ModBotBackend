@@ -45,7 +45,7 @@ namespace ModBotBackend.Operations
 			string sessionId = authentication.SessionID;
 
 			ModInfo modInfo;
-			if (!UploadedModsManager.TryUploadModFromZip(httpMultipartParser.FileContents, sessionId, out modInfo, out string error)) {
+			if (!UploadedModsManager.Instance.TryUploadModFromZip(httpMultipartParser.FileContents, sessionId, out modInfo, out string error)) {
 				Utils.RederectToErrorPage(context, error);
 				return;
 			}

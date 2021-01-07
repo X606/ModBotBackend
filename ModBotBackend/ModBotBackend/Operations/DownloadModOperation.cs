@@ -16,24 +16,24 @@ namespace ModBotBackend.Operations
 		{
 			string id = context.Request.QueryString["id"];
 
-			if(!UploadedModsManager.HasModWithIdBeenUploaded(id))
+			if(!UploadedModsManager.Instance.HasModWithIdBeenUploaded(id))
 			{
 				Utils.RederectToErrorPage(context, "No mod with the id \"" + id + "\" has been uploaded");
 				return;
 			}
 
-			string path = UploadedModsManager.GetZippedModPathFromID(id);
+			string path = UploadedModsManager.Instance.GetZippedModPathFromID(id);
 
 			byte[] data = File.ReadAllBytes(path);
 
-			string displayName = UploadedModsManager.GetModInfoFromId(id).DisplayName + ".zip";
+			string displayName = UploadedModsManager.Instance.GetModInfoFromId(id).DisplayName + ".zip";
 			displayName = displayName.Replace(' ', '_');
 			foreach(char c in Path.GetInvalidFileNameChars())
 			{
 				displayName = displayName.Replace(c, '_');
 			}
 
-			SpecialModData specialModData = UploadedModsManager.GetSpecialModInfoFromId(id);
+			SpecialModData specialModData = UploadedModsManager.Instance.GetSpecialModInfoFromId(id);
 			specialModData.Downloads++;
 			specialModData.Save();
 

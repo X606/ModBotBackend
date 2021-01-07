@@ -42,7 +42,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if(!UploadedModsManager.HasModWithIdBeenUploaded(request.modId))
+			if(!UploadedModsManager.Instance.HasModWithIdBeenUploaded(request.modId))
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send("false");
@@ -50,7 +50,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			SpecialModData specialModData = UploadedModsManager.GetSpecialModInfoFromId(request.modId);
+			SpecialModData specialModData = UploadedModsManager.Instance.GetSpecialModInfoFromId(request.modId);
 
 			Comment comment = specialModData.GetCommentWithCommentID(request.commentId);
 			if (comment == null)

@@ -50,7 +50,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if (!UploadedModsManager.HasModWithIdBeenUploaded(request.likedModId))
+			if (!UploadedModsManager.Instance.HasModWithIdBeenUploaded(request.likedModId))
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send(new LikeRequestResponse()
@@ -64,8 +64,8 @@ namespace ModBotBackend.Operations
 
 			string userId = authentication.UserID;
 
-			User user = UserManager.GetUserFromId(userId);
-			SpecialModData modData = UploadedModsManager.GetSpecialModInfoFromId(request.likedModId);
+			User user = UserManager.Instance.GetUserFromId(userId);
+			SpecialModData modData = UploadedModsManager.Instance.GetSpecialModInfoFromId(request.likedModId);
 
 			if (request.likeState)
 			{

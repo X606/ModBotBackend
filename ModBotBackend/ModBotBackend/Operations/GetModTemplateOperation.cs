@@ -51,7 +51,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			string creatorUsername = UserManager.GetUserFromId(authentication.UserID).Username;
+			string creatorUsername = UserManager.Instance.GetUserFromId(authentication.UserID).Username;
 
 			ModInfoCopy modInfo = new ModInfoCopy()
 			{
@@ -90,7 +90,7 @@ namespace ModBotBackend.Operations
 			
 			ZipFile.CreateFromDirectory(tempPath, zipFilePath);
 
-			TemporaryFilesMananger.CreateTemporaryFile(zipFilePath, out string key);
+			TemporaryFilesMananger.Instance.CreateTemporaryFile(zipFilePath, out string key);
 
 			HttpStream httpStream = new HttpStream(context.Response);
 			httpStream.Send(new GetModTemplateRequestResponse()

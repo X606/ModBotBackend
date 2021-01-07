@@ -18,13 +18,13 @@ namespace ModBotBackend.Operations
 		{
 			string id = context.Request.QueryString["id"];
 
-			if (!UploadedModsManager.HasModWithIdBeenUploaded(id))
+			if (!UploadedModsManager.Instance.HasModWithIdBeenUploaded(id))
 			{
 				Utils.RederectToErrorPage(context, "No mod with the id \"" + id + "\" has been uploaded");
 				return;
 			}
 
-			ModInfo modInfo = UploadedModsManager.GetModInfoFromId(id);
+			ModInfo modInfo = UploadedModsManager.Instance.GetModInfoFromId(id);
 
 			if (!modInfo.HasImage)
 			{
@@ -33,7 +33,7 @@ namespace ModBotBackend.Operations
 			}
 
 
-			string imageFilePath = UploadedModsManager.GetModPathFromID(id) + modInfo.ImageFileName;
+			string imageFilePath = UploadedModsManager.Instance.GetModPathFromID(id) + modInfo.ImageFileName;
 
 			string[] imageFilePathSplit = imageFilePath.Split('.');
 			string format = imageFilePathSplit[imageFilePathSplit.Length-1].ToLower();

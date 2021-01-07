@@ -7,19 +7,18 @@ using System.IO;
 
 namespace ModBotBackend
 {
-	public static class LogsManager
+	[FolderName("Logs")]
+	public class LogsManager : OwnFolderObject<LogsManager>
 	{
-		public static string LogsFolderPath => Program.LogsFolderPath;
+		FileStream _currentLogFile = null;
 
-		static FileStream _currentLogFile = null;
-
-		public static void CreateNewLogFile()
+		public void CreateNewLogFile()
 		{
 			string date = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
 
 			string filename = date + ".log";
 
-			string filepath = LogsFolderPath + filename;
+			string filepath = FolderPath + filename;
 
 			if (_currentLogFile != null)
 			{
@@ -31,7 +30,7 @@ namespace ModBotBackend
 			_currentLogFile = File.Create(filepath);
 		}
 
-		public static void Write(string text)
+		public void Write(string text)
 		{
 			if (_currentLogFile == null)
 				CreateNewLogFile();
@@ -40,8 +39,11 @@ namespace ModBotBackend
 			_currentLogFile.Write(buffer, 0, buffer.Length);
 			_currentLogFile.Flush();
 		}
-		public static void WriteLine(string line)
+		public void WriteLine(string line)
 		{
+			if (line == null)
+				line = "null";
+
 			line = line.Replace("\n", "\r\n");
 
 			Write(line + "\r\n");

@@ -26,7 +26,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			User user = UserManager.GetUserFromId(userID);
+			User user = UserManager.Instance.GetUserFromId(userID);
 			if (user == null)
 			{
 				HttpStream stream = new HttpStream(context.Response);

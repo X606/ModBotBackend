@@ -50,7 +50,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if (!UploadedModsManager.HasModWithIdBeenUploaded(request.targetModId))
+			if (!UploadedModsManager.Instance.HasModWithIdBeenUploaded(request.targetModId))
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send(new PostCommentResponse()
@@ -62,7 +62,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			SpecialModData specialModData = UploadedModsManager.GetSpecialModInfoFromId(request.targetModId);
+			SpecialModData specialModData = UploadedModsManager.Instance.GetSpecialModInfoFromId(request.targetModId);
 
 			string userId = authentication.UserID;
 

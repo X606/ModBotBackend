@@ -23,7 +23,7 @@ namespace ModBotBackend.Operations
 
 			ModSearchMessage request = Newtonsoft.Json.JsonConvert.DeserializeObject<ModSearchMessage>(json);
 
-			KeyValuePair<SpecialModData, ModInfo>[] mods = UploadedModsManager.GetAllUploadedMods();
+			KeyValuePair<SpecialModData, ModInfo>[] mods = UploadedModsManager.Instance.GetAllUploadedMods();
 			List<string> selectedModIds = new List<string>();
 
 			for(int i = 0; i < mods.Length; i++)
@@ -38,8 +38,8 @@ namespace ModBotBackend.Operations
 			{
 				selectedModIds.Sort(delegate (string a, string b)
 				{
-					SpecialModData specialAData = UploadedModsManager.GetSpecialModInfoFromId(a);
-					SpecialModData specialBData = UploadedModsManager.GetSpecialModInfoFromId(b);
+					SpecialModData specialAData = UploadedModsManager.Instance.GetSpecialModInfoFromId(a);
+					SpecialModData specialBData = UploadedModsManager.Instance.GetSpecialModInfoFromId(b);
 
 					return specialBData.Likes - specialAData.Likes;
 				});
@@ -48,8 +48,8 @@ namespace ModBotBackend.Operations
 			{
 				selectedModIds.Sort(delegate (string a, string b)
 				{
-					SpecialModData specialAData = UploadedModsManager.GetSpecialModInfoFromId(a);
-					SpecialModData specialBData = UploadedModsManager.GetSpecialModInfoFromId(b);
+					SpecialModData specialAData = UploadedModsManager.Instance.GetSpecialModInfoFromId(a);
+					SpecialModData specialBData = UploadedModsManager.Instance.GetSpecialModInfoFromId(b);
 
 					return specialBData.Downloads - specialAData.Downloads;
 				});
@@ -58,8 +58,8 @@ namespace ModBotBackend.Operations
 			{
 				selectedModIds.Sort(delegate (string a, string b)
 				{
-					SpecialModData specialAData = UploadedModsManager.GetSpecialModInfoFromId(a);
-					SpecialModData specialBData = UploadedModsManager.GetSpecialModInfoFromId(b);
+					SpecialModData specialAData = UploadedModsManager.Instance.GetSpecialModInfoFromId(a);
+					SpecialModData specialBData = UploadedModsManager.Instance.GetSpecialModInfoFromId(b);
 
 					return (int)(specialBData.PostedDate - specialAData.PostedDate);
 				});
@@ -68,8 +68,8 @@ namespace ModBotBackend.Operations
 			{
 				selectedModIds.Sort(delegate (string a, string b)
 				{
-					SpecialModData specialAData = UploadedModsManager.GetSpecialModInfoFromId(a);
-					SpecialModData specialBData = UploadedModsManager.GetSpecialModInfoFromId(b);
+					SpecialModData specialAData = UploadedModsManager.Instance.GetSpecialModInfoFromId(a);
+					SpecialModData specialBData = UploadedModsManager.Instance.GetSpecialModInfoFromId(b);
 
 					return (int)(specialBData.UpdatedDate - specialAData.UpdatedDate);
 				});

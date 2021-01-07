@@ -16,12 +16,12 @@ namespace ModBotBackend.Operations
 	{
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
-			string[] ids = UploadedModsManager.GetAllUploadedIds();
+			string[] ids = UploadedModsManager.Instance.GetAllUploadedIds();
 
 			ModInfo[] modInfos = new ModInfo[ids.Length];
 			for(int i = 0; i < ids.Length; i++)
 			{
-				modInfos[i] = UploadedModsManager.GetModInfoFromId(ids[i]);
+				modInfos[i] = UploadedModsManager.Instance.GetModInfoFromId(ids[i]);
 			}
 
 			string json = JsonConvert.SerializeObject(modInfos);

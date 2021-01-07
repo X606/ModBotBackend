@@ -42,7 +42,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if(!UploadedModsManager.HasModWithIdBeenUploaded(request.modId))
+			if(!UploadedModsManager.Instance.HasModWithIdBeenUploaded(request.modId))
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send("false");
@@ -52,7 +52,7 @@ namespace ModBotBackend.Operations
 
 			string userId = authentication.UserID;
 
-			User user = UserManager.GetUserFromId(userId);
+			User user = UserManager.Instance.GetUserFromId(userId);
 
 			bool hasLiked = user.LikedMods.Contains(request.modId);
 

@@ -43,7 +43,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			User user = UserManager.GetUserFromId(authentication.UserID);
+			User user = UserManager.Instance.GetUserFromId(authentication.UserID);
 
 			if (!user.VeryfyPassword(request.password))
 			{

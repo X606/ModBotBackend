@@ -18,7 +18,7 @@ namespace ModBotBackend.Operations
 		{
 			string id = context.Request.QueryString["id"];
 
-			User user = UserManager.GetUserFromId(id);
+			User user = UserManager.Instance.GetUserFromId(id);
 
 			if(user == null)
 			{
@@ -26,7 +26,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			string imageFilePath = UserManager.ProfilePicturesPath + id;
+			string imageFilePath = UserManager.Instance.ProfilePicturesPath + id;
 
 			if (File.Exists(imageFilePath + ".png"))
 			{
@@ -44,7 +44,7 @@ namespace ModBotBackend.Operations
 				context.Response.ContentType = "image/gif";
 			} else
 			{
-				imageFilePath = UserManager.ProfilePicturesPath + "DefaultAvatar.png";
+				imageFilePath = UserManager.Instance.ProfilePicturesPath + "DefaultAvatar.png";
 			}
 			
 			byte[] imageData = File.ReadAllBytes(imageFilePath);

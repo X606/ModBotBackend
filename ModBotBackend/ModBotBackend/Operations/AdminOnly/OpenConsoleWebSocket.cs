@@ -39,7 +39,7 @@ namespace ModBotBackend.Operations.AdminOnly
 
 		static async Task handleWebSocket(HttpListenerContext context, Authentication authentication)
 		{
-			User user = UserManager.GetUserFromId(authentication.UserID);
+			User user = UserManager.Instance.GetUserFromId(authentication.UserID);
 
 			HttpListenerWebSocketContext websocket = await context.AcceptWebSocketAsync(null);
 

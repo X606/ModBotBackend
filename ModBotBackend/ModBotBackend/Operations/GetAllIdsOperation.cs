@@ -16,7 +16,7 @@ namespace ModBotBackend.Operations
 	{
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
-			string[] ids = UploadedModsManager.GetAllUploadedIds();
+			string[] ids = UploadedModsManager.Instance.GetAllUploadedIds();
 
 			string json = JsonConvert.SerializeObject(ids);
 

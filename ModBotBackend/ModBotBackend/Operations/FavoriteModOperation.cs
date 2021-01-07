@@ -38,7 +38,7 @@ namespace ModBotBackend.Operations
 				stream.Close();
 				return;
 			}
-			if (!UploadedModsManager.HasModWithIdBeenUploaded(request.modID))
+			if (!UploadedModsManager.Instance.HasModWithIdBeenUploaded(request.modID))
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send(new Response("No mod with that id has been uploaded.").ToJson());
@@ -46,7 +46,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			User user = UserManager.GetUserFromId(authentication.UserID);
+			User user = UserManager.Instance.GetUserFromId(authentication.UserID);
 			bool isFavorited = user.FavoritedMods.Contains(request.modID);
 			
 			if ((isFavorited && request.favorite) || (!isFavorited && !request.favorite))

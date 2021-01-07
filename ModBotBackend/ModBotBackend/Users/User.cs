@@ -93,7 +93,7 @@ namespace ModBotBackend.Users
 				}
 			}
 
-			if(UserManager.GetUserFromUsername(username) != null)
+			if(UserManager.Instance.GetUserFromUsername(username) != null)
 			{
 				error = "username already taken";
 				return false;
@@ -121,7 +121,7 @@ namespace ModBotBackend.Users
 
 		public void Save()
 		{
-			string path = Program.UsersPath + UserID + ".json";
+			string path = UserManager.Instance.FolderPath + UserID + ".json";
 
 			string json = JsonConvert.SerializeObject(this);
 
@@ -144,7 +144,7 @@ namespace ModBotBackend.Users
 			user.SetPassword(password);
 			user.DisplayColor = "#ffffff";
 
-			UserManager.Users.Add(user);
+			UserManager.Instance.Users.Add(user);
 			return user;
 		}
 

@@ -19,7 +19,7 @@ namespace ModBotBackend.Operations
 
 			string id = context.Request.QueryString["id"];
 
-			User user = UserManager.GetUserFromId(id);
+			User user = UserManager.Instance.GetUserFromId(id);
 
 			if (user == null)
 			{

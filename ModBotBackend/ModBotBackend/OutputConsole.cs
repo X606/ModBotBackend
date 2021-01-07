@@ -16,7 +16,7 @@ namespace ModBotBackend
 
 			OnWriteLine?.Invoke(output, dontHttpEncode);
 			Console.WriteLine(output);
-			LogsManager.WriteLine(output);
+			LogsManager.Instance.WriteLine(output);
 		}
 
 		public static event Action<string, bool> OnWriteLine;

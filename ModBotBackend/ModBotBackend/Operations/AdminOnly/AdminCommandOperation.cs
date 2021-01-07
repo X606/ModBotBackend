@@ -51,7 +51,7 @@ namespace ModBotBackend.Operations.AdminOnly
 
 		static void executeAdminCommand(string[] subStrings, Authentication authentication)
 		{
-			User user = UserManager.GetUserFromId(authentication.UserID);
+			User user = UserManager.Instance.GetUserFromId(authentication.UserID);
 			string baseCommand = subStrings[0].ToLower();
 
 			string[] arguments = new string[subStrings.Length - 1];

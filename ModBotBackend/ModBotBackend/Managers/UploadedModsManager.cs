@@ -13,7 +13,8 @@ using ModBotBackend.Users.Sessions;
 
 namespace ModBotBackend
 {
-	public static class UploadedModsManager
+	[FolderName("Data")]
+	public class UploadedModsManager : OwnFolderObject<UploadedModsManager>
 	{
 		static string _dataPath;
 
@@ -22,8 +23,10 @@ namespace ModBotBackend
 
 		static Dictionary<string, SpecialModData> _loadedSpecialModData = new Dictionary<string, SpecialModData>();
 
-		public static void Setup(string dataPath)
+		public override void OnStartup()
 		{
+			string dataPath = FolderPath;
+
 			_dataPath = dataPath;
 
 			GetOrCreateZippedModsFolder();
@@ -32,10 +35,10 @@ namespace ModBotBackend
 
 			string modsFolder = GetOrCreateModsFolder();
 			string[] modFolders = Directory.GetDirectories(modsFolder);
-			foreach(string folder in modFolders)
+			foreach (string folder in modFolders)
 			{
-				string dataFilePath = folder +"/" + ModsManager.MOD_INFO_FILE_NAME;
-				if(!File.Exists(dataFilePath))
+				string dataFilePath = folder + "/" + ModsManager.MOD_INFO_FILE_NAME;
+				if (!File.Exists(dataFilePath))
 					continue;
 
 				ModInfo loadedModInfo;
@@ -44,12 +47,12 @@ namespace ModBotBackend
 				{
 					loadedModInfo = JsonConvert.DeserializeObject<ModInfo>(json);
 				}
-				catch(JsonException e)
+				catch (JsonException e)
 				{
 					OutputConsole.WriteLine("Failed to read mod data file for mod: " + folder);
 					continue;
 				}
-				if(!loadedModInfo.AreAllEssentialFieldsAssigned(out string msg))
+				if (!loadedModInfo.AreAllEssentialFieldsAssigned(out string msg))
 				{
 					OutputConsole.WriteLine("Missing fields for mod: " + folder + ", " + msg);
 					continue;
@@ -62,21 +65,20 @@ namespace ModBotBackend
 
 			string specialModDataFolder = GetOrCreateSpecialModsDataFolder();
 			string[] specialModDataFiles = Directory.GetFiles(specialModDataFolder);
-			foreach(string specialModDatFile in specialModDataFiles)
+			foreach (string specialModDatFile in specialModDataFiles)
 			{
 				string json = File.ReadAllText(specialModDatFile);
 				SpecialModData specialModData = SpecialModData.FromJson(json);
 				_loadedSpecialModData.Add(specialModData.ModId, specialModData);
 			}
 
-			foreach(KeyValuePair<string, ModInfo> loadedMod in _loadedMods)
+			foreach (KeyValuePair<string, ModInfo> loadedMod in _loadedMods)
 			{
 				ZipMod(loadedMod.Key);
 			}
-			
 		}
 		
-		public static KeyValuePair<SpecialModData, ModInfo>[] GetAllUploadedMods()
+		public KeyValuePair<SpecialModData, ModInfo>[] GetAllUploadedMods()
 		{
 			if(_loadedSpecialModData.Count != _loadedMods.Count)
 				throw new Exception("the length of special mod datas is diffrent than the length of normal mod datas");
@@ -93,7 +95,7 @@ namespace ModBotBackend
 			return mods.ToArray();
 		}
 
-		public static bool TryUploadModFromZip(byte[] zipData, string sessionID, out ModInfo modInfo, out string error)
+		public bool TryUploadModFromZip(byte[] zipData, string sessionID, out ModInfo modInfo, out string error)
 		{
 			ModInfo loadedModInfo;
 			try
@@ -198,14 +200,14 @@ namespace ModBotBackend
 			return true;
 		}
 		
-		public static string GetModInfoJsonFromId(string id)
+		public string GetModInfoJsonFromId(string id)
 		{
 			if(!_loadedModJsons.ContainsKey(id))
 				return "null";
 			
 			return _loadedModJsons[id];
 		}
-		public static ModInfo GetModInfoFromId(string id)
+		public ModInfo GetModInfoFromId(string id)
 		{
 			if(!_loadedMods.ContainsKey(id))
 				return null;
@@ -213,14 +215,14 @@ namespace ModBotBackend
 			return _loadedMods[id];
 		}
 
-		public static SpecialModData GetSpecialModInfoFromId(string id)
+		public SpecialModData GetSpecialModInfoFromId(string id)
 		{
 			if(!_loadedSpecialModData.ContainsKey(id))
 				return null;
 
 			return _loadedSpecialModData[id];
 		}
-		public static string GetSpecialModInfoJsonFromId(string id)
+		public string GetSpecialModInfoJsonFromId(string id)
 		{
 			SpecialModData modData = GetSpecialModInfoFromId(id);
 
@@ -230,16 +232,16 @@ namespace ModBotBackend
 			return modData.ToJson();
 		}
 
-		public static string GetModPathFromID(string id)
+		public string GetModPathFromID(string id)
 		{
 			return GetOrCreateModsFolder() + id + "/";
 		}
-		public static string GetZippedModPathFromID(string id)
+		public string GetZippedModPathFromID(string id)
 		{
 			return GetOrCreateZippedModsFolder() + id + ".zip";
 		}
 
-		public static string[] GetAllUploadedIds()
+		public string[] GetAllUploadedIds()
 		{
 			string[] ids = new string[_loadedMods.Count];
 
@@ -253,12 +255,12 @@ namespace ModBotBackend
 			return ids;
 		}
 
-		public static bool HasModWithIdBeenUploaded(string id)
+		public bool HasModWithIdBeenUploaded(string id)
 		{
 			return _loadedMods.ContainsKey(id);
 		}
 
-		public static void ZipMod(string id)
+		public void ZipMod(string id)
 		{
 			if(!HasModWithIdBeenUploaded(id))
 				return;
@@ -272,7 +274,7 @@ namespace ModBotBackend
 
 			ZipFile.CreateFromDirectory(GetOrCreateModsFolder() + id, zippedModPath);
 		}
-		public static void CreateAndAddSpecialModDataFormMod(string modID, string ownerID)
+		public void CreateAndAddSpecialModDataFormMod(string modID, string ownerID)
 		{
 			ModInfo modInfo = GetModInfoFromId(modID);
 			SpecialModData specialModData = SpecialModData.CreateNewSpecialModData(modInfo, ownerID);
@@ -281,28 +283,28 @@ namespace ModBotBackend
 
 			SaveSpecialModData(specialModData);
 		}
-		public static void SaveSpecialModData(SpecialModData data)
+		public void SaveSpecialModData(SpecialModData data)
 		{
 			string path = GetOrCreateSpecialModsDataFolder() + data.ModId + ".json";
 
 			File.WriteAllText(path, data.ToJson());
 		}
 
-		public static string GetOrCreateModsFolder()
+		public string GetOrCreateModsFolder()
 		{
 			string path = Utils.CombinePaths(_dataPath, "Mods/");
 			Directory.CreateDirectory(path);
 
 			return path;
 		}
-		public static string GetOrCreateZippedModsFolder()
+		public string GetOrCreateZippedModsFolder()
 		{
 			string path = Utils.CombinePaths(_dataPath, "ZippedMods/");
 			Directory.CreateDirectory(path);
 
 			return path;
 		}
-		public static string GetOrCreateSpecialModsDataFolder()
+		public string GetOrCreateSpecialModsDataFolder()
 		{
 			string path = Utils.CombinePaths(_dataPath, "SpecialModsData/");
 			Directory.CreateDirectory(path);

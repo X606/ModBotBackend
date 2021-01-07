@@ -19,20 +19,12 @@ namespace ModBotBackend
 		static void Main(string[] args)
 		{
 			PopulateOperations();
+			PopulateOwnFolderObjects();
 
 			Directory.CreateDirectory(BasePath);
 
-			Directory.CreateDirectory(UsersPath);
-			Directory.CreateDirectory(DataPath);
 			Directory.CreateDirectory(ModTemplateFilePath);
-			Directory.CreateDirectory(TemporaryFilesPath);
 			Directory.CreateDirectory(WebsitePath);
-			Directory.CreateDirectory(LogsFolderPath);
-
-			UploadedModsManager.Setup(DataPath);
-			UserManager.Init();
-
-			TemporaryFilesMananger.Init();
 
 			if (args.Contains("-httpOnly"))
 			{
@@ -188,20 +180,15 @@ namespace ModBotBackend
 
 		public static string BasePath => Directory.GetCurrentDirectory() + "/SiteData/";
 
-		public static string DataPath => BasePath + "/Data/";
-		public static string UsersPath => BasePath + "/Users/";
-		public static string DiscordClientSecretPath => BasePath + "/discordSecret.txt";
-
 		public static string ModTemplateFilePath => BasePath + "/ModTemplate/";
-		public static string TemporaryFilesPath => BasePath + "/TemporaryFiles/";
-
 		public static string WebsitePath => BasePath + "/Website/";
-		public static string LogsFolderPath => BasePath + "/Logs/";
 		public static string WebsiteFile => BasePath + "/Website.txt";
 
 
 		public static void PopulateOperations()
 		{
+			Operations.Clear();
+
 			Type[] loadedTypes = System.Reflection.Assembly.GetExecutingAssembly().GetTypes();
 			for (int i = 0; i < loadedTypes.Length; i++)
 			{
@@ -215,11 +202,28 @@ namespace ModBotBackend
 				Operations.Add(operationAttribute.OperationKey, (OperationBase)Activator.CreateInstance(loadedTypes[i]));
 			}
 
+		}
+		public static void PopulateOwnFolderObjects()
+		{
+			OwnFolderObjects.Clear();
+
+			Type[] loadedTypes = System.Reflection.Assembly.GetExecutingAssembly().GetTypes();
+			for (int i = 0; i < loadedTypes.Length; i++)
+			{
+				FolderNameAttribute operationAttribute = (FolderNameAttribute)Attribute.GetCustomAttribute(loadedTypes[i], typeof(FolderNameAttribute));
+				if (operationAttribute == null)
+					continue;
+
+				object instance = Activator.CreateInstance(loadedTypes[i]);
+				instance.GetType().GetMethod("Init").Invoke(instance, new object[] { operationAttribute.FolderName });
+				OwnFolderObjects.Add(instance);
+			}
 
 		}
 
+
 		public static readonly Dictionary<string, OperationBase> Operations = new Dictionary<string, OperationBase>();
-		
+		public static readonly List<object> OwnFolderObjects = new List<object>();
 
 	}
 }

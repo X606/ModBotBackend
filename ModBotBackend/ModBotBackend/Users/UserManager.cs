@@ -10,42 +10,29 @@ using ModBotBackend.Users.Sessions;
 
 namespace ModBotBackend.Users
 {
-	public static class UserManager
+	[FolderName("Users")]
+	public class UserManager : OwnFolderObject<UserManager>
 	{
-		public static string ProfilePicturesPath = Program.UsersPath + "/ProfilePictures/";
+		public string ProfilePicturesPath => FolderPath + "/ProfilePictures/";
 
-		public static string DiscordClientSecret;
+		public List<User> Users = new List<User>();
 
-		public static List<User> Users = new List<User>();
-
-		public static void Init()
+		public override void OnStartup()
 		{
-			string discordClientSecretPath = Program.DiscordClientSecretPath;
-
-			if(!File.Exists(discordClientSecretPath))
-			{
-				File.WriteAllText(discordClientSecretPath, "<Your Client Secret Here>");
-				Console.ForegroundColor = ConsoleColor.Red;
-				OutputConsole.WriteLine("Please fill out your client secret :)");
-				return;
-			}
-
-			DiscordClientSecret = File.ReadAllText(discordClientSecretPath);
-
 			LoadUsers();
 
 			Directory.CreateDirectory(ProfilePicturesPath);
 		}
 
-		public static void LoadUsers()
+		public void LoadUsers()
 		{
-			string[] users = Directory.GetFiles(Program.UsersPath);
+			string[] users = Directory.GetFiles(FolderPath);
 			foreach(string userFilePath in users)
 			{
 				Users.Add(User.GetFromFile(userFilePath));
 			}
 		}
-		public static User GetUserFromId(string id)
+		public User GetUserFromId(string id)
 		{
 			foreach(User user in Users)
 			{
@@ -55,7 +42,7 @@ namespace ModBotBackend.Users
 
 			return null;
 		}
-		public static User GetUserFromUsername(string username)
+		public User GetUserFromUsername(string username)
 		{
 			foreach(User user in Users)
 			{
@@ -66,7 +53,7 @@ namespace ModBotBackend.Users
 			return null;
 		}
 
-		public static Session SignInAsUser(string username, string password)
+		public Session SignInAsUser(string username, string password)
 		{
 			User user = GetUserFromUsername(username);
 

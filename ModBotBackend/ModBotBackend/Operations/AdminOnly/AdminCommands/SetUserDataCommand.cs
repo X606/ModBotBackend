@@ -23,7 +23,7 @@ namespace ModBotBackend.Operations.AdminOnly.AdminCommands
 			string targetData = arguments[1].ToLower();
 			string newData = getAfterAsString(arguments, 2);
 
-			User targetUser = UserManager.GetUserFromId(targetUserId);
+			User targetUser = UserManager.Instance.GetUserFromId(targetUserId);
 
 			if (targetUser == null)
 			{

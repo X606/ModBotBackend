@@ -17,7 +17,7 @@ namespace ModBotBackend.Operations
 		{
 			string key = context.Request.QueryString["key"];
 			
-			if (!TemporaryFilesMananger.TryGetTempFile(key, out byte[] data, out string filename))
+			if (!TemporaryFilesMananger.Instance.TryGetTempFile(key, out byte[] data, out string filename))
 			{
 				Utils.RederectToErrorPage(context, "The requested file does not exist");
 				return;

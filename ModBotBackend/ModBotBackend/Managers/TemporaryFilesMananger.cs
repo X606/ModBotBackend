@@ -5,31 +5,25 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Security.Cryptography;
+
 namespace ModBotBackend
 {
-	public static class TemporaryFilesMananger
+	[FolderName("TemporaryFiles")]
+	public class TemporaryFilesMananger : OwnFolderObject<TemporaryFilesMananger>
 	{
-		public static void Init()
+		public override void OnStartup()
 		{
-			string path = Program.TemporaryFilesPath;
-			if(Directory.Exists(path))
+			string path = FolderPath;
+			string[] files = Directory.GetFiles(path);
+			foreach (string file in files)
 			{
-				string[] files = Directory.GetFiles(path);
-				foreach(string file in files)
-				{
-					File.Delete(file);
-				}
+				File.Delete(file);
 			}
-			else
-			{
-				Directory.CreateDirectory(path);
-			}
-
 		}
 
-		static Dictionary<string, TempFile> _tempFiles = new Dictionary<string, TempFile>();
+		Dictionary<string, TempFile> _tempFiles = new Dictionary<string, TempFile>();
 
-		public static bool CreateTemporaryFile(string path, out string key)
+		public bool CreateTemporaryFile(string path, out string key)
 		{
 			string[] subPaths = path.Split('/', '\\');
 			string fileName = subPaths[subPaths.Length-1];
@@ -51,7 +45,7 @@ namespace ModBotBackend
 			{
 				filename = filename.Replace(c.ToString(), "");
 			}
-			string tempFilePath = Program.TemporaryFilesPath + filename;
+			string tempFilePath = FolderPath + filename;
 
 			File.WriteAllBytes(tempFilePath, data);
 
@@ -68,14 +62,14 @@ namespace ModBotBackend
 			return true;
 		}
 
-		static async void deleteFileAfterSeconds(string key, float seconds)
+		async void deleteFileAfterSeconds(string key, float seconds)
 		{
 			await Task.Delay(TimeSpan.FromSeconds(seconds));
 
 			DeleteTempFile(key);
 		}
 
-		public static bool TryGetTempFile(string key, out byte[] data, out string filename)
+		public bool TryGetTempFile(string key, out byte[] data, out string filename)
 		{
 			if(key == null || !_tempFiles.ContainsKey(key))
 			{
@@ -94,7 +88,7 @@ namespace ModBotBackend
 			return true;
 		}
 
-		public static void DeleteTempFile(string key)
+		public void DeleteTempFile(string key)
 		{
 			if(_tempFiles.ContainsKey(key))
 			{

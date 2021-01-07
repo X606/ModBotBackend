@@ -36,7 +36,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 			
-			Session session = UserManager.SignInAsUser(request.username, request.password);
+			Session session = UserManager.Instance.SignInAsUser(request.username, request.password);
 
 			if (session == null)
 			{

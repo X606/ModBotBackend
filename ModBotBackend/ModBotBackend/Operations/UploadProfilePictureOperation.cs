@@ -48,7 +48,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			string path = UserManager.ProfilePicturesPath + authentication.UserID;
+			string path = UserManager.Instance.ProfilePicturesPath + authentication.UserID;
 
 			foreach(string ext in _validFileExtensions)
 			{

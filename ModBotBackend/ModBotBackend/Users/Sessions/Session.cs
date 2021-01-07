@@ -17,7 +17,7 @@ namespace ModBotBackend.Users.Sessions
 			ExpieryTime = DateTime.Now.AddHours(1);
 			Key = Convert.ToBase64String(generatedKey);
 			OwnerUserID = ownerUserId;
-			AuthenticationLevel = UserManager.GetUserFromId(ownerUserId).AuthenticationLevel;
+			AuthenticationLevel = UserManager.Instance.GetUserFromId(ownerUserId).AuthenticationLevel;
 
 			for(int i = SessionsManager.Sessions.Count - 1; i >= 0; i--)
 			{
