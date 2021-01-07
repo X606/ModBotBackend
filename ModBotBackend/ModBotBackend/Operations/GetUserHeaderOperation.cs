@@ -14,7 +14,8 @@ namespace ModBotBackend.Operations
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/html";
-			string html = Encoding.UTF8.GetString(WebsiteRequestProcessor.OnRequest("/userHeader.html", out string contentType));
+			int statusCode = 200;
+			string html = Encoding.UTF8.GetString(WebsiteRequestProcessor.OnRequest("/userHeader.html", out string contentType, ref statusCode));
 
 			string userID = context.Request.QueryString["userID"];
 			if (userID == null)
@@ -39,8 +40,9 @@ namespace ModBotBackend.Operations
 			string username = user.Username;
 			string icon = GetIconHtml(user);
 
+			string usernameStyle = "color: " + user.DisplayColor;
 
-			string formatedString = Utils.FormatString(html, linkUrl, avatarUrl, username, icon, avatarStyle);
+			string formatedString = Utils.FormatString(html, linkUrl, avatarUrl, username, icon, avatarStyle, usernameStyle);
 
 			HttpStream httpStream = new HttpStream(context.Response);
 			httpStream.Send(formatedString);

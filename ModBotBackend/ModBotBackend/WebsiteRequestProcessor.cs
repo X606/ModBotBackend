@@ -16,8 +16,10 @@ namespace ModBotBackend
 		public static void OnRequest(HttpListenerContext context)
 		{
 			string path = context.Request.Url.AbsolutePath;
-			byte[] data = OnRequest(path, out string contentType);
+			int statusCode = 200;
+			byte[] data = OnRequest(path, out string contentType, ref statusCode);
 
+			context.Response.StatusCode = statusCode;
 			context.Response.ContentType = contentType;
 			if (context.Response.OutputStream.CanWrite)
 			{
@@ -27,7 +29,7 @@ namespace ModBotBackend
 			context.Response.Close();
 		}
 
-		public static byte[] OnRequest(string path, out string contentType)
+		public static byte[] OnRequest(string path, out string contentType, ref int statusCode)
 		{
 			path = path.TrimEnd('/', '\\');
 
@@ -111,6 +113,7 @@ namespace ModBotBackend
 			if (is404 && Utils.FileExistsCached(GetWebsiteFilePath() + "/404.html"))
 			{
 				contentType = "text/html";
+				statusCode = 404;
 
 				string data404 = Utils.FileReadAllTextCached(GetWebsiteFilePath() + "/404.html");
 				return Encoding.UTF8.GetBytes(data404);
@@ -119,6 +122,8 @@ namespace ModBotBackend
 			if (is404)
 			{
 				contentType = "text/plain";
+				statusCode = 404;
+
 				return Encoding.UTF8.GetBytes("404 :(");
 			}
 
