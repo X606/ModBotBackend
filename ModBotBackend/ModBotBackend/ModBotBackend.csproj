@@ -61,6 +61,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -76,8 +77,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication.cs" />
+    <Compile Include="LogsManager.cs" />
     <Compile Include="ModReport.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommandOperation.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\DisplayAllUsersCommand.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\UsernameToUserIdCommand.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\PrintCommand.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\SayCommand.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\SetUserDataCommand.cs" />
     <Compile Include="Operations\AdminOnly\OpenConsoleWebSocket.cs" />
     <Compile Include="Operations\CreateAccountOperation.cs" />
     <Compile Include="Operations\DeleteCommentOperation.cs" />
@@ -89,6 +96,7 @@
     <Compile Include="Operations\GetProfilePictureOperation.cs" />
     <Compile Include="Operations\GetPublicUserDataOperation.cs" />
     <Compile Include="Operations\GetSpecialModDataOperation.cs" />
+    <Compile Include="Operations\GetUserHeaderOperation.cs" />
     <Compile Include="Operations\HasLikedCommentOperation.cs" />
     <Compile Include="Operations\HasLikedOperation.cs" />
     <Compile Include="Operations\IsMyCommentOperation.cs" />
@@ -98,6 +106,7 @@
     <Compile Include="Operations\ModSearchOperation.cs" />
     <Compile Include="Operations\AdminOnly\OpenConsoleOperation.cs" />
     <Compile Include="Operations\PostCommentOperation.cs" />
+    <Compile Include="Operations\RequestCloneDroneLinkingOperation.cs" />
     <Compile Include="Operations\SignInOperation.cs" />
     <Compile Include="Operations\SignOutOperation.cs" />
     <Compile Include="Operations\UpdateUserDataOperation.cs" />

@@ -1,4 +1,8 @@
 ﻿<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
 	<style>
 		body {
 			background-color: #121212;
@@ -31,45 +35,45 @@
 		var websocket;
 
 		window.onload = async function() {
-			const input = document.getElementById('input');
-		
-			websocket = new WebSocket("wss://" + location.host + "/api?operation=openConsoleWebSocket");
-			websocket.onmessage = function(e) {
-				WriteToConsole(e.data);
-			}
-			window.onbeforeunload = function(e) {
-				websocket.close();
-				console.log("bye!");
-			}
-			
-			input.addEventListener('keydown', (evt) => {
-				if (evt.keyCode === 13) {
-					evt.preventDefault();
-					OnCommandRan(input.innerHTML);
-					input.innerHTML = "";
-				}
-			});	
-		
-			API = (await import("./javascript/Modules/API/Api.js")).API;
-		
-			heartBeat();
+		const input = document.getElementById('input');
+
+		websocket = new WebSocket("wss://" + location.host + "/api?operation=openConsoleWebSocket");
+		websocket.onmessage = function(e) {
+		WriteToConsole(e.data);
+		}
+		window.onbeforeunload = function(e) {
+		websocket.close();
+		console.log("bye!");
+		}
+
+		input.addEventListener('keydown', (evt) => {
+		if (evt.keyCode === 13) {
+		evt.preventDefault();
+		OnCommandRan(input.innerHTML);
+		input.innerHTML = "";
+		}
+		});
+
+		API = (await import("./javascript/Modules/API/Api.js")).API;
+
+		heartBeat();
 		}
 
 		function OnCommandRan(command)
 		{
-			command = command.replaceAll("<br>","").trim();
-			API.adminCommand(command);
+		command = command.replaceAll("<br>","").trim();
+		API.adminCommand(command);
 		}
 		function WriteToConsole(message)
 		{
-			var console = document.getElementById("console");
-			console.innerHTML += message + "<br>";
-			console.scrollTop = console.scrollHeight - console.clientHeight;
+		var console = document.getElementById("console");
+		console.innerHTML += message + "<br>";
+		console.scrollTop = console.scrollHeight - console.clientHeight;
 		}
 
 		function heartBeat() {
-			websocket.send("boomp");
-			setTimeout(heartBeat, 1000);
+		websocket.send("boomp");
+		setTimeout(heartBeat, 1000);
 		}
 	</script>
 </head>

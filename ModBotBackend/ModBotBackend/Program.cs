@@ -24,6 +24,10 @@ namespace ModBotBackend
 
 			Directory.CreateDirectory(UsersPath);
 			Directory.CreateDirectory(DataPath);
+			Directory.CreateDirectory(ModTemplateFilePath);
+			Directory.CreateDirectory(TemporaryFilesPath);
+			Directory.CreateDirectory(WebsitePath);
+			Directory.CreateDirectory(LogsFolderPath);
 
 			UploadedModsManager.Setup(DataPath);
 			UserManager.Init();
@@ -173,10 +177,12 @@ namespace ModBotBackend
 		public static string DiscordClientSecretPath => BasePath + "/discordSecret.txt";
 
 		public static string ModTemplateFilePath => BasePath + "/ModTemplate/";
-		public static string TemporaryFiles => BasePath + "/TemporaryFiles/";
+		public static string TemporaryFilesPath => BasePath + "/TemporaryFiles/";
 
 		public static string WebsitePath => BasePath + "/Website/";
+		public static string LogsFolderPath => BasePath + "/Logs/";
 		public static string WebsiteFile => BasePath + "/Website.txt";
+
 
 		public static void PopulateOperations()
 		{

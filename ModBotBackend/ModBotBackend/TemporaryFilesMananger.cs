@@ -11,7 +11,7 @@ namespace ModBotBackend
 	{
 		public static void Init()
 		{
-			string path = Program.TemporaryFiles;
+			string path = Program.TemporaryFilesPath;
 			if(Directory.Exists(path))
 			{
 				string[] files = Directory.GetFiles(path);
@@ -43,7 +43,7 @@ namespace ModBotBackend
 			{
 				filename = filename.Replace(c.ToString(), "");
 			}
-			string tempFilePath = Program.TemporaryFiles + filename;
+			string tempFilePath = Program.TemporaryFilesPath + filename;
 
 			File.WriteAllBytes(tempFilePath, data);
 

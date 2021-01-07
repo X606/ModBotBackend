@@ -62,6 +62,12 @@ namespace ModBotBackend
 			Directory.Delete(folder);
 		}
 
+		public static void ClearFileCache()
+		{
+			_fileExistsCache.Clear();
+			_cachedFileData.Clear();
+		}
+
 		static Dictionary<string, bool> _fileExistsCache = new Dictionary<string, bool>();
 		public static bool FileExistsCached(string path)
 		{
@@ -115,6 +121,54 @@ namespace ModBotBackend
 			}
 
 			return generatedKey;
+		}
+
+		
+		public static string FormatString(string str, params string[] args)
+		{
+			for (int i = 0; i < args.Length; i++)
+			{
+				string searchString = "{" + i + "}";
+				int[] indecies = GetIndexesInString(str, searchString);
+
+				for (int j = indecies.Length - 1; j >= 0; j--)
+				{
+					int index = indecies[j];
+					string pre = str.Substring(0, index);
+					string post = str.Substring(index + searchString.Length);
+
+					str = pre + args[i] + post;
+				}
+
+			}
+
+			return str;
+		}
+
+		public static int[] GetIndexesInString(string str, string substring)
+		{
+			List<int> indexies = new List<int>();
+
+			for (int i = 0; i < str.Length; i++)
+			{
+				for (int j = 0; j < substring.Length; j++)
+				{
+					if ((i + j) == str.Length)
+						break;
+
+					if (str[i + j] != substring[j])
+						break;
+
+					if (j == (substring.Length - 1))
+					{
+						indexies.Add(i);
+					}
+				}
+
+
+			}
+
+			return indexies.ToArray();
 		}
 
 	}

@@ -64,7 +64,9 @@ namespace ModBotBackend.Operations
 			User newUser = User.CreateNewUser(request.username, request.password);
 
 			Session session = UserManager.SignInAsUser(request.username, request.password);
-			
+
+			OutputConsole.WriteLine("New user signed up " + newUser.UserID + " (" + newUser.Username + ")");
+
 			HttpStream httpStream = new HttpStream(context.Response);
 			httpStream.Send(new CreateAccountResponse()
 			{

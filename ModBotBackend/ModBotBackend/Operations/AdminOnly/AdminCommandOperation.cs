@@ -7,6 +7,8 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using ModBotBackend.Users;
+using ModBotBackend.Operations.AdminOnly.AdminCommands;
+
 namespace ModBotBackend.Operations.AdminOnly
 {
 	[Operation("adminCommand")]
@@ -39,7 +41,7 @@ namespace ModBotBackend.Operations.AdminOnly
 				return;
 			}
 
-			executeAdminCommand(message.Split(' '), authentication);
+			executeAdminCommand(message.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries), authentication);
 
 			context.Response.ContentType = "text/plain";
 			HttpStream httpStream = new HttpStream(context.Response);
@@ -50,85 +52,37 @@ namespace ModBotBackend.Operations.AdminOnly
 		static void executeAdminCommand(string[] subStrings, Authentication authentication)
 		{
 			User user = UserManager.GetUserFromId(authentication.UserID);
-			string baseCommand = subStrings[0];
+			string baseCommand = subStrings[0].ToLower();
+
+			string[] arguments = new string[subStrings.Length - 1];
+			Array.Copy(subStrings, 1, arguments, 0, subStrings.Length - 1);
 
 			OutputConsole.WriteLine(user.Username + ": " + getAfterAsString(subStrings, 0));
 
-			if (baseCommand == "print")
+			if (_adminCommands == null)
+				populateAdminCommands();
+
+			if (_adminCommands.TryGetValue(baseCommand, out AdminCommand value))
 			{
-				OutputConsole.WriteLine(getAfterAsString(subStrings, 1));
-			} else if(baseCommand == "say")
-			{
-				OutputConsole.WriteLine(user.Username + ": " + getAfterAsString(subStrings, 1));
-			} else if(baseCommand == "setUserData")
-			{
-				if (subStrings.Length < 4)
-				{
-					OutputConsole.WriteLine("The setUserData command takes 3 arguments: [targetUserID] [targetData] [newData]");
-					return;
-				}
-
-				string targetUserId = subStrings[1];
-				string targetData = subStrings[2].ToLower();
-				string newData = getAfterAsString(subStrings, 3);
-
-				User targetUser = UserManager.GetUserFromId(targetUserId);
-
-				if (targetUser == null)
-				{
-					OutputConsole.WriteLine("The target user could not be found");
-					return;
-				}
-
-				if (user.AuthenticationLevel <= targetUser.AuthenticationLevel && user != targetUser)
-				{
-					OutputConsole.WriteLine("You must have a higher authentication level than the target to preform this action");
-					return;
-				}
-
-				if (targetData == "authenticationlevel")
-				{
-					AuthenticationLevel authenticationLevel;
-					if (int.TryParse(newData, out int authLevel))
-					{
-						authenticationLevel = (AuthenticationLevel)authLevel;
-					}
-					else
-					{
-						OutputConsole.WriteLine("The provided new data was not a valid number");
-						return;
-					}
-					targetUser.AuthenticationLevel = authenticationLevel;
-					targetUser.Save();
-					OutputConsole.WriteLine("Updated " + targetUser.Username + "s AuthenticationLevel to " + authenticationLevel);
-				} else if(targetData == "bio")
-				{
-					targetUser.Bio = newData;
-					targetUser.Save();
-					OutputConsole.WriteLine("Updated " + targetUser.Username + "s bio to " + newData);
-				} else if(targetData == "color")
-				{
-					targetUser.DisplayColor = newData;
-					targetUser.Save();
-					OutputConsole.WriteLine("Updated " + targetUser.Username + "s color to " + newData);
-				}
-				else if (targetData == "username")
-				{
-					targetUser.Username = newData;
-					targetUser.Save();
-					OutputConsole.WriteLine("Updated " + targetUser.Username + "s username to " + newData);
-				} 
-				else if (targetData == "password")
-				{
-					targetUser.SetPassword(newData);
-					OutputConsole.WriteLine("Updated " + targetUser.Username + " password.");
-				}
-				else
-				{
-					OutputConsole.WriteLine("The provided targetData was invalid");
-				}
-
+				value.ProcessCommand(arguments, authentication, user);
 			}
+		}
+
+		static Dictionary<string, AdminCommand> _adminCommands = null;
+
+		static void populateAdminCommands()
+		{
+			_adminCommands = new Dictionary<string, AdminCommand>();
+			Type[] types = System.Reflection.Assembly.GetExecutingAssembly().GetTypes();
+			foreach (Type type in types)
+			{
+				AdminCommandAttribute adminCommandAttribute = (AdminCommandAttribute)Attribute.GetCustomAttribute(type, typeof(AdminCommandAttribute));
+				if (adminCommandAttribute == null)
+					continue;
+
+				_adminCommands.Add(adminCommandAttribute.CommandKey.ToLower(), (AdminCommand)Activator.CreateInstance(type));
+			}
+
 		}
 
 		static string getAfterAsString(string[] array, int index)
@@ -145,7 +99,6 @@ namespace ModBotBackend.Operations.AdminOnly
 			return output;
 		}
 
-
 		[Serializable]
 		public class Request
 		{
@@ -153,4 +106,35 @@ namespace ModBotBackend.Operations.AdminOnly
 		}
 
 	}
+}
+namespace ModBotBackend.Operations.AdminOnly.AdminCommands
+{
+	public abstract class AdminCommand 
+	{
+		public abstract void ProcessCommand(string[] arguments, Authentication authentication, User caller);
+
+		protected static string getAfterAsString(string[] array, int index)
+		{
+			string output = "";
+			for (int i = index; i < array.Length; i++)
+			{
+				output += array[i];
+
+				if (i != (array.Length - 1))
+					output += " ";
+			}
+
+			return output;
+		}
+	}
+	public class AdminCommandAttribute : Attribute
+	{
+		public string CommandKey = "";
+
+		public AdminCommandAttribute(string commandKey)
+		{
+			CommandKey = commandKey;
+		}
+	}
+
 }

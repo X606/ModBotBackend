@@ -77,7 +77,7 @@ namespace ModBotBackend.Operations
 			}
 			if (request.bio != null)
 			{
-				user.Bio = request.bio;
+				user.Bio = System.Web.HttpUtility.HtmlEncode(request.bio);
 			}
 			if (request.newPassword != null)
 			{
@@ -101,6 +101,8 @@ namespace ModBotBackend.Operations
             }
 
 			user.Save();
+
+			OutputConsole.WriteLine(user.UserID + " (" + user.Username + ") updated their profile.");
 
             HttpStream resopnseStream = new HttpStream(context.Response);
 			resopnseStream.Send(new Response().ToJson());

@@ -17,13 +17,15 @@ namespace ModBotBackend.Users
 		public string Username;
 		public string PasswordHash;
 		
-		public string Bio;
+		public string Bio = "";
 
 		public string UserID;
 
-		public string DisplayColor;
-		public BorderStyles BorderStyle;
-        public bool ShowFull;
+		public string PlayfabID = null;
+
+		public string DisplayColor = "#ffffff";
+		public BorderStyles BorderStyle = BorderStyles.Runded;
+        public bool ShowFull = false;
 
 		public AuthenticationLevel AuthenticationLevel = AuthenticationLevel.BasicUser;
 
@@ -160,6 +162,8 @@ namespace ModBotBackend.Users
 
 			return a.UserID == b.UserID;
 		}
+
+		public override string ToString() => "User(userID: " + UserID + ", username: " + Username + ")";
 	}
 	public enum BorderStyles
 	{

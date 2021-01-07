@@ -16,9 +16,22 @@ namespace ModBotBackend
 		public static void OnRequest(HttpListenerContext context)
 		{
 			string path = context.Request.Url.AbsolutePath;
+			byte[] data = OnRequest(path, out string contentType);
+
+			context.Response.ContentType = contentType;
+			if (context.Response.OutputStream.CanWrite)
+			{
+				context.Response.OutputStream.Write(data, 0, data.Length);
+				context.Response.OutputStream.Close();
+			}
+			context.Response.Close();
+		}
+
+		public static byte[] OnRequest(string path, out string contentType)
+		{
 			path = path.TrimEnd('/', '\\');
 
-			if(path == "")
+			if (path == "")
 			{
 				path = "/index";
 			}
@@ -27,9 +40,9 @@ namespace ModBotBackend
 
 			string fileExtension = Path.GetExtension(path);
 
-			if(fileExtension == "")
+			if (fileExtension == "")
 			{
-				if(_fileExstensionCache.TryGetValue(fullPath, out string chachedExtsion))
+				if (_fileExstensionCache.TryGetValue(fullPath, out string chachedExtsion))
 				{
 					fullPath += chachedExtsion;
 					fileExtension = Path.GetExtension(fullPath);
@@ -49,9 +62,9 @@ namespace ModBotBackend
 					".jpeg"
 					};
 
-					foreach(string extension in extensions)
+					foreach (string extension in extensions)
 					{
-						if(Utils.FileExistsCached(fullPath + extension))
+						if (Utils.FileExistsCached(fullPath + extension))
 						{
 							_fileExstensionCache.Add(fullPath, extension);
 							fullPath += extension;
@@ -64,12 +77,12 @@ namespace ModBotBackend
 
 			bool is404 = false;
 
-			if(!Utils.FileExistsCached(fullPath))
+			if (!Utils.FileExistsCached(fullPath))
 			{
 				is404 = true;
 			}
 
-			if(is404 && Directory.Exists(fullPath))
+			if (is404 && Directory.Exists(fullPath))
 			{
 				is404 = false;
 
@@ -77,57 +90,42 @@ namespace ModBotBackend
 				page += "<a href=\"./../\">[<--]</a><br><br>";
 
 				string[] subFolders = Directory.GetDirectories(fullPath);
-				foreach(string folder in subFolders)
+				foreach (string folder in subFolders)
 				{
 					page += string.Format("<a href=\"{0}\">{1}</a><br>", path + "/" + Path.GetFileName(folder), folder);
 				}
 				page += "<br>";
 
 				string[] files = Directory.GetFiles(fullPath);
-				foreach(string file in files)
+				foreach (string file in files)
 				{
 					page += string.Format("<a href=\"{0}\">{1}</a><br>", path + "/" + Path.GetFileName(file), file);
 				}
 
 				page += "</body>";
 
-				context.Response.ContentType = "text/html";
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(page);
-				stream.Close();
-
-				return;
+				contentType = "text/html";
+				return Encoding.UTF8.GetBytes(page);
 			}
 
 			if (is404 && Utils.FileExistsCached(GetWebsiteFilePath() + "/404.html"))
 			{
-				context.Response.ContentType = "text/html";
+				contentType = "text/html";
 
 				string data404 = Utils.FileReadAllTextCached(GetWebsiteFilePath() + "/404.html");
-				HttpStream stream404 = new HttpStream(context.Response);
-				stream404.Send(data404);
-				stream404.Close();
-				return;
+				return Encoding.UTF8.GetBytes(data404);
 			}
 
-			if(is404)
+			if (is404)
 			{
-				context.Response.ContentType = "text/plain";
-				HttpStream stream404 = new HttpStream(context.Response);
-				stream404.Send("404 :(");
-				stream404.Close();
-				return;
+				contentType = "text/plain";
+				return Encoding.UTF8.GetBytes("404 :(");
 			}
 
-			context.Response.ContentType = GetContentTypeForExtension(fileExtension);
+			contentType = GetContentTypeForExtension(fileExtension);
 
 			byte[] data = Utils.FileReadAllBytesCached(fullPath);
-			if(context.Response.OutputStream.CanWrite)
-			{
-				context.Response.OutputStream.Write(data, 0, data.Length);
-				context.Response.OutputStream.Close();
-			}
-			context.Response.Close();
+			return data;
 		}
 
 		public static string GetWebsiteFilePath()

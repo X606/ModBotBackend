@@ -51,6 +51,10 @@ namespace ModBotBackend.Operations.AdminOnly
 					Console.WriteLine("error, websocket is not connected");
 					return;
 				}
+				
+				line = System.Web.HttpUtility.HtmlEncode(line);
+
+				line = line.Replace("\n", "<br>");
 
 				byte[] buffer = Encoding.UTF8.GetBytes(line);
 

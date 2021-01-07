@@ -10,8 +10,13 @@ namespace ModBotBackend
 	{
 		public static void WriteLine(string line)
 		{
-			OnWriteLine?.Invoke(line);
-			Console.WriteLine(line);
+			DateTime now = DateTime.Now;
+
+			string output = "[" + now.ToString() + "] " + line;
+
+			OnWriteLine?.Invoke(output);
+			Console.WriteLine(output);
+			LogsManager.WriteLine(output);
 		}
 
 		public static event Action<string> OnWriteLine;
