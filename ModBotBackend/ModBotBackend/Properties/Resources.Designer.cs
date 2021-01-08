@@ -62,11 +62,33 @@ namespace ModBotBackend.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;head&gt;
+        ///	&lt;meta charset=&quot;UTF-8&quot;&gt;
+        ///	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+        ///	&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;ie=edge&quot;&gt;
         ///
-        ///&lt;/head&gt;
-        ///&lt;body&gt;
-        ///
-        ///&lt;/body&gt;.
+        ///	&lt;style&gt;
+        ///		.input {
+        ///			position: fixed;
+        ///			left: 0px;
+        ///			right: 0px;
+        ///			bottom: 0px;
+        ///			height: 40px;
+        ///			background-color: #222222;
+        ///			padding: 0.2em;
+        ///			font-size: 2em;
+        ///		}
+        ///		.console {
+        ///			position: fixed;
+        ///			bottom: 50px;
+        ///			left: 10px;
+        ///			right: 0px;
+        ///			top: 10px;
+        ///			overflow-y: scroll;
+        ///		}
+        ///		{0}
+        ///	&lt;/style&gt;
+        ///	&lt;script&gt;
+        ///		var [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Console {
             get {
@@ -76,15 +98,58 @@ namespace ModBotBackend.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;head&gt;
+        ///	&lt;style&gt;
+        ///		body {
+        ///			background-color: #121212;
+        ///			color: white;
+        ///			font-family: Arial, Helvetica, sans-serif;
+        ///		}
         ///
+        ///		.console {
+        ///			position: fixed;
+        ///			bottom: 50px;
+        ///			left: 10px;
+        ///			right: 10px;
+        ///			top: 10px;
+        ///			overflow-y: scroll;
+        ///		}
+        ///
+        ///		.input {
+        ///			position: fixed;
+        ///			left: 0px;
+        ///			right: 0px;
+        ///			bottom: 0px;
+        ///			height: 40px;
+        ///			background-color: #222222;
+        ///			padding: 0.2em;
+        ///			font-size: 2em;
+        ///		}
+        ///	&lt;/style&gt;
         ///&lt;/head&gt;
         ///&lt;body&gt;
-        ///	&lt;p&gt;Sorry you dont have the perms to see this :/&lt;/p&gt;
-        ///&lt;/body&gt;.
+        ///	&lt;p id=&quot;console&quot; class=&quot;console&quot;&gt;Sorry, you do [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ConsoleCantAccess {
             get {
                 return ResourceManager.GetString("ConsoleCantAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to body {
+        ///	background-color: #121212;
+        ///	color: white;
+        ///	font-family: Arial, Helvetica, sans-serif;
+        ///}
+        ///
+        ///a {
+        ///	color: #d55ca6;
+        ///}
+        ///.
+        /// </summary>
+        internal static string ConsoleDefaultCss {
+            get {
+                return ResourceManager.GetString("ConsoleDefaultCss", resourceCulture);
             }
         }
     }

@@ -23,6 +23,12 @@ namespace ModBotBackend.Operations
 
 			string html = Properties.Resources.Console;
 
+			string css = ConsoleCustomCssManager.Instance.GetCssForUserID(authentication.UserID);
+			if (css == null)
+				css = Properties.Resources.ConsoleDefaultCss;
+
+			html = Utils.FormatString(html, css);
+
 			HttpStream httpStream = new HttpStream(context.Response);
 			httpStream.Send(html);
 			httpStream.Close();

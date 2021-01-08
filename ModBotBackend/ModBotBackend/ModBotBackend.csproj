@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication.cs" />
+    <Compile Include="Managers\ConsoleCustomCssManager.cs" />
     <Compile Include="Managers\LogsManager.cs" />
     <Compile Include="ModReport.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommandOperation.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Operations\AdminOnly\AdminCommands\SayCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\SetUserDataCommand.cs" />
     <Compile Include="Operations\AdminOnly\OpenConsoleWebSocket.cs" />
+    <Compile Include="Operations\AdminOnly\SetCustomConsoleCssOperation.cs" />
     <Compile Include="Operations\CreateAccountOperation.cs" />
     <Compile Include="Operations\DeleteCommentOperation.cs" />
     <Compile Include="Operations\DownloadTempFileOperation.cs" />
@@ -155,6 +157,7 @@
   <ItemGroup>
     <Content Include="Html\Console.html" />
     <Content Include="Html\ConsoleCantAccess.html" />
+    <Content Include="Html\ConsoleDefaultCss.css" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
