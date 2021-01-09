@@ -16,6 +16,9 @@ namespace ModBotBackend.Operations
 	[Operation("updateUserData")]
 	public class UpdateUserDataOperation : OperationBase
 	{
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { "password", "username", "bio", "newPassword", "borderStyle", "showFull" };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "application/json";

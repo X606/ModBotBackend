@@ -15,6 +15,16 @@ namespace ModBotBackend.Operations
 	[Operation("signIn")]
 	public class SignInOperation : OperationBase
 	{
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { "username", "password" };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
+
+		public override string OverrideResolveJavascript => 
+		@"if (e.sessionID != null) {
+			setCurrentSessionId(e.sessionID);
+		}
+
+		resolve(e);";
 
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{

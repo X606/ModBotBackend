@@ -15,6 +15,10 @@ namespace ModBotBackend.Operations
 	[Operation("favoriteMod")]
 	public class FavoriteModOperation : OperationBase
 	{
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { "modID", "favorite" };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
+
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "application/json";

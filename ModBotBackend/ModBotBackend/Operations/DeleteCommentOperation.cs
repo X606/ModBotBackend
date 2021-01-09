@@ -16,6 +16,9 @@ namespace ModBotBackend.Operations
 	[Operation("deleteComment")]
 	public class DeleteCommentOperation : OperationBase
 	{
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { "targetModId", "targetCommentId" };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
 
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{

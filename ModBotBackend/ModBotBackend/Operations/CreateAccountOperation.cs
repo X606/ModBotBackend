@@ -16,6 +16,16 @@ namespace ModBotBackend.Operations
 	[Operation("createAccout")]
 	public class CreateAccountOperation : OperationBase
 	{
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { "username", "password" };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
+
+		public override string OverrideResolveJavascript =>
+		@"if (e.isError == false) {
+			setCurrentSessionId(e.sessionID);
+		}
+
+		resolve(e);";
 
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{

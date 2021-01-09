@@ -14,6 +14,11 @@ namespace ModBotBackend.Operations.AdminOnly
 	[Operation("openConsoleWebSocket")]
 	public class OpenConsoleWebSocket : OperationBase
 	{
+		public override bool ParseAsJson => false;
+		public override string[] Arguments => new string[] { };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.Admin;
+		public override string OverrideAPICallJavascript => "return new WebSocket(\"wss://\" + location.host + \"/api?operation=openConsoleWebSocket\");";
+
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			if (!context.Request.IsWebSocketRequest)

@@ -16,6 +16,11 @@ namespace ModBotBackend.Operations
 	[Operation("uploadProfilePicture")]
 	public class UploadProfilePictureOperation : OperationBase
 	{
+		public override bool ParseAsJson => false;
+		public override string[] Arguments => new string[] { };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
+		public override bool HideInAPI => true;
+
 		readonly string[] _validFileExtensions = new string[]
 			{
 				".png",

@@ -8,12 +8,17 @@ using System.IO;
 using HttpUtils;
 using Newtonsoft.Json;
 using ModLibrary;
+using ModBotBackend.Users;
 
 namespace ModBotBackend.Operations
 {
 	[Operation("getAllModInfos")]
 	public class GetAllModInfosOperation : OperationBase
 	{
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
+
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			string[] ids = UploadedModsManager.Instance.GetAllUploadedIds();

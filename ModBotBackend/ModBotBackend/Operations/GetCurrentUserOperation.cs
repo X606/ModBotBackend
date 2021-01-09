@@ -16,6 +16,9 @@ namespace ModBotBackend.Operations
 	[Operation("getCurrentUser")]
 	public class GetCurrentUserOperation : OperationBase
 	{
+		public override bool ParseAsJson => false;
+		public override string[] Arguments => new string[] { };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
 
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{

@@ -6,12 +6,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using HttpUtils;
+using ModBotBackend.Users;
 
 namespace ModBotBackend.Operations
 {
 	[Operation("downloadMod")]
 	public class DownloadModOperation : OperationBase
 	{
+		public override bool ParseAsJson => false;
+		public override string[] Arguments => new string[] { "id" };
+		public override string OverrideAPICallJavascript => "window.open(\"/api/?operation=downloadMod&id=\" + id);";
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
+
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			string id = context.Request.QueryString["id"];

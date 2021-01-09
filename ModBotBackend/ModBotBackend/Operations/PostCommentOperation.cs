@@ -16,7 +16,9 @@ namespace ModBotBackend.Operations
 	[Operation("postComment")]
 	public class PostCommentOperation : OperationBase
 	{
-
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { "targetModId", "commentBody" };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "application/json";

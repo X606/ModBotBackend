@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication.cs" />
+    <Content Include="Html\APITemplate.js" />
     <Compile Include="Managers\ConsoleCustomCssManager.cs" />
     <Compile Include="Managers\LogsManager.cs" />
     <Compile Include="ModReport.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Operations\DownloadTempFileOperation.cs" />
     <Compile Include="Operations\FavoriteModOperation.cs" />
     <Compile Include="Operations\GetCurrentUserOperation.cs" />
+    <Compile Include="Operations\GetJavascriptAPIOperation.cs" />
     <Compile Include="Operations\GetModTemplateOperation.cs" />
     <Compile Include="Operations\GetMyAuthenticationLevelOperation.cs" />
     <Compile Include="Operations\GetProfilePictureOperation.cs" />
@@ -166,4 +168,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>cd..
+ModBotBackendDeployer.exe -v=code -speed</PostBuildEvent>
+  </PropertyGroup>
 </Project>

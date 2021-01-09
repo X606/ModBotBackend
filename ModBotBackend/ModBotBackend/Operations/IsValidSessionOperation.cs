@@ -16,7 +16,9 @@ namespace ModBotBackend.Operations
 	[Operation("isValidSession")]
 	public class IsValidSessionOperation : OperationBase
 	{
-
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { "sessionId" };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/plain";

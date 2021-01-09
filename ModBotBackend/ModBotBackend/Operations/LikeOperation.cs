@@ -16,7 +16,9 @@ namespace ModBotBackend.Operations
 	[Operation("like")]
 	public class LikeOperation : OperationBase
 	{
-
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { "likedModId", "likeState" };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/plain";

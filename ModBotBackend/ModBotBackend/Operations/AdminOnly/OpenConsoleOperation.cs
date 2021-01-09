@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModBotBackend.Users;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,6 +11,12 @@ namespace ModBotBackend.Operations
 	[Operation("console")]
 	public class OpenConsoleOperation : OperationBase
 	{
+		public override bool ParseAsJson => false;
+		public override string[] Arguments => new string[] { };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.Admin;
+		public override string OverrideAPICallJavascript => "window.open(\"/api/?operation=console\");";
+
+
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/html";

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ModLibrary;
 using System.IO;
+using ModBotBackend.Users;
 
 namespace ModBotBackend.Operations
 {
@@ -13,7 +14,12 @@ namespace ModBotBackend.Operations
 	[Operation("getModImage")]
 	public class GetImageOperation : OperationBase
 	{
-		
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { "element", "id"};
+		public override bool ArgumentsInQuerystring => true;
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
+		public override string OverrideAPICallJavascript => "element.src = \"/api/?operation=getModImage&id=\" + id;";
+
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			string id = context.Request.QueryString["id"];

@@ -17,6 +17,16 @@ namespace ModBotBackend.Operations
 	[Operation("getModTemplate")]
 	public class GetModTemplateOperation : OperationBase
 	{
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { "modName", "description", "tags" };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
+		public override string OverrideResolveJavascript => 
+			"if(e.isError){" +
+			"resolve(e);" +
+			"return;"+
+			"} " +
+			"API.downloadTempFile(e.fileKey);"+
+			"resolve({ isError: false, message: \"Downloading file...\" });";
 
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{

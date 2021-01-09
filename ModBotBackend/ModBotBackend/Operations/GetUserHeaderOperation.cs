@@ -11,6 +11,12 @@ namespace ModBotBackend.Operations
 	[Operation("getUserHeader")]
 	public class GetUserHeaderOperation : OperationBase
 	{
+		public override bool ParseAsJson => false;
+		public override string[] Arguments => new string[] { "element", "userID" };
+		public override bool ArgumentsInQuerystring => true;
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
+		public override string OverrideAPICallJavascript => "element.contentWindow.location.replace(\"/api?operation=getUserHeader&userID=\" + userID);";
+
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/html";

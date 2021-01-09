@@ -13,6 +13,12 @@ namespace ModBotBackend.Operations
 	[Operation("getProfilePicture")]
 	public class GetProfilePictureOperation : OperationBase
 	{
+		public override bool ParseAsJson => false;
+		public override string[] Arguments => new string[] { "element", "id" };
+		public override bool ArgumentsInQuerystring => true;
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
+
+		public override string OverrideAPICallJavascript => "element.src = \"/api/?operation=getProfilePicture&id=\" + id;";
 
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{

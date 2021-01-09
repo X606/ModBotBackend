@@ -8,12 +8,46 @@ using System.Threading.Tasks;
 using ModBotBackend;
 using ModLibrary;
 using Newtonsoft.Json;
+using ModBotBackend.Users;
 
 namespace ModBotBackend.Operations
 {
 	[Operation("search")]
 	public class ModSearchOperation : OperationBase
 	{
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
+		public override string OverrideAPICallJavascript =>
+			@"this.searchString = null;
+	this.includeDescriptionsInSearch = false;
+	this.userID = null;
+	this.modID = null;
+	this.sortOrder = 'liked';
+
+	this.Send = function () {
+		return new Promise(async resolve => {
+
+			var result = await Post('/api/?operation=search',
+				{
+					searchString: this.searchString,
+					includeDescriptionsInSearch: this.includeDescriptionsInSearch,
+					userID: this.userID,
+					sortOrder: this.sortOrder,
+					modID: this.modID
+				});
+			result = JSON.parse(result);
+
+			resolve(result);
+
+		});
+	}
+	this.searchSortTypes = {
+		Liked: 'liked',
+		Downloads: 'downloads',
+		PostDate: 'postedDate',
+		EditedDate: 'editedDate'
+	};";
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "text/plain";

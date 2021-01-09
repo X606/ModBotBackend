@@ -13,6 +13,11 @@ namespace ModBotBackend.Operations
 	[Operation("getUser")]
 	public class GetPublicUserDataOperation : OperationBase
 	{
+		public override bool ParseAsJson => true;
+		public override string[] Arguments => new string[] { "id" };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
+		public override bool ArgumentsInQuerystring => true;
+
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			context.Response.ContentType = "application/json";

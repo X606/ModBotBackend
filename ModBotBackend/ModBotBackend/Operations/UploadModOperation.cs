@@ -8,12 +8,17 @@ using System.IO;
 using HttpUtils;
 using ModLibrary;
 using ModBotBackend.Users.Sessions;
+using ModBotBackend.Users;
 
 namespace ModBotBackend.Operations
 {
 	[Operation("uploadMod")]
 	public class UploadModOperation : OperationBase
 	{
+		public override bool ParseAsJson => false;
+		public override string[] Arguments => new string[] { };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.VerifiedUser;
+		public override bool HideInAPI => true;
 
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
@@ -22,12 +27,6 @@ namespace ModBotBackend.Operations
 			if(!httpMultipartParser.Success)
 			{
 				Utils.RederectToErrorPage(context, "Invalid request");
-				return;
-			}
-
-			if (!httpMultipartParser.Parameters.ContainsKey("session"))
-			{
-				Utils.RederectToErrorPage(context, "You're not logged in, you have to be logged in to upload mods");
 				return;
 			}
 

@@ -14,6 +14,9 @@ namespace ModBotBackend.Operations.AdminOnly
 	[Operation("adminCommand")]
 	public class AdminCommandOperation : OperationBase
 	{
+		public override bool ParseAsJson => false;
+		public override string[] Arguments => new string[] { "Message" };
+		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.Admin;
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 

@@ -61,6 +61,34 @@ namespace ModBotBackend.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to // General
+        ///function Post(url, data) {
+        ///	var xhr = new XMLHttpRequest();
+        ///	xhr.open(&quot;POST&quot;, url, true);
+        ///	xhr.setRequestHeader(&apos;Content-Type&apos;, &apos;application/json&apos;);
+        ///	xhr.send(JSON.stringify(data));
+        ///
+        ///	return new Promise(resolve =&gt; {
+        ///		xhr.onload = function () {
+        ///			resolve(xhr.responseText);
+        ///		}
+        ///	});	
+        ///}
+        ///function PostRaw(url, data) {
+        ///	var xhr = new XMLHttpRequest();
+        ///	xhr.open(&quot;POST&quot;, url, true);
+        ///	xhr.setRequestHeader(&apos;Content-Type&apos;, &apos;application/json&apos;);
+        ///	xhr.send(data);
+        ///
+        ///	return new Promise(resol [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string APITemplate {
+            get {
+                return ResourceManager.GetString("APITemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;head&gt;
         ///	&lt;meta charset=&quot;UTF-8&quot;&gt;
         ///	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
@@ -73,7 +101,6 @@ namespace ModBotBackend.Properties {
         ///			right: 0px;
         ///			bottom: 0px;
         ///			height: 40px;
-        ///			background-color: #222222;
         ///			padding: 0.2em;
         ///			font-size: 2em;
         ///		}
@@ -88,7 +115,10 @@ namespace ModBotBackend.Properties {
         ///		{0}
         ///	&lt;/style&gt;
         ///	&lt;script&gt;
-        ///		var [rest of string was truncated]&quot;;.
+        ///		var API;
+        ///		var websocket;
+        ///
+        ///		wi [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Console {
             get {
@@ -145,7 +175,10 @@ namespace ModBotBackend.Properties {
         ///a {
         ///	color: #d55ca6;
         ///}
-        ///.
+        ///
+        ///.input {
+        ///	background-color: #222222;
+        ///}.
         /// </summary>
         internal static string ConsoleDefaultCss {
             get {

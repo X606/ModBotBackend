@@ -3,6 +3,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+	<title>Mod-Bot Console</title>
+
 	<style>
 		.input {
 			position: fixed;
@@ -28,11 +30,16 @@
 		var websocket;
 
 		window.onload = async function() {
+			API = (await import("https://" + location.host + "/api?operation=getAPI")).API;
+
 			const input = document.getElementById('input');
 
-			websocket = new WebSocket("wss://" + location.host + "/api?operation=openConsoleWebSocket");
+			websocket = API.openConsoleWebSocket();
 			websocket.onmessage = function(e) {
 				WriteToConsole(e.data);
+			}
+			websocket.onopen = function(e) {
+				heartBeat();
 			}
 			window.onbeforeunload = function(e) {
 				websocket.close();
@@ -47,9 +54,6 @@
 				}
 			});
 
-			API = (await import("./javascript/Modules/API/Api.js")).API;
-
-			heartBeat();
 		}
 
 		function OnCommandRan(command)

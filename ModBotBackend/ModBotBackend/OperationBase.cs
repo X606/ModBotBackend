@@ -12,6 +12,14 @@ namespace ModBotBackend
 	{
 		public abstract void OnOperation(HttpListenerContext context, Authentication authentication);
 
+		public abstract string[] Arguments { get; }
+		public abstract bool ParseAsJson { get; }
+		public abstract AuthenticationLevel MinimumAuthenticationLevelToCall { get; }
+
+		public virtual bool ArgumentsInQuerystring => false;
+		public virtual string OverrideResolveJavascript => null;
+		public virtual string OverrideAPICallJavascript => null;
+		public virtual bool HideInAPI => false;
 	}
 
 	public class OperationAttribute : Attribute
