@@ -37,14 +37,17 @@
 			websocket = API.openConsoleWebSocket();
 			websocket.onmessage = function(e) {
 				WriteToConsole(e.data);
-			}
+			};
 			websocket.onopen = function(e) {
 				heartBeat();
-			}
+			};
+			websocket.onclose = function(event) {
+			  WriteToConsole("Connection lost!");
+			};
 			window.onbeforeunload = function(e) {
 				websocket.close();
 				console.log("bye!");
-			}
+			};
 
 			input.addEventListener('keydown', (evt) => {
 				if (evt.keyCode === 13) {
@@ -64,7 +67,7 @@
 		function WriteToConsole(message)
 		{
 			var console = document.getElementById("console");
-			console.innerHTML += message + "<br>";
+			console.innerHTML += "<div class=\"message\">" + message + "</div>";
 			console.scrollTop = console.scrollHeight - console.clientHeight;
 		}
 
@@ -76,7 +79,7 @@
 	</script>
 </head>
 <body>
-	<p id="console" class="console"></p>
+	<div id="console" class="console"></div>
 	<div contenteditable="true" class="input" id="input"></div>
 
 </body>

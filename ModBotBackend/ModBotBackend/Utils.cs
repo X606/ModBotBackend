@@ -30,6 +30,20 @@ namespace ModBotBackend
 
 			Rederect(context, url);
 		}
+
+		public static void SendErrorPage(HttpListenerResponse response, string message, bool isError, HttpStatusCode status)
+		{
+			int statusCode = -1;
+			string html = Encoding.UTF8.GetString(WebsiteRequestProcessor.OnRequest("/errorPage.html", out string contentType, ref statusCode));
+
+			response.StatusCode = (int)status;
+			response.ContentType = "text/html";
+			html = Utils.FormatString(html, message, isError ? "" : "display: none;", isError ? "display: none;" : "");
+
+			HttpStream stream = new HttpStream(response);
+			stream.Send(html);
+			stream.Close();
+		}
 		public static void Rederect(HttpListenerContext context, string url)
 		{
 			context.Response.Redirect(url);

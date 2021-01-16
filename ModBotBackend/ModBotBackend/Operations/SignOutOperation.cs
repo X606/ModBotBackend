@@ -38,7 +38,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			SessionsManager.RemoveSession(authentication.SessionID);
+			SessionsManager.Instance.RemoveSession(authentication.SessionID);
 
 			HttpStream httpStream = new HttpStream(context.Response);
 			httpStream.Send(new SignOutResponse()

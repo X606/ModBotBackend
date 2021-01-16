@@ -59,6 +59,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Web" />
@@ -83,6 +84,7 @@
     <Compile Include="ModReport.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommandOperation.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\DisplayAllUsersCommand.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\GetSessionsCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\LogsCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\UsernameToUserIdCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\PrintCommand.cs" />
@@ -110,8 +112,10 @@
     <Compile Include="Operations\LikeOperation.cs" />
     <Compile Include="Operations\ModSearchOperation.cs" />
     <Compile Include="Operations\AdminOnly\OpenConsoleOperation.cs" />
+    <Compile Include="Operations\PingOperation.cs" />
     <Compile Include="Operations\PostCommentOperation.cs" />
     <Compile Include="Operations\RequestCloneDroneLinkingOperation.cs" />
+    <Compile Include="Operations\SignInFromGameOperation.cs" />
     <Compile Include="Operations\SignInOperation.cs" />
     <Compile Include="Operations\SignOutOperation.cs" />
     <Compile Include="Operations\UpdateUserDataOperation.cs" />
@@ -148,6 +152,7 @@
     <Compile Include="Users\UserReport.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WebsiteRequestProcessor.cs" />
+    <Content Include="Html\cross.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

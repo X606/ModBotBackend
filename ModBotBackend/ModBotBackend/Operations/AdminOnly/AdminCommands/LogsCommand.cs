@@ -22,18 +22,30 @@ namespace ModBotBackend.Operations.AdminOnly.AdminCommands
 			
 			if (arguments[0] == "list")
 			{
+				float daysBack = 2;
+				if (arguments.Length >= 2)
+				{
+					if (!float.TryParse(arguments[1], out daysBack))
+					{
+						daysBack = 2;
+					}
+				}
+
 				StringBuilder builder = new StringBuilder();
 				builder.Append("Saved logs:\n");
 				string[] logs = Directory.GetFiles(LogsManager.Instance.FolderPath);
 				for (int i = 0; i < logs.Length; i++)
 				{
 					FileInfo info = new FileInfo(logs[i]);
-					builder.Append(info.Name + " (" + GetByteAmountWithUnit(info.Length) + ")");
-
 					
+					if (info.CreationTime.AddDays(daysBack) >= DateTime.Now)
+					{
+						builder.Append(info.Name + " (" + GetByteAmountWithUnit(info.Length) + ")");
 
-					if (i != (logs.Length - 1))
-						builder.Append('\n');
+						if (i != (logs.Length - 1))
+							builder.Append('\n');
+					}
+
 				}
 				OutputConsole.WriteLine(builder.ToString());
 				return;

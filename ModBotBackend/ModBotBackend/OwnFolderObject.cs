@@ -26,8 +26,13 @@ namespace ModBotBackend
 
 		public string FolderPath => Program.BasePath + "/" + _folderName + "/";
 
+		public string GetPathForFile(string file)
+		{
+			return FolderPath + file;
+		}
 
 		public virtual void OnStartup() { }
+		public virtual void OnShutDown() { }
 
 	}
 

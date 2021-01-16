@@ -24,7 +24,7 @@ namespace ModBotBackend.Operations
 
 			if(!UploadedModsManager.Instance.HasModWithIdBeenUploaded(id))
 			{
-				Utils.RederectToErrorPage(context, "No mod with the id \"" + id + "\" has been uploaded");
+				Utils.SendErrorPage(context.Response, "No mod with the id \"" + id + "\" has been uploaded", true, HttpStatusCode.NotFound);
 				return;
 			}
 

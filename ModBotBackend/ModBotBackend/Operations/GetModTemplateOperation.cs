@@ -20,13 +20,13 @@ namespace ModBotBackend.Operations
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "modName", "description", "tags" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
-		public override string OverrideResolveJavascript => 
-			"if(e.isError){" +
-			"resolve(e);" +
-			"return;"+
+		public override string OverrideResolveJavascript =>
+			"if(!e.isError){" +
+				"API.downloadTempFile(e.fileKey);" +
+				"resolve({ isError: false, message: \"Downloading file...\" });" +
+				"return;" +
 			"} " +
-			"API.downloadTempFile(e.fileKey);"+
-			"resolve({ isError: false, message: \"Downloading file...\" });";
+			"resolve(e);";
 
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
@@ -42,7 +42,7 @@ namespace ModBotBackend.Operations
 				HttpStream http = new HttpStream(context.Response);
 				http.Send(new GetModTemplateRequestResponse()
 				{
-					isError = false,
+					isError = true,
 					message = "The request was invalid"
 				}.ToJson());
 				http.Close();
@@ -54,7 +54,7 @@ namespace ModBotBackend.Operations
 				HttpStream http = new HttpStream(context.Response);
 				http.Send(new GetModTemplateRequestResponse()
 				{
-					isError = false,
+					isError = true,
 					message = "You are not signed in"
 				}.ToJson());
 				http.Close();
@@ -69,7 +69,7 @@ namespace ModBotBackend.Operations
 				UniqueID = Guid.NewGuid().ToString(),
 				MainDLLFileName = "",
 				Author = creatorUsername,
-				Description = "",
+				Description = request.description,
 				ImageFileName = "DefaultImage.png",
 				ModDependencies = new string[0],
 				Tags = request.tags,
@@ -123,7 +123,12 @@ namespace ModBotBackend.Operations
 
 			public bool IsValidRequest()
 			{
-				return !string.IsNullOrWhiteSpace(modName) && !string.IsNullOrWhiteSpace(description);
+				if (description == null)
+					description = "";
+				if (tags == null)
+					tags = new string[0];
+
+				return !string.IsNullOrWhiteSpace(modName) && !modName.Contains("/") && !modName.Contains("\\");
 			}
 		}
 		[Serializable]

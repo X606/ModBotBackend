@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.960
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModBotBackend", "ModBotBackend\ModBotBackend.csproj", "{A6A06267-6FFC-42EC-B1D4-ACCDCBD1AA91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModBotWebsiteAPI", "ModBotWebsiteAPI\ModBotWebsiteAPI.csproj", "{524F82B0-170B-4B5B-BBC9-06D349E4EDE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModBotWebsiteAPICodeGenerator", "ModBotWebsiteAPICodeGenerator\ModBotWebsiteAPICodeGenerator.csproj", "{7118B168-2F12-4658-AEC4-6A044A2D682B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{A6A06267-6FFC-42EC-B1D4-ACCDCBD1AA91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6A06267-6FFC-42EC-B1D4-ACCDCBD1AA91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6A06267-6FFC-42EC-B1D4-ACCDCBD1AA91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{524F82B0-170B-4B5B-BBC9-06D349E4EDE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{524F82B0-170B-4B5B-BBC9-06D349E4EDE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{524F82B0-170B-4B5B-BBC9-06D349E4EDE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{524F82B0-170B-4B5B-BBC9-06D349E4EDE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7118B168-2F12-4658-AEC4-6A044A2D682B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7118B168-2F12-4658-AEC4-6A044A2D682B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7118B168-2F12-4658-AEC4-6A044A2D682B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7118B168-2F12-4658-AEC4-6A044A2D682B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

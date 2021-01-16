@@ -24,7 +24,7 @@ namespace ModBotBackend.Operations
 			
 			if (!TemporaryFilesMananger.Instance.TryGetTempFile(key, out byte[] data, out string filename))
 			{
-				Utils.RederectToErrorPage(context, "The requested file does not exist");
+				Utils.SendErrorPage(context.Response, "The requested file does not exist", true, HttpStatusCode.NotFound);
 				return;
 			}
 			

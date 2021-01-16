@@ -63,7 +63,7 @@ namespace ModBotBackend.Users
 			if(!user.VeryfyPassword(password))
 				return null;
 
-			Session session = new Session(user.UserID);
+			Session session = new Session(user.UserID, SessionsManager.SESSION_LENGTH);
 
 			return session;
 		}

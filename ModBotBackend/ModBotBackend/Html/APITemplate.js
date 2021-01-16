@@ -35,7 +35,7 @@ function Post(url, data) {
 
 const sessionIdKey = "SessionID";
 function setCurrentSessionId(sessionId) {
-	setCookie(sessionIdKey, sessionId, 60);
+	setCookie(sessionIdKey, sessionId, {0});
 }
 const API = {};
 

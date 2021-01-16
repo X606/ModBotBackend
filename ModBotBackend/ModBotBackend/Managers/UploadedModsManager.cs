@@ -145,7 +145,7 @@ namespace ModBotBackend
 				}
 				loadedModInfo.FixFieldValues();
 
-				string playerId = SessionsManager.GetPlayerIdFromSession(sessionID);
+				string playerId = SessionsManager.Instance.GetPlayerIdFromSession(sessionID);
 				
 				SpecialModData oldModWithSameID = GetSpecialModInfoFromId(loadedModInfo.UniqueID);
 				if (oldModWithSameID != null)
@@ -192,7 +192,7 @@ namespace ModBotBackend
 				_loadedSpecialModData[loadedModInfo.UniqueID].UpdatedDate = (ulong)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 			} else
 			{
-				CreateAndAddSpecialModDataFormMod(loadedModInfo.UniqueID, SessionsManager.GetPlayerIdFromSession(sessionID));
+				CreateAndAddSpecialModDataFormMod(loadedModInfo.UniqueID, SessionsManager.Instance.GetPlayerIdFromSession(sessionID));
 			}
 
 			modInfo = loadedModInfo;

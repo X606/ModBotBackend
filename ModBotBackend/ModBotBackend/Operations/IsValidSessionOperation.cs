@@ -16,7 +16,7 @@ namespace ModBotBackend.Operations
 	[Operation("isValidSession")]
 	public class IsValidSessionOperation : OperationBase
 	{
-		public override bool ParseAsJson => true;
+		public override bool ParseAsJson => false;
 		public override string[] Arguments => new string[] { "sessionId" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
@@ -36,7 +36,7 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
-			if(!SessionsManager.VerifyKey(request.sessionId, out Session session))
+			if(!SessionsManager.Instance.VerifyKey(request.sessionId, out Session session))
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send("false");

@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{524F82B0-170B-4B5B-BBC9-06D349E4EDE9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ModBotWebsiteAPI</RootNamespace>
+    <AssemblyName>ModBotWebsiteAPI</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\CloneDroneDlls\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\CloneDroneDlls\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="bolt">
+      <HintPath>..\CloneDroneDlls\bolt.dll</HintPath>
+    </Reference>
+    <Reference Include="bolt.user">
+      <HintPath>..\CloneDroneDlls\bolt.user.dll</HintPath>
+    </Reference>
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\CloneDroneDlls\netstandard.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\CloneDroneDlls\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\CloneDroneDlls\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>..\CloneDroneDlls\UnityEngine.UnityWebRequestModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestWWWModule">
+      <HintPath>..\CloneDroneDlls\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="API.cs" />
+    <Compile Include="GeneratedCode\adminCommand.cs" />
+    <Compile Include="GeneratedCode\console.cs" />
+    <Compile Include="GeneratedCode\createAccount.cs" />
+    <Compile Include="GeneratedCode\deleteComment.cs" />
+    <Compile Include="GeneratedCode\downloadMod.cs" />
+    <Compile Include="GeneratedCode\downloadTempFile.cs" />
+    <Compile Include="GeneratedCode\favoriteMod.cs" />
+    <Compile Include="GeneratedCode\getAllModIds.cs" />
+    <Compile Include="GeneratedCode\getAllModInfos.cs" />
+    <Compile Include="GeneratedCode\getAPI.cs" />
+    <Compile Include="GeneratedCode\getCurrentUser.cs" />
+    <Compile Include="GeneratedCode\getModData.cs" />
+    <Compile Include="GeneratedCode\getModImage.cs" />
+    <Compile Include="GeneratedCode\getModTemplate.cs" />
+    <Compile Include="GeneratedCode\getMyAuth.cs" />
+    <Compile Include="GeneratedCode\getProfilePicture.cs" />
+    <Compile Include="GeneratedCode\getSpecialModData.cs" />
+    <Compile Include="GeneratedCode\getUser.cs" />
+    <Compile Include="GeneratedCode\getUserHeader.cs" />
+    <Compile Include="GeneratedCode\hasLiked.cs" />
+    <Compile Include="GeneratedCode\hasLikedComment.cs" />
+    <Compile Include="GeneratedCode\isCommentMine.cs" />
+    <Compile Include="GeneratedCode\isValidSession.cs" />
+    <Compile Include="GeneratedCode\like.cs" />
+    <Compile Include="GeneratedCode\likeComment.cs" />
+    <Compile Include="GeneratedCode\openConsoleWebSocket.cs" />
+    <Compile Include="GeneratedCode\ping.cs" />
+    <Compile Include="GeneratedCode\postComment.cs" />
+    <Compile Include="GeneratedCode\search.cs" />
+    <Compile Include="GeneratedCode\setCustomConsoleCss.cs" />
+    <Compile Include="GeneratedCode\signIn.cs" />
+    <Compile Include="GeneratedCode\signInFromGame.cs" />
+    <Compile Include="GeneratedCode\signOut.cs" />
+    <Compile Include="GeneratedCode\test.cs" />
+    <Compile Include="GeneratedCode\updateUserData.cs" />
+    <Compile Include="GeneratedCode\uploadMod.cs" />
+    <Compile Include="GeneratedCode\uploadProfilePicture.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Template.csTemplate" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

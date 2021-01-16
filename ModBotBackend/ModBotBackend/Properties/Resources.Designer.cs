@@ -61,26 +61,20 @@ namespace ModBotBackend.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to // General
-        ///function Post(url, data) {
-        ///	var xhr = new XMLHttpRequest();
-        ///	xhr.open(&quot;POST&quot;, url, true);
-        ///	xhr.setRequestHeader(&apos;Content-Type&apos;, &apos;application/json&apos;);
-        ///	xhr.send(JSON.stringify(data));
-        ///
-        ///	return new Promise(resolve =&gt; {
-        ///		xhr.onload = function () {
-        ///			resolve(xhr.responseText);
-        ///		}
-        ///	});	
+        ///   Looks up a localized string similar to function setCookie(cname, cvalue, exmins) {
+        ///	var d = new Date();
+        ///	d.setTime(d.getTime() + (exmins * 60 * 1000));
+        ///	var expires = &quot;expires=&quot; + d.toUTCString();
+        ///	document.cookie = cname + &quot;=&quot; + cvalue + &quot;;&quot; + expires + &quot;;path=/;SameSite=Strict&quot;;
         ///}
-        ///function PostRaw(url, data) {
-        ///	var xhr = new XMLHttpRequest();
-        ///	xhr.open(&quot;POST&quot;, url, true);
-        ///	xhr.setRequestHeader(&apos;Content-Type&apos;, &apos;application/json&apos;);
-        ///	xhr.send(data);
-        ///
-        ///	return new Promise(resol [rest of string was truncated]&quot;;.
+        ///function getCookie(cname) {
+        ///	var name = cname + &quot;=&quot;;
+        ///	var decodedCookie = decodeURIComponent(document.cookie);
+        ///	var ca = decodedCookie.split(&apos;;&apos;);
+        ///	for (var i = 0; i &lt; ca.length; i++) {
+        ///		var c = ca[i];
+        ///		while (c.charAt(0) == &apos; &apos;) {
+        ///			c = c.substring(1 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string APITemplate {
             get {
@@ -93,6 +87,8 @@ namespace ModBotBackend.Properties {
         ///	&lt;meta charset=&quot;UTF-8&quot;&gt;
         ///	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
         ///	&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;ie=edge&quot;&gt;
+        ///
+        ///	&lt;title&gt;Mod-Bot Console&lt;/title&gt;
         ///
         ///	&lt;style&gt;
         ///		.input {
@@ -115,10 +111,7 @@ namespace ModBotBackend.Properties {
         ///		{0}
         ///	&lt;/style&gt;
         ///	&lt;script&gt;
-        ///		var API;
-        ///		var websocket;
-        ///
-        ///		wi [rest of string was truncated]&quot;;.
+        ///	 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Console {
             get {
@@ -128,6 +121,12 @@ namespace ModBotBackend.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;head&gt;
+        ///	&lt;meta charset=&quot;UTF-8&quot;&gt;
+        ///	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+        ///	&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;ie=edge&quot;&gt;
+        ///
+        ///	&lt;title&gt;Mod-Bot Console&lt;/title&gt;
+        ///
         ///	&lt;style&gt;
         ///		body {
         ///			background-color: #121212;
@@ -147,17 +146,7 @@ namespace ModBotBackend.Properties {
         ///		.input {
         ///			position: fixed;
         ///			left: 0px;
-        ///			right: 0px;
-        ///			bottom: 0px;
-        ///			height: 40px;
-        ///			background-color: #222222;
-        ///			padding: 0.2em;
-        ///			font-size: 2em;
-        ///		}
-        ///	&lt;/style&gt;
-        ///&lt;/head&gt;
-        ///&lt;body&gt;
-        ///	&lt;p id=&quot;console&quot; class=&quot;console&quot;&gt;Sorry, you do [rest of string was truncated]&quot;;.
+        ///			right:  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ConsoleCantAccess {
             get {
@@ -183,6 +172,16 @@ namespace ModBotBackend.Properties {
         internal static string ConsoleDefaultCss {
             get {
                 return ResourceManager.GetString("ConsoleDefaultCss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cross {
+            get {
+                object obj = ResourceManager.GetObject("cross", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

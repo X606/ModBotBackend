@@ -9,7 +9,9 @@ using System.IO;
 using ModBotBackend.Operations;
 using ModBotBackend.Users;
 using ModBotBackend.Users.Sessions;
-using PlayFab;
+using System.Diagnostics;
+using System.Net.Sockets;
+
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
 namespace ModBotBackend
@@ -61,6 +63,7 @@ namespace ModBotBackend
 
 		static async void listenMain(HttpListener httpListener)
 		{
+			Task.Factory.StartNew(() => DeployerComunication());
 			while(true)
 			{
 				var context = await httpListener.GetContextAsync();
@@ -108,8 +111,10 @@ namespace ModBotBackend
 
 			string sessionID = GetCookie(request,"SessionID");
 
+			//OutputConsole.WriteLine("sessionID: " + sessionID);
+
 			Authentication authentication;
-			if (SessionsManager.VerifyKey(sessionID, out Session session))
+			if (SessionsManager.Instance.VerifyKey(sessionID, out Session session))
 			{
 				authentication = new Authentication(session.AuthenticationLevel, session.OwnerUserID, sessionID);
 			} else
@@ -126,8 +131,10 @@ namespace ModBotBackend
 				{
 					try
 					{
+						Stopwatch stopwatch = new Stopwatch();
+						stopwatch.Start();
 						selectedOperation.OnOperation(context, authentication);
-						
+						stopwatch.Stop();
 					}
 					catch(Exception e)
 					{
@@ -160,7 +167,7 @@ namespace ModBotBackend
 					if(operation == null)
 						operation = "null";
 
-					Utils.RederectToErrorPage(context, "invalid operation \"" + operation + "\"");
+					Utils.SendErrorPage(context.Response, "invalid operation \"" + operation + "\"", true, HttpStatusCode.BadRequest);
 				}
 			} else
 			{
@@ -221,6 +228,35 @@ namespace ModBotBackend
 
 		}
 
+		static void OnProcessExit()
+		{
+			for (int i = 0; i < OwnFolderObjects.Count; i++)
+			{
+				OwnFolderObjects[i].GetType().GetMethod("OnShutDown").Invoke(OwnFolderObjects[i], new object[] { });
+			}
+
+		}
+		static void DeployerComunication()
+		{
+			IPHostEntry host = Dns.GetHostEntry("localhost");
+			IPAddress ipAddress = host.AddressList[0];
+			IPEndPoint remoteEP = new IPEndPoint(ipAddress, 12022);
+
+			// Create a TCP/IP  socket.    
+			Socket sender = new Socket(ipAddress.AddressFamily,
+				SocketType.Stream, ProtocolType.Tcp);
+
+			// Connect to Remote EndPoint  
+			sender.Connect(remoteEP);
+
+			byte[] buffer = new byte[4];
+			sender.Receive(buffer);
+			Console.WriteLine("Exiting....");
+
+			OnProcessExit();
+			Environment.Exit(0);
+
+		}
 
 		public static readonly Dictionary<string, OperationBase> Operations = new Dictionary<string, OperationBase>();
 		public static readonly List<object> OwnFolderObjects = new List<object>();

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ModLibrary;
 using System.IO;
 using ModBotBackend.Users;
+using System.Drawing;
 
 namespace ModBotBackend.Operations
 {
@@ -26,7 +27,12 @@ namespace ModBotBackend.Operations
 
 			if (!UploadedModsManager.Instance.HasModWithIdBeenUploaded(id))
 			{
-				Utils.RederectToErrorPage(context, "No mod with the id \"" + id + "\" has been uploaded");
+				ImageConverter converter = new ImageConverter();
+
+				byte[] data = (byte[])converter.ConvertTo(Properties.Resources.cross, typeof(byte[]));
+				context.Response.ContentLength64 = data.LongLength;
+				context.Response.OutputStream.Write(data, 0, data.Length);
+				context.Response.Close();
 				return;
 			}
 
@@ -34,7 +40,12 @@ namespace ModBotBackend.Operations
 
 			if (!modInfo.HasImage)
 			{
-				Utils.RederectToErrorPage(context, "The mod with the id \"" + id + "\" has no image");
+				ImageConverter converter = new ImageConverter();
+
+				byte[] data = (byte[])converter.ConvertTo(Properties.Resources.cross, typeof(byte[]));
+				context.Response.ContentLength64 = data.LongLength;
+				context.Response.OutputStream.Write(data, 0, data.Length);
+				context.Response.Close();
 				return;
 			}
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using ModBotBackend.Users.Sessions;
 
 namespace ModBotBackend.Operations
 {
@@ -22,7 +23,7 @@ namespace ModBotBackend.Operations
 			javascriptBuilder.Append("//AutenticationLevel = " + authentication.AuthenticationLevel.ToString());
 			javascriptBuilder.Append("\n\n");
 
-			javascriptBuilder.Append(Properties.Resources.APITemplate);
+			javascriptBuilder.Append(Utils.FormatString(Properties.Resources.APITemplate, (SessionsManager.SESSION_LENGTH * 24 * 60).ToString()));
 
 			foreach (KeyValuePair<string, OperationBase> item in Program.Operations)
 			{
