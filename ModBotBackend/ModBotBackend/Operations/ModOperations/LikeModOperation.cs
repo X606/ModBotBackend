@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace ModBotBackend.Operations
 {
 	[Operation("like")]
-	public class LikeOperation : OperationBase
+	public class LikeModOperation : OperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "likedModId", "likeState" };

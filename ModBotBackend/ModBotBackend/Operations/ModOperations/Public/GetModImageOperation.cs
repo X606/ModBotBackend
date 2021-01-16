@@ -13,7 +13,7 @@ namespace ModBotBackend.Operations
 {
 	
 	[Operation("getModImage")]
-	public class GetImageOperation : OperationBase
+	public class GetModImageOperation : OperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "element", "id"};
