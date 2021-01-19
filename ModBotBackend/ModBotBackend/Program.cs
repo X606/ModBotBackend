@@ -59,7 +59,14 @@ namespace ModBotBackend
 			listenHttp(httpListener);
 
 			while (true)
-				System.Threading.Thread.Sleep(1000 * 60 * 60);
+			{
+				string read = Console.ReadLine();
+				if (read == "quit")
+				{
+					OnProcessExit();
+					Environment.Exit(0);
+				}
+			}
 		}
 
 		static async void listenMain(HttpListener httpListener)
