@@ -195,7 +195,9 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>cd..
-ModBotBackendDeployer.exe -v=code -speed</PostBuildEvent>
+    <PostBuildEvent>if NOT $(ConfigurationName) == Local (
+cd..
+ModBotBackendDeployer.exe -v=code -speed
+)</PostBuildEvent>
   </PropertyGroup>
 </Project>
