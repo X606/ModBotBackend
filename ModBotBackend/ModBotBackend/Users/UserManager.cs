@@ -52,6 +52,16 @@ namespace ModBotBackend.Users
 
 			return null;
 		}
+		public User GetUserFromPlayfabID(string playfabID)
+		{
+			foreach (User user in Users)
+			{
+				if (user.PlayfabID == playfabID)
+					return user;
+			}
+
+			return null;
+		}
 
 		public Session SignInAsUser(string username, string password)
 		{
@@ -67,5 +77,7 @@ namespace ModBotBackend.Users
 
 			return session;
 		}
+
+		
 	}
 }

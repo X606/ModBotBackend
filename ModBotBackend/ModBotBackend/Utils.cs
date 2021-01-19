@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
+using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json;
+using HttpUtils;
 
 namespace ModBotBackend
 {
@@ -183,6 +187,72 @@ namespace ModBotBackend
 			}
 
 			return indexies.ToArray();
+		}
+
+		public static bool TryGetRequestBody<T>(HttpListenerContext context, out T _out) where T: class
+		{
+			try
+			{
+				byte[] data = Misc.ToByteArray(context.Request.InputStream);
+				string json = Encoding.UTF8.GetString(data);
+
+				_out = JsonConvert.DeserializeObject<T>(json);
+				return true;
+			} catch
+			{
+				_out = null;
+				return false;
+			}
+		}
+
+		public static void Respond(HttpListenerResponse response, string body)
+		{
+			HttpStream stream = new HttpStream(response);
+			stream.Send(body);
+			stream.Close();
+		}
+		public static void Respond<T>(HttpListenerResponse response, T body)
+		{
+			Respond(response, JsonConvert.SerializeObject(body));
+		}
+	}
+
+	public static class BitCompressor
+	{
+		public static byte[] GetBytes<T>(T obj)
+		{
+			FieldInfo[] fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+			Array.Sort(fields, (x, y) => String.Compare(x.Name, y.Name));
+
+			byte[] data;
+
+			using (MemoryStream stream = new MemoryStream())
+			{
+				BinaryFormatter bf = new BinaryFormatter();
+				bf.Serialize(stream, obj);
+
+				data = stream.ToArray();
+			}
+
+			return data;
+		}
+		public static void FillObj<T>(T obj, byte[] data)
+		{
+			FieldInfo[] fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+			Array.Sort(fields, (x, y) => String.Compare(x.Name, y.Name));
+
+			using (MemoryStream stream = new MemoryStream(data))
+			{
+				BinaryFormatter bf = new BinaryFormatter();
+				T t = (T)bf.Deserialize(stream);
+
+				for (int i = 0; i < fields.Length; i++)
+				{
+					fields[i].SetValue(obj, fields[i].GetValue(t));
+				}
+
+			}
+
 		}
 
 	}

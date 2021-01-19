@@ -11,6 +11,7 @@ using ModBotBackend.Users;
 using ModBotBackend.Users.Sessions;
 using System.Diagnostics;
 using System.Net.Sockets;
+using Newtonsoft.Json;
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
@@ -133,6 +134,11 @@ namespace ModBotBackend
 					{
 						Stopwatch stopwatch = new Stopwatch();
 						stopwatch.Start();
+						if (selectedOperation.ParseAsJson)
+						{
+							context.Response.ContentType = "application/json";
+						}
+
 						selectedOperation.OnOperation(context, authentication);
 						stopwatch.Stop();
 					}
@@ -144,12 +150,14 @@ namespace ModBotBackend
 
 							error = error.Replace("\"", "\\\"");
 
-
+							context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 							HttpStream httpStream = new HttpStream(context.Response);
 
 							//OutputConsole.WriteLine(e.ToString());
 
-							httpStream.Send("{\"isError\":true}");
+							string errorJson = new InternalError(e.ToString()).ToJson();
+
+							httpStream.Send(errorJson);
 							httpStream.Close();
 
 						}
@@ -261,5 +269,20 @@ namespace ModBotBackend
 		public static readonly Dictionary<string, OperationBase> Operations = new Dictionary<string, OperationBase>();
 		public static readonly List<object> OwnFolderObjects = new List<object>();
 
+	}
+
+	[Serializable]
+	public class InternalError
+	{
+		public InternalError(string _error)
+		{
+			error = _error;
+		}
+		public string ToJson()
+		{
+			return JsonConvert.SerializeObject(this);
+		}
+		public bool isError = true;
+		public string error;
 	}
 }

@@ -52,20 +52,37 @@ namespace ModBotBackend.Operations
 				return;
 			}
 
+			
 			User user = UserManager.Instance.GetUserFromId(session.OwnerUserID);
 			if (user.PlayfabID != null && user.PlayfabID != request.playfabID)
 			{
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send(new SignInResponse()
 				{
-					error = "The provided playfab id did not match the one associated with this account"
+					error = "The provided playfabID did not match the one associated with this account"
 				}.ToJson());
 				stream.Close();
 				return;
 			}
 			else if(user.PlayfabID == null)
 			{
+				if (UserManager.Instance.GetUserFromPlayfabID(request.playfabID) != null)
+				{
+					Utils.Respond(context.Response, new SignInResponse()
+					{
+						error = "The provided playfabID is already associated with an account."
+					});
+					return;
+				}
+
 				user.PlayfabID = request.playfabID;
+				user.Save();
+			}
+
+			if (user.AuthenticationLevel < AuthenticationLevel.VerifiedUser)
+			{
+				Console.WriteLine("Verified user: " + user.Username);
+				user.AuthenticationLevel = AuthenticationLevel.VerifiedUser;
 				user.Save();
 			}
 

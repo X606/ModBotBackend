@@ -34,13 +34,13 @@ namespace ModBotBackend.Operations
 
 			if(!httpMultipartParser.Success)
 			{
-				Utils.RederectToErrorPage(context, "Invalid request");
+				Utils.SendErrorPage(context.Response, "Invalid request", true, HttpStatusCode.BadRequest);
 				return;
 			}
 
 			if(!authentication.IsSignedIn)
 			{
-				Utils.RederectToErrorPage(context, "You are not signed in.");
+				Utils.SendErrorPage(context.Response, "You are not signed in.", true, HttpStatusCode.Unauthorized);
 				return;
 			}
 
@@ -49,7 +49,7 @@ namespace ModBotBackend.Operations
 
 			if (!_validFileExtensions.Contains(extension.ToLower()))
 			{
-				Utils.RederectToErrorPage(context, string.Format("The format \"{0}\" is not supported", extension));
+				Utils.SendErrorPage(context.Response, string.Format("The format \"{0}\" is not supported", extension), true, HttpStatusCode.BadRequest);
 				return;
 			}
 
@@ -65,7 +65,7 @@ namespace ModBotBackend.Operations
 			}
 
 			File.WriteAllBytes(path + extension, imageData);
-			Utils.RederectToErrorPage(context, "Uploaded profile picture!", false);
+			Utils.SendErrorPage(context.Response, "Uploaded profile picture!", false, HttpStatusCode.OK);
 		}
 	}
 }

@@ -143,6 +143,8 @@ namespace ModBotBackend.Users
             user.ShowFull = false;
 			user.SetPassword(password);
 			user.DisplayColor = "#ffffff";
+			user.AuthenticationLevel = AuthenticationLevel.BasicUser;
+			user.PlayfabID = "";
 
 			UserManager.Instance.Users.Add(user);
 			return user;

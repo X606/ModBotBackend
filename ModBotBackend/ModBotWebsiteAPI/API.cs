@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
 using System.Collections;
+using Newtonsoft.Json;
 
 namespace ModBotWebsiteAPI
 {
@@ -87,14 +88,14 @@ namespace ModBotWebsiteAPI
 
 	public class JsonObject
 	{
-		Dictionary<string, string> _parsedData = new Dictionary<string, string>();
+		Dictionary<string, object> _parsedData = new Dictionary<string, object>();
 		public readonly string RawData;
 
-		public string this[string data]
+		public object this[string data]
 		{
 			get
 			{
-				if (_parsedData.TryGetValue(data, out string value))
+				if (_parsedData.TryGetValue(data, out object value))
 				{
 					return value;
 				}
@@ -107,6 +108,9 @@ namespace ModBotWebsiteAPI
 		{
 			RawData = data;
 
+			_parsedData = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
+
+			/*
 			for (int i = 1; i < data.Length; i++)
 			{
 				string key = parseOutString(data, i, out i);
@@ -143,7 +147,7 @@ namespace ModBotWebsiteAPI
 				_parsedData.Add(key, value);
 				Console.WriteLine(key + ": " + value);
 			}
-			
+			*/
 
 			
 		}

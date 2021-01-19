@@ -64,7 +64,7 @@ namespace ModBotBackend.Operations
 					return "<i id='icon' style='color: var(--tertiaryRed)' title='Admin' class='material-icons'>miscellaneous_services</i>";
 				case AuthenticationLevel.Modder:
 					return "<i id='icon' style='color: var(--tertiaryOrange)' title='Modder' class='material-icons'>construction</i>";
-				case AuthenticationLevel.BasicUser:
+				case AuthenticationLevel.VerifiedUser:
 					return "<i id='icon' style='color: var(--tertiaryBlue)' title='Verified' class='material-icons'>verified</i>";
 			}
 			return "";

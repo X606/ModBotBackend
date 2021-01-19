@@ -40,6 +40,12 @@ namespace ModBotBackend.Operations
 
 			SessionsManager.Instance.RemoveSession(authentication.SessionID);
 
+			// Delete the sessionID cookie
+			Cookie cookie = context.Request.Cookies["SessionID"];
+			cookie.Expires = DateTime.Now.AddDays(-10);
+			cookie.Value = null;
+			context.Response.SetCookie(cookie);
+
 			HttpStream httpStream = new HttpStream(context.Response);
 			httpStream.Send(new SignOutResponse()
 			{

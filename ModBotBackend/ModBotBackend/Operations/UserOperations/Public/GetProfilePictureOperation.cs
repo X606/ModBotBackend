@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ModLibrary;
 using System.IO;
 using ModBotBackend.Users;
+using System.Drawing;
 
 namespace ModBotBackend.Operations
 {
@@ -28,7 +29,12 @@ namespace ModBotBackend.Operations
 
 			if(user == null)
 			{
-				Utils.RederectToErrorPage(context, "No user with the id \"" + id + "\" has been found");
+				ImageConverter converter = new ImageConverter();
+
+				byte[] data = (byte[])converter.ConvertTo(Properties.Resources.cross, typeof(byte[]));
+				context.Response.ContentLength64 = data.LongLength;
+				context.Response.OutputStream.Write(data, 0, data.Length);
+				context.Response.Close();
 				return;
 			}
 
