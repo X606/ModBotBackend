@@ -64,7 +64,9 @@ namespace ModBotBackend
 
 		static async void listenMain(HttpListener httpListener)
 		{
+#if !LOCAL
 			Task.Factory.StartNew(() => DeployerComunication());
+#endif
 			while(true)
 			{
 				var context = await httpListener.GetContextAsync();
