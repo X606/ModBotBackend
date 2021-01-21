@@ -55,6 +55,29 @@ namespace ModBotBackend.Managers
 			File.Delete(tagPath);
 
 			_tags.Remove(tag.TagID);
+
+			string[] keys = _users.Keys.ToArray();
+			for(int i = 0; i < keys.Length; i++)
+			{
+				PlayerTagsInfo user = _users[keys[i]];
+				if (user.TagIds.Contains(tag.TagID))
+				{
+					string[] tags = user.TagIds;
+					List<string> output = new List<string>();
+					for (int j = 0; j < tags.Length; j++)
+					{
+						if (tags[j] != tag.TagID)
+						{
+							output.Add(tags[j]);
+						}
+					}
+
+					user.TagIds = output.ToArray();
+
+					SaveUserTags(keys[i], user);
+				}
+
+			}
 		}
 		public void SaveUserTags(string playfabId, PlayerTagsInfo playerTags)
 		{
@@ -96,7 +119,7 @@ namespace ModBotBackend.Managers
 	[Serializable]
 	public class PlayerTagsInfo
 	{
-		public readonly string[] TagIds;
+		public string[] TagIds;
 
 		public PlayerTagsInfo(string[] tagIds)
 		{

@@ -15,7 +15,7 @@ namespace ModBotBackend.Operations
 	[Operation("getModImage")]
 	public class GetModImageOperation : OperationBase
 	{
-		public override bool ParseAsJson => true;
+		public override bool ParseAsJson => false;
 		public override string[] Arguments => new string[] { "element", "id"};
 		public override bool ArgumentsInQuerystring => true;
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;

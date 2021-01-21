@@ -104,9 +104,11 @@
     <Compile Include="Operations\AdminOnly\OpenConsoleWebSocket.cs" />
     <Compile Include="Operations\AdminOnly\SetCustomConsoleCssOperation.cs" />
     <Compile Include="Operations\TagsOperations\EditTagOperation.cs" />
+    <Compile Include="Operations\TagsOperations\GetMyTagsOperation.cs" />
     <Compile Include="Operations\TagsOperations\GetPrefixForPlayfabIdOperation.cs" />
     <Compile Include="Operations\TagsOperations\GetTagOperation.cs" />
     <Compile Include="Operations\TagsOperations\GetTagsOperation.cs" />
+    <Compile Include="Operations\TagsOperations\RemoveTagOperation.cs" />
     <Compile Include="Operations\TagsOperations\SetPlayerTags.cs" />
     <Compile Include="Operations\TagsOperations\UploadTagOperation.cs" />
     <Compile Include="Operations\TagsOperations\VerifyTagOperation.cs" />

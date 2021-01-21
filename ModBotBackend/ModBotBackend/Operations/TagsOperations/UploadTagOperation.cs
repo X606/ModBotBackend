@@ -44,6 +44,11 @@ namespace ModBotBackend.Operations.TagsOperations
 			}
 
 			TagInfo tag = new TagInfo(authentication.UserID, request.tagName, request.tagBody);
+			if (authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.Modder))
+			{
+				tag.Verified = true;
+			}
+
 			TagsManager.Instance.SaveTag(tag);
 
 			Utils.Respond(context.Response, new Response()

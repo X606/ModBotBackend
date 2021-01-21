@@ -44,6 +44,17 @@ namespace ModBotBackend.Operations.TagsOperations
 
 			TagInfo tag = TagsManager.Instance.GetTag(request.tagID);
 
+			if (tag == null)
+			{
+				context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+				Utils.Respond(context.Response, new Response()
+				{
+					isError = true,
+					message = "The requested tag doesn't exit"
+				});
+				return;
+			}
+
 			if (authentication.UserID != tag.CreatorId)
 			{
 				context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
@@ -56,7 +67,10 @@ namespace ModBotBackend.Operations.TagsOperations
 			}
 
 			tag.Body = request.body;
-			tag.Verified = false;
+			if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.Modder))
+			{
+				tag.Verified = false;
+			}
 
 			TagsManager.Instance.SaveTag(tag);
 

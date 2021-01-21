@@ -10,7 +10,7 @@
 | |	Arguments: []
 | |	ArgumentsInQuerystring: False
 | |	HideInAPI: True
-| |	MinimumAuthenticationLevelToCall: VerifiedUser
+| |	MinimumAuthenticationLevelToCall: BasicUser
 | |	ParseAsJson: False
 | |
 \*/

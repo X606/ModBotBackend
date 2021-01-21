@@ -15,6 +15,10 @@ namespace ModBotBackend
 {
 	public static class Utils
 	{
+		public static int GetMaxPlayerTags(Authentication auth)
+		{
+			return 3;
+		}
 		public static string CombinePaths(string path1, string path2)
 		{
 			if (!path1.EndsWith("\\") && !path1.EndsWith("/"))

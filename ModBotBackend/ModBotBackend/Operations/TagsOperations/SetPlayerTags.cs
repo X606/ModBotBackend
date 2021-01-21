@@ -58,7 +58,16 @@ namespace ModBotBackend.Operations.TagsOperations
 					return;
 				}
 			}
-
+			int maxTags = Utils.GetMaxPlayerTags(authentication);
+			if (request.tags.Length > maxTags)
+			{
+				Utils.Respond(context.Response, new Response()
+				{
+					isError = true,
+					message = "You can only have a max of " + maxTags + " tags"
+				});
+				return;
+			}
 
 			User user = UserManager.Instance.GetUserFromId(authentication.UserID);
 

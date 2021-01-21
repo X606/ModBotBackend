@@ -53,6 +53,16 @@ namespace ModBotBackend.Operations.TagsOperations
 				return;
 			}
 
+			if(tag.Verified)
+			{
+				Utils.Respond(context.Response, new Response()
+				{
+					isError = true,
+					message = "The provided tag is already verified."
+				});
+				return;
+			}
+
 			tag.Verified = true;
 			TagsManager.Instance.SaveTag(tag);
 
