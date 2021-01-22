@@ -34,20 +34,26 @@
 
 			const input = document.getElementById('input');
 
-			websocket = API.openConsoleWebSocket();
-			websocket.onmessage = function(e) {
-				WriteToConsole(e.data);
-			};
-			websocket.onopen = function(e) {
-				heartBeat();
-			};
-			websocket.onclose = function(event) {
-			  WriteToConsole("Connection lost!");
-			};
-			window.onbeforeunload = function(e) {
-				websocket.close();
-				console.log("bye!");
-			};
+			function connectSocket() {
+				websocket = API.openConsoleWebSocket();
+				websocket.onmessage = function(e) {
+					WriteToConsole(e.data);
+				};
+				websocket.onopen = function(e) {
+					heartBeat();
+				};
+				websocket.onclose = function(event) {
+					WriteToConsole("Connection lost! Trying To reconnect in 2 seconds...");
+					setTimeout(async () => {
+						connectSocket();
+					},2000);
+				};
+				window.onbeforeunload = function(e) {
+					websocket.close();
+					console.log("bye!");
+				};
+			}
+			connectSocket();
 
 			input.addEventListener('keydown', (evt) => {
 				if (evt.keyCode === 13) {
@@ -56,7 +62,6 @@
 					input.innerHTML = "";
 				}
 			});
-
 		}
 
 		function OnCommandRan(command)
@@ -73,6 +78,9 @@
 
 		function heartBeat() 
 		{
+			if (websocket.readyState != WebSocket.OPEN)
+				return;
+			
 			websocket.send("boomp");
 			setTimeout(heartBeat, 1000);
 		}

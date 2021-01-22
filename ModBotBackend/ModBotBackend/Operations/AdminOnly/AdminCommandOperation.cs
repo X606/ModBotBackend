@@ -54,6 +54,7 @@ namespace ModBotBackend.Operations.AdminOnly
 
 		static void executeAdminCommand(string[] subStrings, Authentication authentication)
 		{
+
 			User user = UserManager.Instance.GetUserFromId(authentication.UserID);
 			string baseCommand = subStrings[0].ToLower();
 
@@ -64,6 +65,22 @@ namespace ModBotBackend.Operations.AdminOnly
 
 			if (_adminCommands == null)
 				populateAdminCommands();
+
+			if (baseCommand == "help")
+			{
+				StringBuilder helpResponseBuilder = new StringBuilder();
+
+				helpResponseBuilder.Append("Commands:\n");
+
+				foreach (KeyValuePair<string, AdminCommand> item in _adminCommands)
+				{
+					helpResponseBuilder.Append(item.Key);
+					helpResponseBuilder.Append('\n');
+				}
+
+				OutputConsole.WriteLine(helpResponseBuilder.ToString());
+				return;
+			}
 
 			if (_adminCommands.TryGetValue(baseCommand, out AdminCommand value))
 			{
