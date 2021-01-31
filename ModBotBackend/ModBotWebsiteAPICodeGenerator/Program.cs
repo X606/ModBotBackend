@@ -30,8 +30,7 @@ namespace ModBotWebsiteAPICodeGenerator
 				Console.ReadLine();
 				return;
 			}
-				
-
+			
 			string template = File.ReadAllText(templatePath);
 
 			foreach (string file in Directory.GetFiles(path))
@@ -57,11 +56,7 @@ namespace ModBotWebsiteAPICodeGenerator
 				bool shouldIncludeCodeForOperation = true;
 				string reasonForNotIncluding = "";
 
-				if (operation.Value.OverrideAPICallJavascript != null || operation.Value.OverrideResolveJavascript != null)
-				{
-					shouldIncludeCodeForOperation = false;
-					reasonForNotIncluding = "it contained custom javascript code, and we cant convert that to c#";
-				} else if (operation.Value.HideInAPI)
+				if (operation.Value.HideInAPI)
 				{
 					shouldIncludeCodeForOperation = false;
 					reasonForNotIncluding = "HideInAPI was set to true";

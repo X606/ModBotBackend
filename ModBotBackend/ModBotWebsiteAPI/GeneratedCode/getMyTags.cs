@@ -6,11 +6,11 @@
 | |
 | | Operation Options:
 | |
-| |	OperationID: search
+| |	OperationID: getMyTags
 | |	Arguments: []
 | |	ArgumentsInQuerystring: False
 | |	HideInAPI: False
-| |	MinimumAuthenticationLevelToCall: None
+| |	MinimumAuthenticationLevelToCall: BasicUser
 | |	ParseAsJson: True
 | |
 \*/
@@ -26,16 +26,16 @@ namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void Search(Action<JsonObject> callback) {
-            StaticCoroutineRunner.StartStaticCoroutine(_search(callback));
+        public static void GetMyTags(Action<JsonObject> callback) {
+            StaticCoroutineRunner.StartStaticCoroutine(_getMyTags(callback));
         }
 
-        private static IEnumerator _search(Action<JsonObject> callback) {
+        private static IEnumerator _getMyTags(Action<JsonObject> callback) {
             
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
-            url += "search";
+            url += "getMyTags";
 			JsonConstructor json = new JsonConstructor();
 			data = json.ToString();
 

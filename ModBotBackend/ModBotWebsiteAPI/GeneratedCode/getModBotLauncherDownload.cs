@@ -6,12 +6,12 @@
 | |
 | | Operation Options:
 | |
-| |	OperationID: search
+| |	OperationID: getModBotLauncherDownload
 | |	Arguments: []
 | |	ArgumentsInQuerystring: False
 | |	HideInAPI: False
 | |	MinimumAuthenticationLevelToCall: None
-| |	ParseAsJson: True
+| |	ParseAsJson: False
 | |
 \*/
 
@@ -26,16 +26,16 @@ namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void Search(Action<JsonObject> callback) {
-            StaticCoroutineRunner.StartStaticCoroutine(_search(callback));
+        public static void GetModBotLauncherDownload(Action<string> callback) {
+            StaticCoroutineRunner.StartStaticCoroutine(_getModBotLauncherDownload(callback));
         }
 
-        private static IEnumerator _search(Action<JsonObject> callback) {
+        private static IEnumerator _getModBotLauncherDownload(Action<string> callback) {
             
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
-            url += "search";
+            url += "getModBotLauncherDownload";
 			JsonConstructor json = new JsonConstructor();
 			data = json.ToString();
 

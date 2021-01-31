@@ -18,6 +18,13 @@ namespace ModBotWebsiteAPI
 		{
 			_sessionID = sessionID;
 		}
+		public static bool HasSession
+		{
+			get
+			{
+				return _sessionID != "";
+			}
+		}
 
 		internal static IEnumerator SendRequest(string url, string data, Action<string> callback)
 		{

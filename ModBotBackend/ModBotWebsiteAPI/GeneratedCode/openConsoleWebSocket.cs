@@ -15,4 +15,31 @@
 | |
 \*/
 
-//This operation is not included in the API becuase it contained custom javascript code, and we cant convert that to c#
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ModBotWebsiteAPI
+{
+    public static partial class API
+    {
+        public static void OpenConsoleWebSocket(Action<string> callback) {
+            StaticCoroutineRunner.StartStaticCoroutine(_openConsoleWebSocket(callback));
+        }
+
+        private static IEnumerator _openConsoleWebSocket(Action<string> callback) {
+            
+            string url = MODBOT_API_URL_BASE;
+            string data = "";
+
+            url += "openConsoleWebSocket";
+			JsonConstructor json = new JsonConstructor();
+			data = json.ToString();
+
+            yield return SendRequest(url, data, callback);
+        }
+    }
+}
