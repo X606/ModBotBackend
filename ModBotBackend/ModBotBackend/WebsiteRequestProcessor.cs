@@ -164,6 +164,8 @@ namespace ModBotBackend
 				return "image/jpeg";
 				case ".gif":
 				return "image/gif";
+				case ".txt":
+				return "text/plain";
 
 				default:
 				return "";
