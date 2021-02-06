@@ -8,6 +8,7 @@ using ModLibrary;
 using System.IO;
 using ModBotBackend.Users;
 using System.Drawing;
+using System.Collections.Concurrent;
 
 namespace ModBotBackend.Operations
 {
@@ -19,7 +20,10 @@ namespace ModBotBackend.Operations
 		public override bool ArgumentsInQuerystring => true;
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
-		public override string OverrideAPICallJavascript => "element.src = \"/api/?operation=getProfilePicture&id=\" + id;";
+		//public override string OverrideAPICallJavascript => "element.src = \"/api/?operation=getProfilePicture&id=\" + id;";
+		public override string OverrideAPICallJavascript => "let destroy = () => { element.src = \"/api/?operation=getProfilePicture&size=\" + element.clientWidth + \"x\" + element.clientHeight + \"&id=\" + id; }; if(element.clientWidth == 0 || element.clientHeight == 0) { setTimeout(destroy,100); } else { destroy(); }";
+
+		static ConcurrentDictionary<string, byte[]> _rescaledImageCache = new ConcurrentDictionary<string, byte[]>();
 
 		public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
@@ -58,9 +62,25 @@ namespace ModBotBackend.Operations
 			{
 				imageFilePath = UserManager.Instance.ProfilePicturesPath + "DefaultAvatar.png";
 			}
-			
-			byte[] imageData = File.ReadAllBytes(imageFilePath);
-			
+
+			string size = context.Request.QueryString["size"];
+			if (size == null)
+			{
+				size = "32x32";
+			}
+
+            if (!ImageResizer.TryScaleImageAndGetAsByteArray(id, size, imageFilePath, _rescaledImageCache, out byte[] imageData))
+			{
+				ImageConverter converter = new ImageConverter();
+
+				byte[] data = (byte[])converter.ConvertTo(Properties.Resources.cross, typeof(byte[]));
+				context.Response.ContentLength64 = data.LongLength;
+				context.Response.OutputStream.Write(data, 0, data.Length);
+				context.Response.Close();
+				return;
+			}
+
+			context.Response.ContentType = "image/png";
 			context.Response.ContentLength64 = imageData.LongLength;
 			context.Response.OutputStream.Write(imageData, 0, imageData.Length);
 			context.Response.Close();

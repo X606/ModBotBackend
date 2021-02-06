@@ -230,7 +230,7 @@ namespace ModBotBackend
 		/// <param name="width">The width to resize to.</param>
 		/// <param name="height">The height to resize to.</param>
 		/// <returns>The resized image.</returns>
-		public static Bitmap ResizeImage(Image image, int width, int height)
+		public static Bitmap ResizeImage(Image image, int width, int height, InterpolationMode interpolationMode)
 		{
 			var destRect = new Rectangle(0, 0, width, height);
 			var destImage = new Bitmap(width, height);
@@ -241,7 +241,7 @@ namespace ModBotBackend
 			{
 				graphics.CompositingMode = CompositingMode.SourceCopy;
 				graphics.CompositingQuality = CompositingQuality.HighQuality;
-				graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+				graphics.InterpolationMode = interpolationMode;
 				graphics.SmoothingMode = SmoothingMode.HighQuality;
 				graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 

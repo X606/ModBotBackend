@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="Authentication.cs" />
     <Content Include="Html\APITemplate.js" />
+    <Compile Include="ImageResizer.cs" />
     <Compile Include="Managers\ConsoleCustomCssManager.cs" />
     <Compile Include="Managers\LogsManager.cs" />
     <Compile Include="Managers\ModBotInfoManager.cs" />
