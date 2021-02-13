@@ -103,9 +103,10 @@ namespace ModBotBackend.Operations
         static bool Search(KeyValuePair<SpecialModData, ModInfo> item, Arguments arguments)
         {
             bool shouldIncludeItem = true;
-            if (arguments["searchString"] != null)
+            if (!string.IsNullOrWhiteSpace(arguments["searchString"]))
             {
                 string searchString = ((string)arguments["searchString"]).ToLower();
+
                 string name = item.Value.DisplayName != null ? item.Value.DisplayName.ToLower() : "";
                 string description = item.Value.Description != null ? item.Value.Description.ToLower() : "";
                 bool nameContains = name.Contains(searchString);
@@ -119,12 +120,12 @@ namespace ModBotBackend.Operations
                 }
             }
 
-            if (((string)arguments["userID"]) != null)
+            if (!string.IsNullOrWhiteSpace(arguments["userID"]))
             {
                 if (((string)arguments["userID"]) != item.Key.OwnerID)
                     shouldIncludeItem = false;
             }
-            if (((string)arguments["modID"]) != null)
+            if (!string.IsNullOrWhiteSpace(arguments["modID"]))
             {
                 if (((string)arguments["userID"]) != item.Key.ModId)
                     shouldIncludeItem = false;

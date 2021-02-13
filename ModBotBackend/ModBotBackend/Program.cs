@@ -145,8 +145,6 @@ namespace ModBotBackend
                 {
                     try
                     {
-                        OutputConsole.WriteLine("GOT OPERATION: \"" + operation + "\"");
-
                         Stopwatch stopwatch = new Stopwatch();
                         stopwatch.Start();
                         if (selectedOperation.ParseAsJson)
