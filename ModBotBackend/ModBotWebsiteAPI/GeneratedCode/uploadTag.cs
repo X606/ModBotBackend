@@ -17,29 +17,27 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void UploadTag(string tagName, string tagBody, Action<JsonObject> callback) {
+        public static void UploadTag(string tagName, string tagBody, Action<JsonObject> callback)
+        {
             StaticCoroutineRunner.StartStaticCoroutine(_uploadTag(tagName, tagBody, callback));
         }
 
-        private static IEnumerator _uploadTag(string tagName, string tagBody, Action<JsonObject> callback) {
-            
+        private static IEnumerator _uploadTag(string tagName, string tagBody, Action<JsonObject> callback)
+        {
+
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "uploadTag";
-			JsonConstructor json = new JsonConstructor();
-			json.AppendValue("tagName", tagName);
-			json.AppendValue("tagBody", tagBody);
-			data = json.ToString();
+            JsonConstructor json = new JsonConstructor();
+            json.AppendValue("tagName", tagName);
+            json.AppendValue("tagBody", tagBody);
+            data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

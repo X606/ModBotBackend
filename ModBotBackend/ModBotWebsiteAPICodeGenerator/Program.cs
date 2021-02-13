@@ -1,129 +1,127 @@
-﻿using System;
+﻿using ModBotBackend;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using ModBotBackend;
 using System.Reflection;
-using ModBotWebsiteAPI;
+using System.Text;
 
 namespace ModBotWebsiteAPICodeGenerator
 {
-	class Program
-	{
-		static void Main(string[] args)
-		{
-			string path = new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName + "/ModBotWebsiteAPI/GeneratedCode/";
-			string templatePath = new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName + "/ModBotWebsiteAPI/Template.csTemplate";
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string path = new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName + "/ModBotWebsiteAPI/GeneratedCode/";
+            string templatePath = new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName + "/ModBotWebsiteAPI/Template.csTemplate";
 
-			if (!Directory.Exists(path))
-			{
-				Console.WriteLine("Generated path is invalid \"" + path + "\"");
-				Console.ReadLine();
-				return;
-			}
-				
-			if (!File.Exists(templatePath))
-			{
-				Console.WriteLine("Template path is invalid \"" + templatePath + "\"");
-				Console.ReadLine();
-				return;
-			}
-			
-			string template = File.ReadAllText(templatePath);
+            if (!Directory.Exists(path))
+            {
+                Console.WriteLine("Generated path is invalid \"" + path + "\"");
+                Console.ReadLine();
+                return;
+            }
 
-			foreach (string file in Directory.GetFiles(path))
-			{
-				File.Delete(file);
-			}
+            if (!File.Exists(templatePath))
+            {
+                Console.WriteLine("Template path is invalid \"" + templatePath + "\"");
+                Console.ReadLine();
+                return;
+            }
 
-			Dictionary<string, OperationBase> _operations = new Dictionary<string, OperationBase>();
-			Populate(_operations);
-			foreach (KeyValuePair<string, OperationBase> operation in _operations)
-			{
-				Console.WriteLine("Generating code for operation \"" + operation.Key + "\"...");
+            string template = File.ReadAllText(templatePath);
 
-				string formatedPrefix = Utils.FormatString(Properties.Resources.Prefix,
-					operation.Key,
-					string.Join(", ", operation.Value.Arguments),
-					operation.Value.ArgumentsInQuerystring.ToString(),
-					operation.Value.HideInAPI.ToString(),
-					operation.Value.MinimumAuthenticationLevelToCall.ToString(),
-					operation.Value.ParseAsJson.ToString()
-				);
-				
-				bool shouldIncludeCodeForOperation = true;
-				string reasonForNotIncluding = "";
+            foreach (string file in Directory.GetFiles(path))
+            {
+                File.Delete(file);
+            }
 
-				if (operation.Value.HideInAPI)
-				{
-					shouldIncludeCodeForOperation = false;
-					reasonForNotIncluding = "HideInAPI was set to true";
-				}
+            Dictionary<string, OperationBase> _operations = new Dictionary<string, OperationBase>();
+            Populate(_operations);
+            foreach (KeyValuePair<string, OperationBase> operation in _operations)
+            {
+                Console.WriteLine("Generating code for operation \"" + operation.Key + "\"...");
 
-				string formatedCode;
-				if (shouldIncludeCodeForOperation)
-				{
-					StringBuilder argumentsDefintionBuilder = new StringBuilder();
-					StringBuilder argumentsCallingBuilder = new StringBuilder();
-					for (int i = 0; i < operation.Value.Arguments.Length; i++)
-					{
-						argumentsDefintionBuilder.Append("string ");
-						argumentsDefintionBuilder.Append(operation.Value.Arguments[i]);
-						argumentsCallingBuilder.Append(operation.Value.Arguments[i]);
+                string formatedPrefix = Utils.FormatString(Properties.Resources.Prefix,
+                    operation.Key,
+                    string.Join(", ", operation.Value.Arguments),
+                    operation.Value.ArgumentsInQuerystring.ToString(),
+                    operation.Value.HideInAPI.ToString(),
+                    operation.Value.MinimumAuthenticationLevelToCall.ToString(),
+                    operation.Value.ParseAsJson.ToString()
+                );
 
-						argumentsDefintionBuilder.Append(", ");
-						argumentsCallingBuilder.Append(", ");
-					}
+                bool shouldIncludeCodeForOperation = true;
+                string reasonForNotIncluding = "";
 
-					string privateMethodName = operation.Key;
-					privateMethodName = "_" + privateMethodName[0].ToString().ToLower() + privateMethodName.Substring(1);
+                if (operation.Value.HideInAPI)
+                {
+                    shouldIncludeCodeForOperation = false;
+                    reasonForNotIncluding = "HideInAPI was set to true";
+                }
 
-					string publicMethodName = operation.Key;
-					publicMethodName = publicMethodName[0].ToString().ToUpper() + publicMethodName.Substring(1);
+                string formatedCode;
+                if (shouldIncludeCodeForOperation)
+                {
+                    StringBuilder argumentsDefintionBuilder = new StringBuilder();
+                    StringBuilder argumentsCallingBuilder = new StringBuilder();
+                    for (int i = 0; i < operation.Value.Arguments.Length; i++)
+                    {
+                        argumentsDefintionBuilder.Append("string ");
+                        argumentsDefintionBuilder.Append(operation.Value.Arguments[i]);
+                        argumentsCallingBuilder.Append(operation.Value.Arguments[i]);
 
-					StringBuilder codeStringBuilder = new StringBuilder();
-					codeStringBuilder.Append("url += \"" + operation.Key + "");
+                        argumentsDefintionBuilder.Append(", ");
+                        argumentsCallingBuilder.Append(", ");
+                    }
 
-					if (operation.Value.ArgumentsInQuerystring)
-					{
-						for (int i = 0; i < operation.Value.Arguments.Length; i++)
-						{
-							codeStringBuilder.Append("&");
-							codeStringBuilder.Append(operation.Value.Arguments[i]);
-							codeStringBuilder.Append("=\" + ");
-							codeStringBuilder.Append(operation.Value.Arguments[i]);
-							
-							if (i != (operation.Value.Arguments.Length-1))
-							{
-								codeStringBuilder.Append(" + \"");
-							}
-						}
-						codeStringBuilder.Append(";\r\n");
-						codeStringBuilder.Append("\t\t\t");
-						codeStringBuilder.Append("data = \"{}\";\r\n");
+                    string privateMethodName = operation.Key;
+                    privateMethodName = "_" + privateMethodName[0].ToString().ToLower() + privateMethodName.Substring(1);
 
-					} else
-					{
-						codeStringBuilder.Append("\";\r\n");
+                    string publicMethodName = operation.Key;
+                    publicMethodName = publicMethodName[0].ToString().ToUpper() + publicMethodName.Substring(1);
 
-						codeStringBuilder.Append("\t\t\t");
-						codeStringBuilder.Append("JsonConstructor json = new JsonConstructor();");
-						for (int i = 0; i < operation.Value.Arguments.Length; i++)
-						{
-							codeStringBuilder.Append("\r\n\t\t\t");
-							codeStringBuilder.Append("json.AppendValue(\"");
-							codeStringBuilder.Append(operation.Value.Arguments[i]);
-							codeStringBuilder.Append("\", ");
-							codeStringBuilder.Append(operation.Value.Arguments[i]);
-							codeStringBuilder.Append(");");
-						}
-						codeStringBuilder.Append("\r\n\t\t\t");
-						codeStringBuilder.Append("data = json.ToString();");
-					}
+                    StringBuilder codeStringBuilder = new StringBuilder();
+                    codeStringBuilder.Append("url += \"" + operation.Key + "");
 
-					/*
+                    if (operation.Value.ArgumentsInQuerystring)
+                    {
+                        for (int i = 0; i < operation.Value.Arguments.Length; i++)
+                        {
+                            codeStringBuilder.Append("&");
+                            codeStringBuilder.Append(operation.Value.Arguments[i]);
+                            codeStringBuilder.Append("=\" + ");
+                            codeStringBuilder.Append(operation.Value.Arguments[i]);
+
+                            if (i != (operation.Value.Arguments.Length - 1))
+                            {
+                                codeStringBuilder.Append(" + \"");
+                            }
+                        }
+                        codeStringBuilder.Append(";\r\n");
+                        codeStringBuilder.Append("\t\t\t");
+                        codeStringBuilder.Append("data = \"{}\";\r\n");
+
+                    }
+                    else
+                    {
+                        codeStringBuilder.Append("\";\r\n");
+
+                        codeStringBuilder.Append("\t\t\t");
+                        codeStringBuilder.Append("JsonConstructor json = new JsonConstructor();");
+                        for (int i = 0; i < operation.Value.Arguments.Length; i++)
+                        {
+                            codeStringBuilder.Append("\r\n\t\t\t");
+                            codeStringBuilder.Append("json.AppendValue(\"");
+                            codeStringBuilder.Append(operation.Value.Arguments[i]);
+                            codeStringBuilder.Append("\", ");
+                            codeStringBuilder.Append(operation.Value.Arguments[i]);
+                            codeStringBuilder.Append(");");
+                        }
+                        codeStringBuilder.Append("\r\n\t\t\t");
+                        codeStringBuilder.Append("data = json.ToString();");
+                    }
+
+                    /*
 					
 					JsonConstructor json = new JsonConstructor();
 					json.AppendValue("modId", modId);
@@ -131,50 +129,62 @@ namespace ModBotWebsiteAPICodeGenerator
 					
 					 */
 
-					formatedCode = Utils.FormatString(template,
-						privateMethodName,
-						publicMethodName,
-						argumentsDefintionBuilder.ToString(),
-						argumentsCallingBuilder.ToString(),
-						codeStringBuilder.ToString(),
-						operation.Value.ParseAsJson ? "JsonObject" : "string"
-					);
-				}
-				else 
-				{
-					formatedCode = "//This operation is not included in the API becuase " + reasonForNotIncluding;
-				}
+                    formatedCode = Utils.FormatString(template,
+                        privateMethodName,
+                        publicMethodName,
+                        argumentsDefintionBuilder.ToString(),
+                        argumentsCallingBuilder.ToString(),
+                        codeStringBuilder.ToString(),
+                        operation.Value.ParseAsJson ? "JsonObject" : "string"
+                    );
+                }
+                else
+                {
+                    formatedCode = "//This operation is not included in the API becuase " + reasonForNotIncluding;
+                }
 
 
 
-				File.WriteAllText(path + operation.Key + ".cs", formatedPrefix + formatedCode);
-			}
+                File.WriteAllText(path + operation.Key + ".cs", formatedPrefix + formatedCode);
+            }
 
-			Console.WriteLine("Done!");
-		}
+            Console.WriteLine("Done!");
+        }
 
-		static void Populate(Dictionary<string, OperationBase> _operations)
-		{
-			_operations.Clear();
+        static void Populate(Dictionary<string, OperationBase> _operations)
+        {
+            _operations.Clear();
 
-			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-			
-			for (int i = 0; i < assemblies.Length; i++)
-			{
-				Type[] loadedTypes = assemblies[i].GetTypes();
-				for (int j = 0; j < loadedTypes.Length; j++)
-				{
-					OperationAttribute operationAttribute = (OperationAttribute)Attribute.GetCustomAttribute(loadedTypes[j], typeof(OperationAttribute));
-					if (operationAttribute == null)
-						continue;
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-					if (loadedTypes[j].BaseType != typeof(OperationBase))
-						continue;
+            for (int i = 0; i < assemblies.Length; i++)
+            {
+                Type[] loadedTypes = assemblies[i].GetTypes();
+                for (int j = 0; j < loadedTypes.Length; j++)
+                {
+                    OperationAttribute operationAttribute = (OperationAttribute)Attribute.GetCustomAttribute(loadedTypes[j], typeof(OperationAttribute));
+                    if (operationAttribute == null)
+                        continue;
 
-					_operations.Add(operationAttribute.OperationKey, (OperationBase)Activator.CreateInstance(loadedTypes[j]));
-				}
-			}
+                    if (!ExtendsFrom(loadedTypes[j].BaseType, typeof(OperationBase)))
+                        continue;
 
-		}
-	}
+                    _operations.Add(operationAttribute.OperationKey, (OperationBase)Activator.CreateInstance(loadedTypes[j]));
+                }
+            }
+
+        }
+        public static bool ExtendsFrom(Type type, Type baseType)
+        {
+            while (type != null)
+            {
+                if (type == baseType)
+                    return true;
+
+                type = type.BaseType;
+            }
+
+            return false;
+        }
+    }
 }

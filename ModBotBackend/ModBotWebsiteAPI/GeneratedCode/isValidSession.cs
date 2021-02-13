@@ -17,28 +17,26 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void IsValidSession(string sessionId, Action<string> callback) {
+        public static void IsValidSession(string sessionId, Action<string> callback)
+        {
             StaticCoroutineRunner.StartStaticCoroutine(_isValidSession(sessionId, callback));
         }
 
-        private static IEnumerator _isValidSession(string sessionId, Action<string> callback) {
-            
+        private static IEnumerator _isValidSession(string sessionId, Action<string> callback)
+        {
+
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "isValidSession";
-			JsonConstructor json = new JsonConstructor();
-			json.AppendValue("sessionId", sessionId);
-			data = json.ToString();
+            JsonConstructor json = new JsonConstructor();
+            json.AppendValue("sessionId", sessionId);
+            data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

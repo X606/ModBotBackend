@@ -17,28 +17,26 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void DownloadTempFile(string key, Action<JsonObject> callback) {
+        public static void DownloadTempFile(string key, Action<JsonObject> callback)
+        {
             StaticCoroutineRunner.StartStaticCoroutine(_downloadTempFile(key, callback));
         }
 
-        private static IEnumerator _downloadTempFile(string key, Action<JsonObject> callback) {
-            
+        private static IEnumerator _downloadTempFile(string key, Action<JsonObject> callback)
+        {
+
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "downloadTempFile";
-			JsonConstructor json = new JsonConstructor();
-			json.AppendValue("key", key);
-			data = json.ToString();
+            JsonConstructor json = new JsonConstructor();
+            json.AppendValue("key", key);
+            data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

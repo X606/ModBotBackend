@@ -1,123 +1,121 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.Networking;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Text;
+using UnityEngine.Networking;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
-	{
-		public const string MODBOT_API_URL_BASE = "https://modbot.org/api?operation=";
-		static string _sessionID = "";
+    {
+        public const string MODBOT_API_URL_BASE = "https://modbot.org/api?operation=";
+        static string _sessionID = "";
 
-		public static void SetSessionID(string sessionID)
-		{
-			_sessionID = sessionID;
-		}
-		public static bool HasSession
-		{
-			get
-			{
-				return _sessionID != "";
-			}
-		}
+        public static void SetSessionID(string sessionID)
+        {
+            _sessionID = sessionID;
+        }
+        public static bool HasSession
+        {
+            get
+            {
+                return _sessionID != "";
+            }
+        }
 
-		internal static IEnumerator SendRequest(string url, string data, Action<string> callback)
-		{
-			UnityWebRequest webRequest = new UnityWebRequest(url);
-			webRequest.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(data));
-			webRequest.downloadHandler = new DownloadHandlerBuffer();
-			webRequest.method = UnityWebRequest.kHttpVerbPOST;
+        internal static IEnumerator SendRequest(string url, string data, Action<string> callback)
+        {
+            UnityWebRequest webRequest = new UnityWebRequest(url);
+            webRequest.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(data));
+            webRequest.downloadHandler = new DownloadHandlerBuffer();
+            webRequest.method = UnityWebRequest.kHttpVerbPOST;
 
-			if (_sessionID != null)
-				webRequest.SetRequestHeader("Cookie", "SessionID=" + _sessionID);
-			
-			yield return webRequest.SendWebRequest();
+            if (_sessionID != null)
+                webRequest.SetRequestHeader("Cookie", "SessionID=" + _sessionID);
 
-			callback(webRequest.downloadHandler.text);
-			yield return null;
-		}
-		internal static IEnumerator SendRequest(string url, string data, Action<JsonObject> callback)
-		{
-			//UnityWebRequest webRequest = UnityWebRequest.Post(url, data);
-			UnityWebRequest webRequest = new UnityWebRequest(url);
-			webRequest.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(data));
-			webRequest.downloadHandler = new DownloadHandlerBuffer();
-			webRequest.method = UnityWebRequest.kHttpVerbPOST;
+            yield return webRequest.SendWebRequest();
 
-			if (_sessionID != null)
-				webRequest.SetRequestHeader("Cookie", "SessionID=" + _sessionID);
+            callback(webRequest.downloadHandler.text);
+            yield return null;
+        }
+        internal static IEnumerator SendRequest(string url, string data, Action<JsonObject> callback)
+        {
+            //UnityWebRequest webRequest = UnityWebRequest.Post(url, data);
+            UnityWebRequest webRequest = new UnityWebRequest(url);
+            webRequest.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(data));
+            webRequest.downloadHandler = new DownloadHandlerBuffer();
+            webRequest.method = UnityWebRequest.kHttpVerbPOST;
 
-			yield return webRequest.SendWebRequest();
+            if (_sessionID != null)
+                webRequest.SetRequestHeader("Cookie", "SessionID=" + _sessionID);
 
-			callback(new JsonObject(webRequest.downloadHandler.text));
-			yield return null;
-		}
-	}
+            yield return webRequest.SendWebRequest();
 
-	class JsonConstructor
-	{
-		StringBuilder _builder;
-		public JsonConstructor()
-		{
-			_builder = new StringBuilder();
-			_builder.Append('{');
-			_appended = 0;
-		}
+            callback(new JsonObject(webRequest.downloadHandler.text));
+            yield return null;
+        }
+    }
 
-		int _appended;
+    class JsonConstructor
+    {
+        StringBuilder _builder;
+        public JsonConstructor()
+        {
+            _builder = new StringBuilder();
+            _builder.Append('{');
+            _appended = 0;
+        }
 
-		public void AppendValue(string key, string value)
-		{
-			if (_appended != 0)
-				_builder.Append(", ");
+        int _appended;
 
-			key = key.Replace("\"", "\\\"");
-			value = value.Replace("\"", "\\\"");
+        public void AppendValue(string key, string value)
+        {
+            if (_appended != 0)
+                _builder.Append(", ");
 
-			_builder.Append("\"" + key + "\"");
-			_builder.Append(":");
-			_builder.Append("\"" + value + "\"");
+            key = key.Replace("\"", "\\\"");
+            value = value.Replace("\"", "\\\"");
 
-			_appended++;
-		}
+            _builder.Append("\"" + key + "\"");
+            _builder.Append(":");
+            _builder.Append("\"" + value + "\"");
+
+            _appended++;
+        }
 
 
-		public override string ToString()
-		{
-			return _builder.ToString() + "}";
-		}
-	}
+        public override string ToString()
+        {
+            return _builder.ToString() + "}";
+        }
+    }
 
-	public class JsonObject
-	{
-		Dictionary<string, object> _parsedData = new Dictionary<string, object>();
-		public readonly string RawData;
+    public class JsonObject
+    {
+        Dictionary<string, object> _parsedData = new Dictionary<string, object>();
+        public readonly string RawData;
 
-		public object this[string data]
-		{
-			get
-			{
-				if (_parsedData.TryGetValue(data, out object value))
-				{
-					return value;
-				}
+        public object this[string data]
+        {
+            get
+            {
+                if (_parsedData.TryGetValue(data, out object value))
+                {
+                    return value;
+                }
 
-				return "";
-			}
-		}
+                return "";
+            }
+        }
 
-		public JsonObject(string data)
-		{
-			RawData = data;
+        public JsonObject(string data)
+        {
+            RawData = data;
 
-			_parsedData = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
+            _parsedData = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
 
-			/*
+            /*
 			for (int i = 1; i < data.Length; i++)
 			{
 				string key = parseOutString(data, i, out i);
@@ -156,47 +154,48 @@ namespace ModBotWebsiteAPI
 			}
 			*/
 
-			
-		}
 
-		static string parseOutString(string data, int startIndex, out int endIndex)
-		{
-			if (tryGetEndOfString(data, startIndex, out int end))
-			{
-				endIndex = end;
-			} else
-			{
-				endIndex = 0;
-				return "";
-			}
+        }
 
-			return data.Substring(startIndex + 1, endIndex - startIndex-1);
-		}
+        static string parseOutString(string data, int startIndex, out int endIndex)
+        {
+            if (tryGetEndOfString(data, startIndex, out int end))
+            {
+                endIndex = end;
+            }
+            else
+            {
+                endIndex = 0;
+                return "";
+            }
 
-		static bool tryGetEndOfString(string data, int index, out int endIndex)
-		{
-			if (data[index] != '\"')
-				throw new Exception("The passed index was not a start of a string, its was \"" + data[index] + "\"");
+            return data.Substring(startIndex + 1, endIndex - startIndex - 1);
+        }
 
-			bool nextCharacterSpecial = false;
-			for (int i = index+1; i < data.Length; i++)
-			{
-				if (!nextCharacterSpecial)
-				{
-					if (data[i] == '\"')
-					{
-						endIndex = i;
-						return true;
-					}
-				}
+        static bool tryGetEndOfString(string data, int index, out int endIndex)
+        {
+            if (data[index] != '\"')
+                throw new Exception("The passed index was not a start of a string, its was \"" + data[index] + "\"");
+
+            bool nextCharacterSpecial = false;
+            for (int i = index + 1; i < data.Length; i++)
+            {
+                if (!nextCharacterSpecial)
+                {
+                    if (data[i] == '\"')
+                    {
+                        endIndex = i;
+                        return true;
+                    }
+                }
 
 
-				nextCharacterSpecial = data[i] == '\\';
-			}
+                nextCharacterSpecial = data[i] == '\\';
+            }
 
-			endIndex = -1;
-			return false;
-		}
+            endIndex = -1;
+            return false;
+        }
 
-	}
+    }
 }

@@ -17,29 +17,27 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void CreateAccount(string username, string password, Action<JsonObject> callback) {
+        public static void CreateAccount(string username, string password, Action<JsonObject> callback)
+        {
             StaticCoroutineRunner.StartStaticCoroutine(_createAccount(username, password, callback));
         }
 
-        private static IEnumerator _createAccount(string username, string password, Action<JsonObject> callback) {
-            
+        private static IEnumerator _createAccount(string username, string password, Action<JsonObject> callback)
+        {
+
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "createAccount";
-			JsonConstructor json = new JsonConstructor();
-			json.AppendValue("username", username);
-			json.AppendValue("password", password);
-			data = json.ToString();
+            JsonConstructor json = new JsonConstructor();
+            json.AppendValue("username", username);
+            json.AppendValue("password", password);
+            data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

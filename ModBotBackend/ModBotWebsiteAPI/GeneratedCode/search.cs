@@ -17,27 +17,25 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void Search(Action<JsonObject> callback) {
+        public static void Search(Action<JsonObject> callback)
+        {
             StaticCoroutineRunner.StartStaticCoroutine(_search(callback));
         }
 
-        private static IEnumerator _search(Action<JsonObject> callback) {
-            
+        private static IEnumerator _search(Action<JsonObject> callback)
+        {
+
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "search";
-			JsonConstructor json = new JsonConstructor();
-			data = json.ToString();
+            JsonConstructor json = new JsonConstructor();
+            data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }
