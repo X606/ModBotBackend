@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 
 namespace ModBotBackend
 {
@@ -20,7 +15,7 @@ namespace ModBotBackend
             if (arguments != null)
             {
                 data = OnOperation(arguments, authentication);
-                
+
                 context.Response.StatusCode = (int)StatusCode;
                 context.Response.ContentType = ContentType;
             }

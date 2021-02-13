@@ -1,25 +1,19 @@
 ﻿using ModBotBackend.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModBotBackend.Operations
 {
-	[Operation("ping")]
-	public class PingOperation : PlainTextOperationBase
-	{
-		public override string[] Arguments => new string[] { };
+    [Operation("ping")]
+    public class PingOperation : PlainTextOperationBase
+    {
+        public override string[] Arguments => new string[] { };
 
-		public override bool ParseAsJson => false;
+        public override bool ParseAsJson => false;
 
-		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
+        public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
-		public override string OnOperation(Arguments arguments, Authentication authentication)
-		{
-			return "pong!";
-		}
-	}
+        public override string OnOperation(Arguments arguments, Authentication authentication)
+        {
+            return "pong!";
+        }
+    }
 }

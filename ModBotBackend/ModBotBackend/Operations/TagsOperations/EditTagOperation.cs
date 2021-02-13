@@ -1,83 +1,78 @@
 ﻿using ModBotBackend.Managers;
 using ModBotBackend.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModBotBackend.Operations.TagsOperations
 {
-	[Operation("editTag")]
-	public class EditTagOperation : JsonOperationBase
-	{
-		public override string[] Arguments => new string[] { "tagID", "body" };
+    [Operation("editTag")]
+    public class EditTagOperation : JsonOperationBase
+    {
+        public override string[] Arguments => new string[] { "tagID", "body" };
 
-		public override bool ParseAsJson => true;
+        public override bool ParseAsJson => true;
 
-		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
+        public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
 
-		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
-		{
-			if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.VerifiedUser))
-			{
-				StatusCode = HttpStatusCode.Unauthorized;
-				return new Response()
-				{
-					message = "You need to be at least a verified user to do this"
-				};
-			}
+        public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
+        {
+            if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.VerifiedUser))
+            {
+                StatusCode = HttpStatusCode.Unauthorized;
+                return new Response()
+                {
+                    message = "You need to be at least a verified user to do this"
+                };
+            }
 
-			Request request = new Request()
-			{
-				tagID = arguments["tagID"],
-				body = arguments["body"]
-			};
+            Request request = new Request()
+            {
+                tagID = arguments["tagID"],
+                body = arguments["body"]
+            };
 
-			TagInfo tag = TagsManager.Instance.GetTag(request.tagID);
+            TagInfo tag = TagsManager.Instance.GetTag(request.tagID);
 
-			if (tag == null)
-			{
-				StatusCode = HttpStatusCode.BadRequest;
-				return new Response()
-				{
-					Error = "The requested tag doesn't exit"
-				};
-			}
+            if (tag == null)
+            {
+                StatusCode = HttpStatusCode.BadRequest;
+                return new Response()
+                {
+                    Error = "The requested tag doesn't exit"
+                };
+            }
 
-			if (authentication.UserID != tag.CreatorId)
-			{
-				StatusCode = HttpStatusCode.Unauthorized;
-				return new Response()
-				{
-					Error = "You are not the owner of this tag."
-				};
-			}
+            if (authentication.UserID != tag.CreatorId)
+            {
+                StatusCode = HttpStatusCode.Unauthorized;
+                return new Response()
+                {
+                    Error = "You are not the owner of this tag."
+                };
+            }
 
-			tag.Body = request.body;
-			if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.Modder))
-			{
-				tag.Verified = false;
-			}
+            tag.Body = request.body;
+            if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.Modder))
+            {
+                tag.Verified = false;
+            }
 
-			TagsManager.Instance.SaveTag(tag);
+            TagsManager.Instance.SaveTag(tag);
 
-			return new Response()
-			{
-				message = "Updated tag."
-			};
-		}
+            return new Response()
+            {
+                message = "Updated tag."
+            };
+        }
 
-		class Request
-		{
-			public string tagID;
-			public string body;
-		}
-		class Response : JsonOperationResponseBase
-		{
-			public string message;
-		}
+        class Request
+        {
+            public string tagID;
+            public string body;
+        }
+        class Response : JsonOperationResponseBase
+        {
+            public string message;
+        }
 
-	}
+    }
 }

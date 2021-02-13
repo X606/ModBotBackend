@@ -1,106 +1,103 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ModLibrary;
 using Newtonsoft.Json;
-using ModLibrary;
+using System;
+using System.Collections.Generic;
 
 namespace ModBotBackend
 {
-	[Serializable]
-	public class SpecialModData
-	{
-		private SpecialModData() { }
+    [Serializable]
+    public class SpecialModData
+    {
+        private SpecialModData() { }
 
-		public int Likes;
-		public int Downloads;
-		public string OwnerID;
-		public string ModId;
+        public int Likes;
+        public int Downloads;
+        public string OwnerID;
+        public string ModId;
 
-		public ulong PostedDate;
-		public ulong UpdatedDate;
+        public ulong PostedDate;
+        public ulong UpdatedDate;
 
-		public List<Comment> Comments = new List<Comment>();
-		public List<ModReport> Reports = new List<ModReport>();
+        public List<Comment> Comments = new List<Comment>();
+        public List<ModReport> Reports = new List<ModReport>();
 
-		public string ToJson()
-		{
-			return JsonConvert.SerializeObject(this);
-		}
-		public static SpecialModData FromJson(string json)
-		{
-			return JsonConvert.DeserializeObject<SpecialModData>(json);
-		}
+        public string ToJson()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+        public static SpecialModData FromJson(string json)
+        {
+            return JsonConvert.DeserializeObject<SpecialModData>(json);
+        }
 
-		public Comment GetCommentWithCommentID(string commentID)
-		{
-			foreach(Comment comment in Comments)
-			{
-				if (comment.CommentID == commentID)
-					return comment;
+        public Comment GetCommentWithCommentID(string commentID)
+        {
+            foreach (Comment comment in Comments)
+            {
+                if (comment.CommentID == commentID)
+                    return comment;
 
-			}
+            }
 
-			return null;
-		}
-		public void DeleteCommentWithId(string commentID)
-		{
-			for(int i = Comments.Count - 1; i >= 0; i--)
-			{
-				if (Comments[i].CommentID == commentID)
-				{
-					Comments.RemoveAt(i);
-					break;
-				}
-			}
-			
-			
-		}
+            return null;
+        }
+        public void DeleteCommentWithId(string commentID)
+        {
+            for (int i = Comments.Count - 1; i >= 0; i--)
+            {
+                if (Comments[i].CommentID == commentID)
+                {
+                    Comments.RemoveAt(i);
+                    break;
+                }
+            }
 
-		public void Save()
-		{
-			UploadedModsManager.Instance.SaveSpecialModData(this);
-		}
 
-		public static SpecialModData CreateNewSpecialModData(ModInfo mod, string ownerID)
-		{
-			SpecialModData specialModData = new SpecialModData();
-			specialModData.Likes = 0;
-			specialModData.Downloads = 0;
-			specialModData.ModId = mod.UniqueID;
-			specialModData.OwnerID = ownerID;
-			specialModData.PostedDate = (ulong)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-			specialModData.UpdatedDate = specialModData.PostedDate;
+        }
 
-			specialModData.Comments = new List<Comment>();
-			specialModData.Reports = new List<ModReport>();
+        public void Save()
+        {
+            UploadedModsManager.Instance.SaveSpecialModData(this);
+        }
 
-			return specialModData;
-		}
-	}
+        public static SpecialModData CreateNewSpecialModData(ModInfo mod, string ownerID)
+        {
+            SpecialModData specialModData = new SpecialModData();
+            specialModData.Likes = 0;
+            specialModData.Downloads = 0;
+            specialModData.ModId = mod.UniqueID;
+            specialModData.OwnerID = ownerID;
+            specialModData.PostedDate = (ulong)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            specialModData.UpdatedDate = specialModData.PostedDate;
 
-	[Serializable]
-	public class Comment
-	{
-		public static Comment CreateNewComment(string posterUserId, string commentBody)
-		{
-			Comment comment = new Comment();
-			comment.PosterUserId = posterUserId;
-			comment.CommentBody = commentBody;
-			comment.CommentID = Guid.NewGuid().ToString();
-			comment.PostedUTCTime = (ulong)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            specialModData.Comments = new List<Comment>();
+            specialModData.Reports = new List<ModReport>();
 
-			return comment;
-		}
+            return specialModData;
+        }
+    }
 
-		public string PosterUserId;
-		public string CommentBody;
+    [Serializable]
+    public class Comment
+    {
+        public static Comment CreateNewComment(string posterUserId, string commentBody)
+        {
+            Comment comment = new Comment();
+            comment.PosterUserId = posterUserId;
+            comment.CommentBody = commentBody;
+            comment.CommentID = Guid.NewGuid().ToString();
+            comment.PostedUTCTime = (ulong)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
-		public string CommentID;
+            return comment;
+        }
 
-		public ulong PostedUTCTime;
+        public string PosterUserId;
+        public string CommentBody;
 
-		public List<string> UsersWhoLikedThis = new List<string>();
-	}
+        public string CommentID;
+
+        public ulong PostedUTCTime;
+
+        public List<string> UsersWhoLikedThis = new List<string>();
+    }
 }

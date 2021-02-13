@@ -1,81 +1,75 @@
 ﻿using ModBotBackend.Managers;
 using ModBotBackend.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModBotBackend.Operations.TagsOperations
 {
-	[Operation("setPlayerTags")]
-	public class SetPlayerTags : JsonOperationBase
-	{
-		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
-		public override string[] Arguments => new string[] { "tags" };
-		public override bool ParseAsJson => true;
+    [Operation("setPlayerTags")]
+    public class SetPlayerTags : JsonOperationBase
+    {
+        public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
+        public override string[] Arguments => new string[] { "tags" };
+        public override bool ParseAsJson => true;
 
-		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
-		{
-			Request request = new Request()
-			{
-				tags = arguments["tags"]
-			};
+        public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
+        {
+            Request request = new Request()
+            {
+                tags = arguments["tags"]
+            };
 
-			if (!authentication.IsSignedIn)
-			{
-				return new Response()
-				{
-					Error = "Not signed in"
-				};
-			}
-			if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.VerifiedUser))
-			{
-				return new Response()
-				{
-					Error = "You need to be verified to set your player tags"
-				};
-			}
-			for (int i = 0; i < request.tags.Length; i++)
-			{
-				TagInfo tag = TagsManager.Instance.GetTag(request.tags[i]);
-				if (!tag.Verified)
-				{
-					return new Response()
-					{
-						Error = "The tag \"" + tag.TagID + "\" is not verified, so you cant use it yet."
-					};
-				}
-			}
-			int maxTags = Utils.GetMaxPlayerTags(authentication);
-			if (request.tags.Length > maxTags)
-			{
-				return new Response()
-				{
-					Error = "You can only have a max of " + maxTags + " tags"
-				};
-			}
+            if (!authentication.IsSignedIn)
+            {
+                return new Response()
+                {
+                    Error = "Not signed in"
+                };
+            }
+            if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.VerifiedUser))
+            {
+                return new Response()
+                {
+                    Error = "You need to be verified to set your player tags"
+                };
+            }
+            for (int i = 0; i < request.tags.Length; i++)
+            {
+                TagInfo tag = TagsManager.Instance.GetTag(request.tags[i]);
+                if (!tag.Verified)
+                {
+                    return new Response()
+                    {
+                        Error = "The tag \"" + tag.TagID + "\" is not verified, so you cant use it yet."
+                    };
+                }
+            }
+            int maxTags = Utils.GetMaxPlayerTags(authentication);
+            if (request.tags.Length > maxTags)
+            {
+                return new Response()
+                {
+                    Error = "You can only have a max of " + maxTags + " tags"
+                };
+            }
 
-			User user = UserManager.Instance.GetUserFromId(authentication.UserID);
+            User user = UserManager.Instance.GetUserFromId(authentication.UserID);
 
-			TagsManager.Instance.SaveUserTags(user.PlayfabID, new PlayerTagsInfo(request.tags));
+            TagsManager.Instance.SaveUserTags(user.PlayfabID, new PlayerTagsInfo(request.tags));
 
-			return new Response()
-			{
-				message = "Updated tags for player with playfab id \"" + user.PlayfabID + "\""
-			};
-		}
+            return new Response()
+            {
+                message = "Updated tags for player with playfab id \"" + user.PlayfabID + "\""
+            };
+        }
 
-		class Request
-		{
-			public string[] tags;
-		}
+        class Request
+        {
+            public string[] tags;
+        }
 
-		class Response : JsonOperationResponseBase
-		{
-			public string message;
-		}
+        class Response : JsonOperationResponseBase
+        {
+            public string message;
+        }
 
-	}
+    }
 }
