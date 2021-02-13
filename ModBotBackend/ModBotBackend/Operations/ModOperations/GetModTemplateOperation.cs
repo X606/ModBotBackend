@@ -13,7 +13,7 @@ namespace ModBotBackend.Operations
         public override string[] Arguments => new string[] { "modName", "description", "tags" };
         public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
         public override string OverrideResolveJavascript =>
-            "if(!e.isError){" +
+            "if(e.Error != null){" +
                 "API.downloadTempFile(e.fileKey);" +
                 "resolve({ isError: false, message: \"Downloading file...\" });" +
                 "return;" +

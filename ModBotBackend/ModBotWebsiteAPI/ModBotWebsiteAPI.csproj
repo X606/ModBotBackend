@@ -74,12 +74,55 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API.cs" />
+    <Compile Include="GeneratedCode\adminCommand.cs" />
+    <Compile Include="GeneratedCode\console.cs" />
+    <Compile Include="GeneratedCode\createAccount.cs" />
+    <Compile Include="GeneratedCode\deleteComment.cs" />
     <Compile Include="GeneratedCode\downloadMod.cs" />
     <Compile Include="GeneratedCode\downloadTempFile.cs" />
+    <Compile Include="GeneratedCode\editTag.cs" />
+    <Compile Include="GeneratedCode\favoriteMod.cs" />
+    <Compile Include="GeneratedCode\getAllModIds.cs" />
+    <Compile Include="GeneratedCode\getAllModInfos.cs" />
+    <Compile Include="GeneratedCode\getAPI.cs" />
+    <Compile Include="GeneratedCode\getCurrentModBotVersion.cs" />
+    <Compile Include="GeneratedCode\getCurrentUser.cs" />
+    <Compile Include="GeneratedCode\getModBotDownload.cs" />
+    <Compile Include="GeneratedCode\getModBotLauncherDownload.cs" />
+    <Compile Include="GeneratedCode\getModData.cs" />
+    <Compile Include="GeneratedCode\getModImage.cs" />
+    <Compile Include="GeneratedCode\getModTemplate.cs" />
+    <Compile Include="GeneratedCode\getMyAuth.cs" />
+    <Compile Include="GeneratedCode\getMyTags.cs" />
+    <Compile Include="GeneratedCode\getPlayerPrefix.cs" />
+    <Compile Include="GeneratedCode\getProfilePicture.cs" />
+    <Compile Include="GeneratedCode\getSpecialModData.cs" />
+    <Compile Include="GeneratedCode\getTag.cs" />
+    <Compile Include="GeneratedCode\getTags.cs" />
+    <Compile Include="GeneratedCode\getUser.cs" />
+    <Compile Include="GeneratedCode\getUserHeader.cs" />
+    <Compile Include="GeneratedCode\hasLiked.cs" />
+    <Compile Include="GeneratedCode\hasLikedComment.cs" />
+    <Compile Include="GeneratedCode\isCommentMine.cs" />
+    <Compile Include="GeneratedCode\isValidSession.cs" />
+    <Compile Include="GeneratedCode\like.cs" />
+    <Compile Include="GeneratedCode\likeComment.cs" />
     <Compile Include="GeneratedCode\openConsoleWebSocket.cs" />
+    <Compile Include="GeneratedCode\ping.cs" />
+    <Compile Include="GeneratedCode\postComment.cs" />
+    <Compile Include="GeneratedCode\removeTag.cs" />
+    <Compile Include="GeneratedCode\search.cs" />
+    <Compile Include="GeneratedCode\setCustomConsoleCss.cs" />
+    <Compile Include="GeneratedCode\setPlayerTags.cs" />
+    <Compile Include="GeneratedCode\signIn.cs" />
+    <Compile Include="GeneratedCode\signInFromGame.cs" />
     <Compile Include="GeneratedCode\signOut.cs" />
+    <Compile Include="GeneratedCode\test.cs" />
+    <Compile Include="GeneratedCode\updateUserData.cs" />
     <Compile Include="GeneratedCode\uploadMod.cs" />
     <Compile Include="GeneratedCode\uploadProfilePicture.cs" />
+    <Compile Include="GeneratedCode\uploadTag.cs" />
+    <Compile Include="GeneratedCode\verifyTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

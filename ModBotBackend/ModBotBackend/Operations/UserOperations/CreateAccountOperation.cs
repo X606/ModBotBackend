@@ -12,7 +12,7 @@ namespace ModBotBackend.Operations
         public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
         public override string OverrideResolveJavascript =>
-        @"if (e.isError == false) {
+        @"if (e.Error != null) {
 			setCurrentSessionId(e.sessionID);
 		}
 
