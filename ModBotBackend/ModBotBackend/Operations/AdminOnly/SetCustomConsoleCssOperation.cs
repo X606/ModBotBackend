@@ -11,48 +11,34 @@ using Newtonsoft.Json;
 namespace ModBotBackend.Operations.AdminOnly
 {
 	[Operation("setCustomConsoleCss")]
-	public class SetCustomConsoleCssOperation : OperationBase
+	public class SetCustomConsoleCssOperation : PlainTextOperationBase
 	{
 		public override bool ParseAsJson => false;
 		public override string[] Arguments => new string[] { "css" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.Admin;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments arguments, Authentication authentication)
 		{
+			ContentType = "text/plain";
+
 			if (!authentication.HasAtLeastAuthenticationLevel(Users.AuthenticationLevel.Admin))
 			{
-				context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-				context.Response.ContentType = "text/plain";
-				HttpStream httapStream = new HttpStream(context.Response);
-				httapStream.Send("Access denied :/");
-				httapStream.Close();
-				return;
+				StatusCode = HttpStatusCode.Unauthorized;
+
+				return "Access denied :/";
 			}
 
-			string json = Encoding.UTF8.GetString(Misc.ToByteArray(context.Request.InputStream));
+			string css = arguments["css"];
 
-			Request data = JsonConvert.DeserializeObject<Request>(json);
-
-			if (data.css == "[clear]")
+			if (css == "[clear]")
 			{
 				ConsoleCustomCssManager.Instance.ClearCustomCssForUser(authentication.UserID);
 			} else
 			{
-				ConsoleCustomCssManager.Instance.SetCustomCss(authentication.UserID, data.css);
+				ConsoleCustomCssManager.Instance.SetCustomCss(authentication.UserID, css);
 			}
 
-			
-
-			context.Response.ContentType = "text/plain";
-			HttpStream respone = new HttpStream(context.Response);
-			respone.Send("Updated custom css for " + authentication.UserID);
-			respone.Close();
-		}
-
-		[Serializable]
-		public class Request
-		{
-			public string css;
+			return "Updated custom css for " + authentication.UserID;
 		}
 
 

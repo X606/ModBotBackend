@@ -15,7 +15,7 @@ using System.IO.Compression;
 namespace ModBotBackend.Operations
 {
 	[Operation("getModTemplate")]
-	public class GetModTemplateOperation : OperationBase
+	public class GetModTemplateOperation : JsonOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "modName", "description", "tags" };
@@ -28,37 +28,29 @@ namespace ModBotBackend.Operations
 			"} " +
 			"resolve(e);";
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
-
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
-
-			GetModTemplateRequestData request = JsonConvert.DeserializeObject<GetModTemplateRequestData>(json);
-
-			if(!request.IsValidRequest())
+			GetModTemplateRequestData request = new GetModTemplateRequestData()
 			{
-				HttpStream http = new HttpStream(context.Response);
-				http.Send(new GetModTemplateRequestResponse()
+				description = arguments["description"],
+				modName = arguments["modName"],
+				tags = arguments["tags"]
+			};
+
+			if (!request.IsValidRequest())
+			{
+				return new GetModTemplateRequestResponse()
 				{
-					isError = true,
-					message = "The request was invalid"
-				}.ToJson());
-				http.Close();
-				return;
+					Error = "The request was invalid"
+				};
 			}
 
 			if(!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.BasicUser))
 			{
-				HttpStream http = new HttpStream(context.Response);
-				http.Send(new GetModTemplateRequestResponse()
+				return new GetModTemplateRequestResponse()
 				{
-					isError = true,
-					message = "You are not signed in"
-				}.ToJson());
-				http.Close();
-				return;
+					Error = "You are not signed in"
+				};
 			}
 
 			string creatorUsername = UserManager.Instance.GetUserFromId(authentication.UserID).Username;
@@ -102,16 +94,13 @@ namespace ModBotBackend.Operations
 
 			TemporaryFilesMananger.Instance.CreateTemporaryFile(zipFilePath, out string key);
 
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(new GetModTemplateRequestResponse()
-			{
-				isError = false,
-				fileKey = key
-			}.ToJson());
-			httpStream.Close();
-
 			File.Delete(zipFilePath);
 			Utils.RecursivelyDeleteFolder(tempPath);
+
+			return new GetModTemplateRequestResponse()
+			{
+				fileKey = key
+			};
 		}
 
 		[Serializable]
@@ -132,10 +121,9 @@ namespace ModBotBackend.Operations
 			}
 		}
 		[Serializable]
-		private class GetModTemplateRequestResponse
+		private class GetModTemplateRequestResponse : JsonOperationResponseBase
 		{
 			public string message;
-			public bool isError;
 
 			public string fileKey;
 

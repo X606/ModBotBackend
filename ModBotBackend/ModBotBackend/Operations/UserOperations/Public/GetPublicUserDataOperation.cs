@@ -11,31 +11,27 @@ using ModBotBackend.Users;
 namespace ModBotBackend.Operations
 {
 	[Operation("getUser")]
-	public class GetPublicUserDataOperation : OperationBase
+	public class GetPublicUserDataOperation : JsonOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "id" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 		public override bool ArgumentsInQuerystring => true;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "application/json";
+			ContentType = "application/json";
 
-			string id = context.Request.QueryString["id"];
+			string id = arguments["id"];
 
 			User user = UserManager.Instance.GetUserFromId(id);
 
 			if (user == null)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new PublicUserDataResponse()
+				return new PublicUserDataResponse()
 				{
-					message = "The user you asked for doesn't exist",
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = "The user you asked for doesn't exist"
+				};
 			}
 
 			string bio = user.Bio.Replace("\n", "<br>");
@@ -49,19 +45,14 @@ namespace ModBotBackend.Operations
 				color = user.DisplayColor,
 				borderStyle = user.BorderStyle,
                 showFull = user.ShowFull,
-				authenticationLevel = (int)user.AuthenticationLevel,
-
-                isError = false,
-				message = ""
+				authenticationLevel = (int)user.AuthenticationLevel
 			};
 
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(publicUserData.ToJson());
-			httpStream.Close();
+			return publicUserData;
 		}
 
 		[Serializable]
-		private class PublicUserDataResponse
+		private class PublicUserDataResponse : JsonOperationResponseBase
 		{
 			public string username;
 			public string bio;
@@ -71,14 +62,6 @@ namespace ModBotBackend.Operations
 			public BorderStyles borderStyle;
             public bool showFull;
 			public int authenticationLevel;
-
-			public bool isError = false;
-			public string message;
-
-			public string ToJson()
-			{
-				return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-			}
 		}
 	}
 }

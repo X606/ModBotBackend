@@ -19,7 +19,15 @@ namespace ModBotBackend.Operations.AdminOnly
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.Admin;
 		public override string OverrideAPICallJavascript => "return new WebSocket(\"wss://\" + location.host + \"/api?operation=openConsoleWebSocket\");";
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+        public override byte[] GetResponseForError(Exception e, out string contentType)
+        {
+			string error = "ERROR!\nError:\n" + e.ToString();
+
+			contentType = "text/plain";
+			return Encoding.UTF8.GetBytes(error);
+        }
+
+        public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			if (!context.Request.IsWebSocketRequest)
 			{

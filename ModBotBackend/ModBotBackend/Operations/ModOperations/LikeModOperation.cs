@@ -14,54 +14,41 @@ using Newtonsoft.Json;
 namespace ModBotBackend.Operations
 {
 	[Operation("like")]
-	public class LikeModOperation : OperationBase
+	public class LikeModOperation : JsonOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "likedModId", "likeState" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
-
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
-
-			LikeRequestData request = JsonConvert.DeserializeObject<LikeRequestData>(json);
+			LikeRequestData request = new LikeRequestData()
+			{
+				likedModId = arguments["likedModId"],
+				likeState = arguments["likeState"]
+			};
 
 			if(!request.IsValidRequest())
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new LikeRequestResponse()
+				return new LikeRequestResponse()
 				{
-					message = "All fields were not filled out",
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = "All fields were not filled out"
+				};
 			}
 
 			if(!authentication.IsSignedIn)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new LikeRequestResponse()
+				return new LikeRequestResponse()
 				{
-					message = "You are not signed in.",
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = "You are not signed in."
+				};
 			}
 
 			if (!UploadedModsManager.Instance.HasModWithIdBeenUploaded(request.likedModId))
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new LikeRequestResponse()
+				return new LikeRequestResponse()
 				{
-					message = "No mod with that id exists",
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = "No mod with that id exists"
+				};
 			}
 
 			string userId = authentication.UserID;
@@ -80,14 +67,10 @@ namespace ModBotBackend.Operations
 				}
 				else
 				{
-					HttpStream stream = new HttpStream(context.Response);
-					stream.Send(new LikeRequestResponse()
+					return new LikeRequestResponse()
 					{
-						message = "You have already liked that mod!",
-						isError = false
-					}.ToJson());
-					stream.Close();
-					return;
+						Error = "You have already liked that mod!"
+					};
 				}
 				
 			} else
@@ -101,25 +84,17 @@ namespace ModBotBackend.Operations
 				}
 				else
 				{
-					HttpStream stream = new HttpStream(context.Response);
-					stream.Send(new LikeRequestResponse()
+					return new LikeRequestResponse()
 					{
-						message = "You havent liked that mod!",
-						isError = false
-					}.ToJson());
-					stream.Close();
-					return;
+						Error = "You havent liked that mod!"
+					};
 				}
 			}
-			
 
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(new LikeRequestResponse()
+			return new LikeRequestResponse()
 			{
-				message = "Your liked status has been updated!",
-				isError = false
-			}.ToJson());
-			httpStream.Close();
+				message = "Your liked status has been updated!"
+			};
 		}
 
 		[Serializable]
@@ -134,15 +109,9 @@ namespace ModBotBackend.Operations
 			}
 		}
 		[Serializable]
-		private class LikeRequestResponse
+		private class LikeRequestResponse : JsonOperationResponseBase
 		{
 			public string message;
-			public bool isError;
-
-			public string ToJson()
-			{
-				return JsonConvert.SerializeObject(this);
-			}
 		}
 	}
 }

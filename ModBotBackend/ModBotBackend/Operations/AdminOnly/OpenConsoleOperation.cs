@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace ModBotBackend.Operations
 {
 	[Operation("console")]
-	public class OpenConsoleOperation : OperationBase
+	public class OpenConsoleOperation : PlainTextOperationBase
 	{
 		public override bool ParseAsJson => false;
 		public override string[] Arguments => new string[] { };
@@ -17,15 +17,13 @@ namespace ModBotBackend.Operations
 		public override string OverrideAPICallJavascript => "window.open(\"/api/?operation=console\");";
 
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/html";
+			ContentType = "text/html";
 
-			if (!authentication.HasAtLeastAuthenticationLevel(Users.AuthenticationLevel.Admin))
+			if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.Admin))
 			{
-				HttpStream httpAccessDeniedStream = new HttpStream(context.Response);
-				httpAccessDeniedStream.Send(Properties.Resources.ConsoleCantAccess);
-				httpAccessDeniedStream.Close();
+				return Properties.Resources.ConsoleCantAccess;
 			}
 
 			string html = Properties.Resources.Console;
@@ -36,9 +34,7 @@ namespace ModBotBackend.Operations
 
 			html = Utils.FormatString(html, css);
 
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(html);
-			httpStream.Close();
+			return html;
 		}
 	}
 }

@@ -18,7 +18,13 @@ namespace ModBotBackend.Operations
 		public override string OverrideAPICallJavascript => "window.open(\"/api/?operation=downloadMod&id=\" + id);";
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+        public override byte[] GetResponseForError(Exception e, out string contentType)
+        {
+			contentType = "text/plain";
+			return Encoding.UTF8.GetBytes("ERROR!\nError:\n" + e.ToString());
+        }
+
+        public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			string id = context.Request.QueryString["id"];
 

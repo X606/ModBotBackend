@@ -14,42 +14,33 @@ using Newtonsoft.Json;
 namespace ModBotBackend.Operations
 {
 	[Operation("hasLiked")]
-	public class HasLikedModOperation : OperationBase
+	public class HasLikedModOperation : PlainTextOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "modId" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
+			ContentType = "application/json";
 
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
-
-			LikeRequestData request = JsonConvert.DeserializeObject<LikeRequestData>(json);
+			LikeRequestData request = new LikeRequestData()
+			{
+				modId = arguments["modId"]
+			};
 
 			if(!request.IsValidRequest())
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send("false");
-				stream.Close();
-				return;
+				return "false";
 			}
 
 			if(!authentication.IsSignedIn)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send("false");
-				stream.Close();
-				return;
+				return "false";
 			}
 
 			if(!UploadedModsManager.Instance.HasModWithIdBeenUploaded(request.modId))
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send("false");
-				stream.Close();
-				return;
+				return "false";
 			}
 
 			string userId = authentication.UserID;
@@ -57,10 +48,8 @@ namespace ModBotBackend.Operations
 			User user = UserManager.Instance.GetUserFromId(userId);
 
 			bool hasLiked = user.LikedMods.Contains(request.modId);
-
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(hasLiked ? "true" : "false");
-			httpStream.Close();
+			
+			return hasLiked ? "true" : "false";
 		}
 
 		[Serializable]

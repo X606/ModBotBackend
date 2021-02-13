@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ModBotBackend.Operations.TagsOperations
 {
 	[Operation("removeTag")]
-	public class RemoveTagOperation : OperationBase
+	public class RemoveTagOperation : JsonOperationBase
 	{
 		public override string[] Arguments => new string[] { "tagID" };
 
@@ -20,31 +20,27 @@ namespace ModBotBackend.Operations.TagsOperations
 
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.VerifiedUser;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			string tagId = context.Request.QueryString["tagID"];
+			string tagId = arguments["tagID"];
 
 			if (tagId == null)
 			{
-				context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-				Utils.Respond(context.Response, new Response()
+				StatusCode = HttpStatusCode.BadRequest;
+				return new Response()
 				{
-					isError = true,
-					message = "Invalid request"
-				});
-				return;
+					Error = "Invalid request"
+				};
 			}
 
 			TagInfo tag = TagsManager.Instance.GetTag(tagId);
 			if (tag == null)
 			{
-				context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-				Utils.Respond(context.Response, new Response()
+				StatusCode = HttpStatusCode.NotFound;
+				return new Response()
 				{
-					isError = true,
-					message = "Could not find the requested tag"
-				});
-				return;
+					Error = "Could not find the requested tag"
+				};
 			}
 
 			bool authorized = false;
@@ -57,28 +53,24 @@ namespace ModBotBackend.Operations.TagsOperations
 
 			if (!authorized)
 			{
-				context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-				Utils.Respond(context.Response, new Response()
+				StatusCode = HttpStatusCode.Unauthorized;
+				return new Response()
 				{
-					isError = true,
-					message = "Unauthorized"
-				});
-				return;
+					Error = "Unauthorized"
+				};
 			}
 
 			TagsManager.Instance.RemoveTag(tag);
 
-			context.Response.StatusCode = (int)HttpStatusCode.OK;
-			Utils.Respond(context.Response, new Response()
+			StatusCode = HttpStatusCode.OK;
+			return new Response()
 			{
-				isError = false,
 				message = "Removed tag."
-			});
+			};
 		}
 		
-		class Response
+		class Response : JsonOperationResponseBase
 		{
-			public bool isError;
 			public string message;
 		}
 

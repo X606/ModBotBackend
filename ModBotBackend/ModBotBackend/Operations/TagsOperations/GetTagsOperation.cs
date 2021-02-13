@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ModBotBackend.Operations.TagsOperations
 {
 	[Operation("getTags")]
-	public class GetTagsOperation : OperationBase
+	public class GetTagsOperation : JsonOperationBase
 	{
 		public override string[] Arguments => new string[] { };
 
@@ -18,17 +18,17 @@ namespace ModBotBackend.Operations.TagsOperations
 
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
 			TagInfo[] tags = TagsManager.Instance.GetTags();
 
-			Utils.Respond(context.Response, new Result()
+			return new Result()
 			{
 				tags = tags
-			});
+			};
 		}
 
-		class Result
+		class Result : JsonOperationResponseBase
 		{
 			public TagInfo[] tags;
 		}

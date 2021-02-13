@@ -10,7 +10,7 @@ using ModBotBackend.Managers;
 namespace ModBotBackend.Operations
 {
 	[Operation("getCurrentModBotVersion")]
-	public class GetCurrentModBotVersionOperation : OperationBase
+	public class GetCurrentModBotVersionOperation : PlainTextOperationBase
 	{
 		public override string[] Arguments => new string[] { };
 
@@ -18,13 +18,9 @@ namespace ModBotBackend.Operations
 
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
-
-			string modbotVersion = ModBotInfoManager.Instance.GetModBotVersion();
-
-			Utils.Respond(context.Response, modbotVersion);
+			return ModBotInfoManager.Instance.GetModBotVersion();
 		}
 	}
 }

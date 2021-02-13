@@ -9,7 +9,7 @@ using ModBotBackend.Users;
 namespace ModBotBackend.Operations
 {
 	[Operation("getUserHeader")]
-	public class GetUserHeaderOperation : OperationBase
+	public class GetUserHeaderOperation : PlainTextOperationBase
 	{
 		public override bool ParseAsJson => false;
 		public override string[] Arguments => new string[] { "element", "userID" };
@@ -17,28 +17,22 @@ namespace ModBotBackend.Operations
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 		public override string OverrideAPICallJavascript => "element.contentWindow.location.replace(\"/api?operation=getUserHeader&userID=\" + userID);";
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/html";
+			ContentType = "text/html";
 			int statusCode = 200;
 			string html = Encoding.UTF8.GetString(WebsiteRequestProcessor.OnRequest("/userHeader.html", out string contentType, ref statusCode));
 
-			string userID = context.Request.QueryString["userID"];
+			string userID = arguments["userID"];
 			if (userID == null)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(Utils.FormatString(html, "404.html", "Assets/DefaultAvatar.png", "[Deleted user]", "", ""));
-				stream.Close();
-				return;
+				return Utils.FormatString(html, "404.html", "Assets/DefaultAvatar.png", "[Deleted user]", "", "");
 			}
 
 			User user = UserManager.Instance.GetUserFromId(userID);
 			if (user == null)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(Utils.FormatString(html, "404.html", "Assets/DefaultAvatar.png", "[Deleted user]", "", ""));
-				stream.Close();
-				return;
+				return Utils.FormatString(html, "404.html", "Assets/DefaultAvatar.png", "[Deleted user]", "", "");
 			}
 
 			string linkUrl = "userPage.html?userID=" + user.UserID;
@@ -50,10 +44,7 @@ namespace ModBotBackend.Operations
 
 			string formatedString = Utils.FormatString(html, linkUrl, avatarUrl, username, icon, avatarStyle, usernameStyle);
 
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(formatedString);
-			httpStream.Close();
-			return;
+			return formatedString;
 		}
 
 		static string GetIconHtml(User user)

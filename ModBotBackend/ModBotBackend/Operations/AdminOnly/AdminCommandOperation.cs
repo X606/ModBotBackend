@@ -12,44 +12,28 @@ using ModBotBackend.Operations.AdminOnly.AdminCommands;
 namespace ModBotBackend.Operations.AdminOnly
 {
 	[Operation("adminCommand")]
-	public class AdminCommandOperation : OperationBase
+	public class AdminCommandOperation : PlainTextOperationBase
 	{
 		public override bool ParseAsJson => false;
 		public override string[] Arguments => new string[] { "Message" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.Admin;
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
-		{
 
-			if (!authentication.HasAtLeastAuthenticationLevel(Users.AuthenticationLevel.Admin))
+        public override string OnOperation(Arguments arguments, Authentication authentication)
+        {
+			if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.Admin))
 			{
-				context.Response.ContentType = "text/plain";
-				HttpStream httapStream = new HttpStream(context.Response);
-				httapStream.Send("Access denied :/");
-				httapStream.Close();
-				return;
+				return "Access denied :/";
 			}
 
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
-
-			Request request = JsonConvert.DeserializeObject<Request>(json);
-
-			string message = request.Message;
+			string message = arguments["Message"];
 			if (message.Length > 512)
 			{
-				context.Response.ContentType = "text/plain";
-				HttpStream httapStream = new HttpStream(context.Response);
-				httapStream.Send("This command is too long :/");
-				httapStream.Close();
-				return;
+				return "This command is too long :/";
 			}
 
 			executeAdminCommand(message.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries), authentication);
 
-			context.Response.ContentType = "text/plain";
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send("Ran command.");
-			httpStream.Close();
+			return "Ran command.";
 		}
 
 		static void executeAdminCommand(string[] subStrings, Authentication authentication)

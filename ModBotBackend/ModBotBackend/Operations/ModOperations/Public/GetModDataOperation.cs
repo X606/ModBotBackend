@@ -11,21 +11,18 @@ using ModBotBackend.Users;
 namespace ModBotBackend.Operations
 {
 	[Operation("getModData")]
-	public class GetModDataOperation : OperationBase
+	public class GetModDataOperation : PlainTextOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "id"};
 		public override bool ArgumentsInQuerystring => true;
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments arguments, Authentication authentication)
 		{
-		 	string id = context.Request.QueryString["id"];
+		 	string id = arguments["id"];
 
-			context.Response.ContentType = "text/plain";
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(UploadedModsManager.Instance.GetModInfoJsonFromId(id));
-			httpStream.Close();
+			return UploadedModsManager.Instance.GetModInfoJsonFromId(id);
 		}
 
 	}

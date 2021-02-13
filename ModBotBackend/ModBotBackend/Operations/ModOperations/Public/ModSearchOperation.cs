@@ -13,7 +13,7 @@ using ModBotBackend.Users;
 namespace ModBotBackend.Operations
 {
 	[Operation("search")]
-	public class ModSearchOperation : OperationBase
+	public class ModSearchOperation : JsonOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { };
@@ -48,27 +48,20 @@ namespace ModBotBackend.Operations
 		PostDate: 'postedDate',
 		EditedDate: 'editedDate'
 	};";
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
-
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
-
-			ModSearchMessage request = Newtonsoft.Json.JsonConvert.DeserializeObject<ModSearchMessage>(json);
-
 			KeyValuePair<SpecialModData, ModInfo>[] mods = UploadedModsManager.Instance.GetAllUploadedMods();
 			List<string> selectedModIds = new List<string>();
 
 			for(int i = 0; i < mods.Length; i++)
 			{
-				bool include = Search(mods[i], request);
+				bool include = Search(mods[i], arguments);
 
 				if (include)
 					selectedModIds.Add(mods[i].Value.UniqueID);
 			}
 
-			if(request.sortOrder == "liked")
+			if (arguments["sortOrder"] == "liked")
 			{
 				selectedModIds.Sort(delegate (string a, string b)
 				{
@@ -78,7 +71,7 @@ namespace ModBotBackend.Operations
 					return specialBData.Likes - specialAData.Likes;
 				});
 			}
-			else if(request.sortOrder == "downloads")
+			else if(arguments["sortOrder"] == "downloads")
 			{
 				selectedModIds.Sort(delegate (string a, string b)
 				{
@@ -88,7 +81,7 @@ namespace ModBotBackend.Operations
 					return specialBData.Downloads - specialAData.Downloads;
 				});
 			}
-			else if(request.sortOrder == "postedDate")
+			else if(arguments["sortOrder"] == "postedDate")
 			{
 				selectedModIds.Sort(delegate (string a, string b)
 				{
@@ -98,7 +91,7 @@ namespace ModBotBackend.Operations
 					return (int)(specialBData.PostedDate - specialAData.PostedDate);
 				});
 			}
-			else if(request.sortOrder == "editedDate")
+			else if(arguments["sortOrder"] == "editedDate")
 			{
 				selectedModIds.Sort(delegate (string a, string b)
 				{
@@ -109,19 +102,18 @@ namespace ModBotBackend.Operations
 				});
 			}
 
-			string responseJson = JsonConvert.SerializeObject(selectedModIds);
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(responseJson);
-			httpStream.Close();
+			return new SearchOperationResponse()
+			{
+				ModIds = selectedModIds
+			};
 		}
 
-		static bool Search(KeyValuePair<SpecialModData, ModInfo> item, ModSearchMessage request)
+		static bool Search(KeyValuePair<SpecialModData, ModInfo> item, Arguments arguments)
 		{
 			bool shouldIncludeItem = true;
-
-			if (request.searchString != null)
+			if (arguments["searchString"] != null)
 			{
-				string searchString = request.searchString.ToLower();
+				string searchString = ((string)arguments["searchString"]).ToLower();
 				string name = item.Value.DisplayName != null ? item.Value.DisplayName.ToLower() : "";
 				string description = item.Value.Description != null ? item.Value.Description.ToLower() : "";
 				bool nameContains = name.Contains(searchString);
@@ -129,20 +121,20 @@ namespace ModBotBackend.Operations
 
 				shouldIncludeItem = nameContains;
 
-				if (request.includeDescriptionsInSearch)
+				if (((bool)arguments["includeDescriptionsInSearch"]))
 				{
 					shouldIncludeItem |= descriptionContains;
 				}
 			}
 
-			if (request.userID != null)
+			if (((string)arguments["userID"]) != null)
 			{
-				if (request.userID != item.Key.OwnerID)
+				if (((string)arguments["userID"]) != item.Key.OwnerID)
 					shouldIncludeItem = false;
 			}
-			if (request.modID != null)
+			if (((string)arguments["modID"]) != null)
 			{
-				if (request.userID != item.Key.ModId)
+				if (((string)arguments["userID"]) != item.Key.ModId)
 					shouldIncludeItem = false;
 			}
 
@@ -165,4 +157,8 @@ namespace ModBotBackend.Operations
 		}
 
 	}
+	public class SearchOperationResponse : JsonOperationResponseBase
+    {
+		public List<string> ModIds = new List<string>();
+    }
 }

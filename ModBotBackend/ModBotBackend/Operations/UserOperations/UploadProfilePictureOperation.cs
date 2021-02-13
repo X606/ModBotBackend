@@ -28,7 +28,13 @@ namespace ModBotBackend.Operations
 				".jpg"
 			};
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+        public override byte[] GetResponseForError(Exception e, out string contentType)
+        {
+			contentType = "text/plain";
+			return Encoding.UTF8.GetBytes("ERROR!\nError:\n" + e.ToString());
+        }
+
+        public override void OnOperation(HttpListenerContext context, Authentication authentication)
 		{
 			HttpMultipartParser httpMultipartParser = new HttpMultipartParser(context.Request.InputStream, "file");
 

@@ -14,30 +14,22 @@ using Newtonsoft.Json;
 namespace ModBotBackend.Operations
 {
 	[Operation("getCurrentUser")]
-	public class GetCurrentUserOperation : OperationBase
+	public class GetCurrentUserOperation : PlainTextOperationBase
 	{
 		public override bool ParseAsJson => false;
 		public override string[] Arguments => new string[] { };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
-
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
+			ContentType = "text/plain";
 
 			if(!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.BasicUser))
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send("null");
-				stream.Close();
-				return;
+				return "null";
 			}
-			
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(authentication.UserID);
-			httpStream.Close();
+
+			return authentication.UserID;
 		}
 
 	}

@@ -14,64 +14,48 @@ using Newtonsoft.Json;
 namespace ModBotBackend.Operations
 {
 	[Operation("likeComment")]
-	public class LikeCommentOperation : OperationBase
+	public class LikeCommentOperation : JsonOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "modId", "commentId", "likeState" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
+			string modId = arguments["modId"];
+			string commentId = arguments["commentId"];
+			bool likeState = arguments["likeState"];
 
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
-
-			LikeCommentRequestData request = JsonConvert.DeserializeObject<LikeCommentRequestData>(json);
-
-			if(!request.IsValidRequest())
+			if (modId == null || commentId == null)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new LikeCommentRequestResponse()
-				{
-					message = "All fields were not filled out",
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+				return new LikeCommentRequestResponse() {
+					Error = "All fields were not filled out"
+				};
 			}
 
 			if(!authentication.IsSignedIn)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new LikeCommentRequestResponse()
+				return new LikeCommentRequestResponse()
 				{
-					message = "You are not signed in.",
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = "You are not signed in."
+				};
 			}
 
-			if(!UploadedModsManager.Instance.HasModWithIdBeenUploaded(request.modId))
+			if(!UploadedModsManager.Instance.HasModWithIdBeenUploaded(modId))
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new LikeCommentRequestResponse()
+				return new LikeCommentRequestResponse()
 				{
-					message = "No mod with that id exists",
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = "No mod with that id exists"
+				};
 			}
 
 			string userId = authentication.UserID;
 
 			User user = UserManager.Instance.GetUserFromId(userId);
-			SpecialModData modData = UploadedModsManager.Instance.GetSpecialModInfoFromId(request.modId);
+			SpecialModData modData = UploadedModsManager.Instance.GetSpecialModInfoFromId(modId);
 
-			Comment comment = modData.GetCommentWithCommentID(request.commentId);
+			Comment comment = modData.GetCommentWithCommentID(commentId);
 
-			if(request.likeState)
+			if(likeState)
 			{
 				if(!comment.UsersWhoLikedThis.Contains(userId))
 				{
@@ -80,14 +64,10 @@ namespace ModBotBackend.Operations
 				}
 				else
 				{
-					HttpStream stream = new HttpStream(context.Response);
-					stream.Send(new LikeCommentRequestResponse()
+					return new LikeCommentRequestResponse()
 					{
-						message = "You have already liked that comment!",
-						isError = false
-					}.ToJson());
-					stream.Close();
-					return;
+						Error = "You have already liked that comment!"
+					};
 				}
 
 			}
@@ -100,49 +80,23 @@ namespace ModBotBackend.Operations
 				}
 				else
 				{
-					HttpStream stream = new HttpStream(context.Response);
-					stream.Send(new LikeCommentRequestResponse()
+					return new LikeCommentRequestResponse()
 					{
-						message = "You havent liked that comment.",
-						isError = false
-					}.ToJson());
-					stream.Close();
-					return;
+						Error = "You havent liked that comment."
+					};
 				}
 			}
 
-
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(new LikeCommentRequestResponse()
+			return new LikeCommentRequestResponse()
 			{
-				message = "Your liked status has been updated!",
-				isError = false
-			}.ToJson());
-			httpStream.Close();
+				message = "Your liked status has been updated!"
+			};
 		}
 
 		[Serializable]
-		private class LikeCommentRequestData
-		{
-			public bool likeState;
-			public string modId;
-			public string commentId;
-
-			public bool IsValidRequest()
-			{
-				return !string.IsNullOrWhiteSpace(modId) && !string.IsNullOrWhiteSpace(commentId);
-			}
-		}
-		[Serializable]
-		private class LikeCommentRequestResponse
+		private class LikeCommentRequestResponse : JsonOperationResponseBase
 		{
 			public string message;
-			public bool isError;
-
-			public string ToJson()
-			{
-				return JsonConvert.SerializeObject(this);
-			}
 		}
 	}
 }

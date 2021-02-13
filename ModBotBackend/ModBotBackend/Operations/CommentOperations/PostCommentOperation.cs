@@ -14,61 +14,45 @@ using Newtonsoft.Json;
 namespace ModBotBackend.Operations
 {
 	[Operation("postComment")]
-	public class PostCommentOperation : OperationBase
+	public class PostCommentOperation : JsonOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "targetModId", "commentBody" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "application/json";
+			string targetModId = arguments["targetModId"];
+			string commentBody = arguments["commentBody"];
 
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
-
-			PostCommentRequest request = JsonConvert.DeserializeObject<PostCommentRequest>(json);
-
-			if(!request.IsValidRequest())
+			if (targetModId == null || commentBody == null)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new PostCommentResponse()
+				return new PostCommentResponse()
 				{
-					message = "All fields were not filled out",
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = "All fields were not filled out"
+				};
 			}
 
 			if (!authentication.IsSignedIn)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new PostCommentResponse()
+				return new PostCommentResponse()
 				{
-					message = "You are not signed in.",
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = "You are not signed in."
+				};
 			}
 
-			if (!UploadedModsManager.Instance.HasModWithIdBeenUploaded(request.targetModId))
+			if (!UploadedModsManager.Instance.HasModWithIdBeenUploaded(targetModId))
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new PostCommentResponse()
+				return new PostCommentResponse()
 				{
-					message = "That mod does not exist",
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = "That mod does not exist"
+				};
 			}
 
-			SpecialModData specialModData = UploadedModsManager.Instance.GetSpecialModInfoFromId(request.targetModId);
+			SpecialModData specialModData = UploadedModsManager.Instance.GetSpecialModInfoFromId(targetModId);
 
 			string userId = authentication.UserID;
 
-			string sanitized = request.commentBody.Replace("<", "&lt;").Replace(">", "&gt;");
+			string sanitized = commentBody.Replace("<", "&lt;").Replace(">", "&gt;");
 
 			sanitized = sanitized.Replace("\n", "<br>");
 
@@ -76,36 +60,16 @@ namespace ModBotBackend.Operations
 			specialModData.Comments.Add(comment);
 			specialModData.Save();
 
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(new PostCommentResponse()
+			return new PostCommentResponse()
 			{
-				message = "Comment posted.",
-				isError = false
-			}.ToJson());
-			httpStream.Close();
+				message = "Comment posted."
+			};
 		}
 
 		[Serializable]
-		private class PostCommentRequest
-		{
-			public string targetModId;
-			public string commentBody;
-
-			public bool IsValidRequest()
-			{
-				return !string.IsNullOrWhiteSpace(commentBody) && !string.IsNullOrWhiteSpace(targetModId);
-			}
-		}
-		[Serializable]
-		private class PostCommentResponse
+		private class PostCommentResponse : JsonOperationResponseBase
 		{
 			public string message;
-			public bool isError;
-
-			public string ToJson()
-			{
-				return JsonConvert.SerializeObject(this);
-			}
 		}
 	}
 }

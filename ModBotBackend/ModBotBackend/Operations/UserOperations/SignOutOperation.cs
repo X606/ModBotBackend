@@ -19,10 +19,22 @@ namespace ModBotBackend.Operations
 		public override string[] Arguments => new string[] {};
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
-		{
-			context.Response.ContentType = "text/plain";
+        public override byte[] GetResponseForError(Exception e, out string contentType)
+        {
+			contentType = "application/json";
 
+			string json = new SignOutResponse()
+			{
+				Error = e.ToString()
+			}.ToJson();
+
+			return Encoding.UTF8.GetBytes(json);
+		}
+
+        public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		{
+			context.Response.ContentType = "application/json";
+			
 			byte[] data = Misc.ToByteArray(context.Request.InputStream);
 			string json = Encoding.UTF8.GetString(data);
 
@@ -31,8 +43,7 @@ namespace ModBotBackend.Operations
 				HttpStream stream = new HttpStream(context.Response);
 				stream.Send(new SignOutResponse()
 				{
-					message = "You are not signed in.",
-					isError = true
+					Error = "You are not signed in."
 				}.ToJson());
 				stream.Close();
 				return;
@@ -49,8 +60,7 @@ namespace ModBotBackend.Operations
 			HttpStream httpStream = new HttpStream(context.Response);
 			httpStream.Send(new SignOutResponse()
 			{
-				message = "signed out!",
-				isError = false
+				Error = "signed out!"
 			}.ToJson());
 			httpStream.Close();
 		}
@@ -59,7 +69,7 @@ namespace ModBotBackend.Operations
 		private class SignOutResponse
 		{
 			public string message;
-			public bool isError;
+			public string Error;
 
 			public string ToJson()
 			{

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ModBotBackend.Operations.TagsOperations
 {
 	[Operation("editTag")]
-	public class EditTagOperation : OperationBase
+	public class EditTagOperation : JsonOperationBase
 	{
 		public override string[] Arguments => new string[] { "tagID", "body" };
 
@@ -18,52 +18,41 @@ namespace ModBotBackend.Operations.TagsOperations
 
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
 			if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.VerifiedUser))
 			{
-				context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-				Utils.Respond(context.Response, new Response()
+				StatusCode = HttpStatusCode.Unauthorized;
+				return new Response()
 				{
-					isError = true,
 					message = "You need to be at least a verified user to do this"
-				});
-				return;
+				};
 			}
 
-			if (!Utils.TryGetRequestBody(context, out Request request))
+			Request request = new Request()
 			{
-				context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-				Utils.Respond(context.Response, new Response()
-				{
-					isError = true,
-					message = "Invalid request"
-				});
-				return;
-			}
+				tagID = arguments["tagID"],
+				body = arguments["body"]
+			};
 
 			TagInfo tag = TagsManager.Instance.GetTag(request.tagID);
 
 			if (tag == null)
 			{
-				context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-				Utils.Respond(context.Response, new Response()
+				StatusCode = HttpStatusCode.BadRequest;
+				return new Response()
 				{
-					isError = true,
-					message = "The requested tag doesn't exit"
-				});
-				return;
+					Error = "The requested tag doesn't exit"
+				};
 			}
 
 			if (authentication.UserID != tag.CreatorId)
 			{
-				context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-				Utils.Respond(context.Response, new Response()
+				StatusCode = HttpStatusCode.Unauthorized;
+				return new Response()
 				{
-					isError = true,
-					message = "You are not the owner of this tag."
-				});
-				return;
+					Error = "You are not the owner of this tag."
+				};
 			}
 
 			tag.Body = request.body;
@@ -74,11 +63,10 @@ namespace ModBotBackend.Operations.TagsOperations
 
 			TagsManager.Instance.SaveTag(tag);
 
-			Utils.Respond(context.Response, new Response()
+			return new Response()
 			{
-				isError = false,
 				message = "Updated tag."
-			});
+			};
 		}
 
 		class Request
@@ -86,9 +74,8 @@ namespace ModBotBackend.Operations.TagsOperations
 			public string tagID;
 			public string body;
 		}
-		class Response
+		class Response : JsonOperationResponseBase
 		{
-			public bool isError;
 			public string message;
 		}
 

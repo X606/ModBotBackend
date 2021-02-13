@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace ModBotBackend.Operations
 {
 	[Operation("ping")]
-	public class PingOperation : OperationBase
+	public class PingOperation : PlainTextOperationBase
 	{
 		public override string[] Arguments => new string[] { };
 
@@ -17,12 +17,9 @@ namespace ModBotBackend.Operations
 
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
-			HttpStream stream = new HttpStream(context.Response);
-			stream.Send("Pong!");
-			stream.Close();
+			return "pong!";
 		}
 	}
 }

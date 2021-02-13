@@ -10,74 +10,61 @@ using System.Threading.Tasks;
 namespace ModBotBackend.Operations.TagsOperations
 {
 	[Operation("setPlayerTags")]
-	public class SetPlayerTags : OperationBase
+	public class SetPlayerTags : JsonOperationBase
 	{
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
 		public override string[] Arguments => new string[] { "tags" };
 		public override bool ParseAsJson => true;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			if (!Utils.TryGetRequestBody(context, out Request request))
+			Request request = new Request()
 			{
-				Utils.Respond(context.Response, new Response()
-				{
-					isError = true,
-					message = "Invalid request"
-				});
-				return;
-			}
+				tags = arguments["tags"]
+			};
+
 			if (!authentication.IsSignedIn)
 			{
-				Utils.Respond(context.Response, new Response()
+				return new Response()
 				{
-					isError = true,
-					message = "Not signed in"
-				});
-				return;
+					Error = "Not signed in"
+				};
 			}
 			if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.VerifiedUser))
 			{
-				Utils.Respond(context.Response, new Response()
+				return new Response()
 				{
-					isError = true,
-					message = "You need to be verified to set your player tags"
-				});
-				return;
+					Error = "You need to be verified to set your player tags"
+				};
 			}
 			for (int i = 0; i < request.tags.Length; i++)
 			{
 				TagInfo tag = TagsManager.Instance.GetTag(request.tags[i]);
 				if (!tag.Verified)
 				{
-					Utils.Respond(context.Response, new Response()
+					return new Response()
 					{
-						isError = true,
-						message = "The tag \"" + tag.TagID + "\" is not verified, so you cant use it yet."
-					});
-					return;
+						Error = "The tag \"" + tag.TagID + "\" is not verified, so you cant use it yet."
+					};
 				}
 			}
 			int maxTags = Utils.GetMaxPlayerTags(authentication);
 			if (request.tags.Length > maxTags)
 			{
-				Utils.Respond(context.Response, new Response()
+				return new Response()
 				{
-					isError = true,
-					message = "You can only have a max of " + maxTags + " tags"
-				});
-				return;
+					Error = "You can only have a max of " + maxTags + " tags"
+				};
 			}
 
 			User user = UserManager.Instance.GetUserFromId(authentication.UserID);
 
 			TagsManager.Instance.SaveUserTags(user.PlayfabID, new PlayerTagsInfo(request.tags));
 
-			Utils.Respond(context.Response, new Response()
+			return new Response()
 			{
-				isError = false,
 				message = "Updated tags for player with playfab id \"" + user.PlayfabID + "\""
-			});
+			};
 		}
 
 		class Request
@@ -85,9 +72,8 @@ namespace ModBotBackend.Operations.TagsOperations
 			public string[] tags;
 		}
 
-		class Response
+		class Response : JsonOperationResponseBase
 		{
-			public bool isError;
 			public string message;
 		}
 

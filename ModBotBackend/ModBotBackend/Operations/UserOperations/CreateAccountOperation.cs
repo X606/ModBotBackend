@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace ModBotBackend.Operations
 {
 	[Operation("createAccount")]
-	public class CreateAccountOperation : OperationBase
+	public class CreateAccountOperation : JsonOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "username", "password" };
@@ -27,48 +27,37 @@ namespace ModBotBackend.Operations
 
 		resolve(e);";
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
+			ContentType = "text/plain";
 
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
-			
-			CreateAccountData request = JsonConvert.DeserializeObject<CreateAccountData>(json);
+			CreateAccountData request = new CreateAccountData()
+			{
+				username = arguments["username"],
+				password = arguments["password"]
+			};
 
 			if(!request.IsValidRequest())
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new CreateAccountResponse()
+				return new CreateAccountResponse()
 				{
-					error = "All fields were not filled out",
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = "All fields were not filled out"
+				};
 			}
 
 			if (!User.IsValidUsername(request.username, out string usernameError))
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new CreateAccountResponse()
+				return new CreateAccountResponse()
 				{
-					error = string.Format("Invalid username, {0}", usernameError),
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = string.Format("Invalid username, {0}", usernameError)
+				};
 			}
 			if(!User.IsValidPassword(request.password, out string passwordError))
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new CreateAccountResponse()
+				return new CreateAccountResponse()
 				{
-					error = string.Format("Invalid password, {0}", passwordError),
-					isError = true
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = string.Format("Invalid password, {0}", passwordError)
+				};
 			}
 
 			User newUser = User.CreateNewUser(request.username, request.password);
@@ -77,13 +66,10 @@ namespace ModBotBackend.Operations
 
 			OutputConsole.WriteLine("New user signed up " + newUser.UserID + " (" + newUser.Username + ")");
 
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(new CreateAccountResponse()
+			return new CreateAccountResponse()
 			{
-				sessionID = session.Key,
-				isError = false
-			}.ToJson());
-			httpStream.Close();
+				sessionID = session.Key
+			};
 		}
 
 
@@ -99,16 +85,9 @@ namespace ModBotBackend.Operations
 			}
 		}
 		[Serializable]
-		private class CreateAccountResponse
+		private class CreateAccountResponse : JsonOperationResponseBase
 		{
 			public string sessionID;
-			public string error;
-			public bool isError;
-
-			public string ToJson()
-			{
-				return JsonConvert.SerializeObject(this);
-			}
 		}
 	}
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ModBotBackend.Operations.TagsOperations
 {
 	[Operation("getMyTags")]
-	public class GetMyTagsOperation : OperationBase
+	public class GetMyTagsOperation : JsonOperationBase
 	{
 		public override string[] Arguments => new string[] { };
 
@@ -18,16 +18,15 @@ namespace ModBotBackend.Operations.TagsOperations
 
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
 			if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.VerifiedUser))
 			{
-				context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-				Utils.Respond(context.Response, new Result()
+				StatusCode = HttpStatusCode.Unauthorized;
+				return new Result()
 				{
-					isError = true
-				});
-				return;
+					Error = "Unauthorized"
+				};
 			}
 
 			User user = UserManager.Instance.GetUserFromId(authentication.UserID);
@@ -40,17 +39,15 @@ namespace ModBotBackend.Operations.TagsOperations
 				tagIds[i] = tags[i].TagID;
 			}
 
-			Utils.Respond(context.Response, new Result()
+			return new Result()
 			{
-				isError = false,
 				Tags = tagIds
-			});
+			};
 		}
 
 
-		class Result
+		class Result : JsonOperationResponseBase
 		{
-			public bool isError;
 			public string[] Tags;
 		}
 	}

@@ -12,22 +12,26 @@ using ModBotBackend.Users;
 namespace ModBotBackend.Operations
 {
 	[Operation("getAllModIds")]
-	public class GetAllModIdsOperation : OperationBase
+	public class GetAllModIdsOperation : JsonOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
 			string[] ids = UploadedModsManager.Instance.GetAllUploadedIds();
 
-			string json = JsonConvert.SerializeObject(ids);
-
-			context.Response.ContentType = "text/plain";
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(json);
-			httpStream.Close();
+			return new ModIdsResponse()
+			{
+				Ids = ids
+			};
 		}
 
 	}
+
+	public class ModIdsResponse : JsonOperationResponseBase
+    {
+		public string[] Ids;
+    }
+
 }

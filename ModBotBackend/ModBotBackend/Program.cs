@@ -147,6 +147,8 @@ namespace ModBotBackend
 				{
 					try
 					{
+						OutputConsole.WriteLine("GOT OPERATION: \"" + operation + "\"");
+
 						Stopwatch stopwatch = new Stopwatch();
 						stopwatch.Start();
 						if (selectedOperation.ParseAsJson)
@@ -161,11 +163,20 @@ namespace ModBotBackend
 					{
 						try
 						{
-							string error = e.ToString();
+							byte[] data = selectedOperation.GetResponseForError(e, out string contentType);
+							
+							context.Response.ContentType = contentType;
+							context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+							/*string error = e.ToString();
 
 							error = error.Replace("\"", "\\\"");
+							*/
 
-							context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+							context.Response.OutputStream.Write(data, 0, data.Length);
+							context.Response.ContentLength64 = data.Length;
+							context.Response.Close();
+
+							/*
 							HttpStream httpStream = new HttpStream(context.Response);
 
 							//OutputConsole.WriteLine(e.ToString());
@@ -173,7 +184,7 @@ namespace ModBotBackend
 							string errorJson = new InternalError(e.ToString()).ToJson();
 
 							httpStream.Send(errorJson);
-							httpStream.Close();
+							httpStream.Close();*/
 
 						}
 						catch
@@ -226,13 +237,27 @@ namespace ModBotBackend
 				if (operationAttribute == null)
 					continue;
 
-				if (loadedTypes[i].BaseType != typeof(OperationBase))
+				if (!ExtendsFrom(loadedTypes[i].BaseType, typeof(OperationBase)))
 					continue;
 
 				Operations.Add(operationAttribute.OperationKey, (OperationBase)Activator.CreateInstance(loadedTypes[i]));
 			}
 
 		}
+
+		public static bool ExtendsFrom(Type type, Type baseType)
+        {
+			while(type != null)
+            {
+				if (type == baseType)
+					return true;
+
+				type = type.BaseType;
+            }
+
+			return false;
+        }
+
 		public static void PopulateOwnFolderObjects()
 		{
 			OwnFolderObjects.Clear();

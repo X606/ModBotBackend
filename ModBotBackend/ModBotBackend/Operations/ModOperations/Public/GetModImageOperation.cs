@@ -15,7 +15,7 @@ namespace ModBotBackend.Operations
 {
 	
 	[Operation("getModImage")]
-	public class GetModImageOperation : OperationBase
+	public class GetModImageOperation : RawDataOperationBase
 	{
 		public override bool ParseAsJson => false;
 		public override string[] Arguments => new string[] { "element", "id"};
@@ -25,19 +25,28 @@ namespace ModBotBackend.Operations
 
 		static ConcurrentDictionary<string, byte[]> _rescaledImageCache = new ConcurrentDictionary<string, byte[]>();
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+        public override byte[] GetResponseForError(Exception e, out string contentType)
+        {
+			contentType = "image/png";
+
+			ImageConverter converter = new ImageConverter();
+
+			byte[] data = (byte[])converter.ConvertTo(Properties.Resources.cross, typeof(byte[]));
+			return data;
+		}
+
+        public override byte[] OnOperation(Arguments arguments, Authentication authentication)
 		{
-			string id = context.Request.QueryString["id"];
+			ContentType = "image/png";
+
+			string id = arguments["id"];
 
 			if (!UploadedModsManager.Instance.HasModWithIdBeenUploaded(id))
 			{
 				ImageConverter converter = new ImageConverter();
 				int statusCode = 0;
 				byte[] data = WebsiteRequestProcessor.OnRequest("Assets/DefaultAvatar.png", out string contentType, ref statusCode);
-				context.Response.ContentLength64 = data.LongLength;
-				context.Response.OutputStream.Write(data, 0, data.Length);
-				context.Response.Close();
-				return;
+				return data;
 			}
 
 			ModInfo modInfo = UploadedModsManager.Instance.GetModInfoFromId(id);
@@ -47,38 +56,28 @@ namespace ModBotBackend.Operations
 				ImageConverter converter = new ImageConverter();
 
 				byte[] data = (byte[])converter.ConvertTo(Properties.Resources.cross, typeof(byte[]));
-				context.Response.ContentLength64 = data.LongLength;
-				context.Response.OutputStream.Write(data, 0, data.Length);
-				context.Response.Close();
-				return;
+				return data;
 			}
 
 
 			string imageFilePath = UploadedModsManager.Instance.GetModPathFromID(id) + modInfo.ImageFileName;
 
-			string size = context.Request.QueryString["size"];
+			string size = arguments["size"];
 			if (size == null)
 			{
 				size = "64x64";
 			}
 
-			if (!ImageResizer.TryScaleImageAndGetAsByteArray(context.Request.QueryString["id"], size, imageFilePath, _rescaledImageCache, out byte[] imgData))
+			if (!ImageResizer.TryScaleImageAndGetAsByteArray(arguments["id"], size, imageFilePath, _rescaledImageCache, out byte[] imgData))
             {
 				ImageConverter converter = new ImageConverter();
 
 				byte[] data = (byte[])converter.ConvertTo(Properties.Resources.cross, typeof(byte[]));
-				context.Response.ContentLength64 = data.LongLength;
-				context.Response.OutputStream.Write(data, 0, data.Length);
-				context.Response.Close();
-				return;
+				return data;
             }
 
-			
 
-			context.Response.ContentType = "image/png";
-			context.Response.ContentLength64 = imgData.LongLength;
-			context.Response.OutputStream.Write(imgData, 0, imgData.Length);
-			context.Response.Close();
+			return imgData;
 		}
 
 	}

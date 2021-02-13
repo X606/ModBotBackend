@@ -147,6 +147,9 @@
     <Compile Include="Operations\UserOperations\SignOutOperation.cs" />
     <Compile Include="Operations\UserOperations\UpdateUserDataOperation.cs" />
     <Compile Include="Operations\UserOperations\UploadProfilePictureOperation.cs" />
+    <Compile Include="OperationTypes\JsonOperationBase.cs" />
+    <Compile Include="OperationTypes\PlainTextOperationBase.cs" />
+    <Compile Include="OperationTypes\RawDataOperationBase.cs" />
     <Compile Include="OutputConsole.cs" />
     <Compile Include="OwnFolderObject.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -162,7 +165,7 @@
     <Compile Include="Users\UserManager.cs" />
     <Compile Include="HttpStream.cs" />
     <Compile Include="JsonFile.cs" />
-    <Compile Include="OperationBase.cs" />
+    <Compile Include="OperationTypes\OperationBase.cs" />
     <Compile Include="Operations\ModOperations\Public\DownloadModOperation.cs" />
     <Compile Include="Operations\ModOperations\Public\GetAllModIdsOperation.cs" />
     <Compile Include="Operations\ModOperations\Public\GetAllModInfosOperation.cs" />

@@ -10,38 +10,33 @@ using ModBotBackend.Managers;
 namespace ModBotBackend.Operations.TagsOperations
 {
 	[Operation("uploadTag")]
-	public class UploadTagOperation : OperationBase
+	public class UploadTagOperation : JsonOperationBase
 	{
 		public override string[] Arguments => new string[] { "tagName", "tagBody" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
 		public override bool ParseAsJson => true;
 		
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
 			if (!authentication.IsSignedIn)
 			{
-				Utils.Respond(context.Response, new Response()
+				return new Response()
 				{
-					error = "You are not logged in"
-				});
-				return;
+					Error = "You are not logged in"
+				};
 			}
 			if (authentication.AuthenticationLevel < AuthenticationLevel.VerifiedUser)
 			{
-				Utils.Respond(context.Response, new Response()
+				return new Response()
 				{
-					error = "To prevent spam you need to have a verified account to upload tags"
-				});
-				return;
+					Error = "To prevent spam you need to have a verified account to upload tags"
+				};
 			}
-			if (!Utils.TryGetRequestBody<Request>(context, out Request request))
+			Request request = new Request()
 			{
-				Utils.Respond(context.Response, new Response()
-				{
-					error = "the request was invalid"
-				});
-				return;
-			}
+				tagBody = arguments["tagBody"],
+				tagName = arguments["tagName"]
+			};
 
 			TagInfo tag = new TagInfo(authentication.UserID, request.tagName, request.tagBody);
 			if (authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.Modder))
@@ -51,11 +46,11 @@ namespace ModBotBackend.Operations.TagsOperations
 
 			TagsManager.Instance.SaveTag(tag);
 
-			Utils.Respond(context.Response, new Response()
+			return new Response()
 			{
 				message = "Uploaded tag!",
 				ID = tag.TagID
-			});
+			};
 		}
 
 		public class Request
@@ -63,9 +58,8 @@ namespace ModBotBackend.Operations.TagsOperations
 			public string tagBody;
 			public string tagName;
 		}
-		public class Response
+		public class Response : JsonOperationResponseBase
 		{
-			public string error = null;
 			public string message = null;
 			public string ID = null;
 		}

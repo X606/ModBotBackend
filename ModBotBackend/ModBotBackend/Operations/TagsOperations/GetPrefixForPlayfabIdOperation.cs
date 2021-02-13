@@ -11,7 +11,7 @@ using ModBotBackend.Managers;
 namespace ModBotBackend.Operations.TagsOperations
 {
 	[Operation("getPlayerPrefix")]
-	public class GetPrefixForPlayfabIdOperation : OperationBase
+	public class GetPrefixForPlayfabIdOperation : JsonOperationBase
 	{
 		public override string[] Arguments => new string[] { "playfabID" };
 		public override bool ArgumentsInQuerystring => true;
@@ -19,9 +19,9 @@ namespace ModBotBackend.Operations.TagsOperations
 
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			string playfabID = context.Request.QueryString["playfabID"];
+			string playfabID = arguments["playfabID"];
 
 			TagInfo[] tags = TagsManager.Instance.GetTagsForPlayfabId(playfabID);
 
@@ -36,21 +36,15 @@ namespace ModBotBackend.Operations.TagsOperations
 				}
 			}
 
-			string json = JsonConvert.SerializeObject(new Result()
+			return new Result()
 			{
 				nameOverride = null,
 				prefix = prefixBuilder.ToString().Trim(" ".ToCharArray())
-			});
+			};
 
-			TagsManager.Instance.GetTagsForPlayfabId(playfabID);
-
-			context.Response.ContentType = "application/json";
-			HttpStream stream = new HttpStream(context.Response);
-			stream.Send(json);
-			stream.Close();
 		}
 
-		class Result
+		class Result : JsonOperationResponseBase
 		{
 			public string nameOverride;
 			public string prefix;

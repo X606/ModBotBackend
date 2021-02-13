@@ -10,7 +10,7 @@ using ModBotBackend.Managers;
 namespace ModBotBackend.Operations
 {
 	[Operation("getModBotLauncherDownload")]
-	public class GetModBotLauncherDownloadLinkOperation : OperationBase
+	public class GetModBotLauncherDownloadLinkOperation : PlainTextOperationBase
 	{
 		public override string[] Arguments => new string[] { };
 
@@ -18,14 +18,9 @@ namespace ModBotBackend.Operations
 
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
-
-			string modbotDownload = ModBotInfoManager.Instance.GetModBotLauncherDownloadLink();
-
-			Utils.Respond(context.Response, modbotDownload);
-
+			return ModBotInfoManager.Instance.GetModBotLauncherDownloadLink();
 		}
 	}
 }

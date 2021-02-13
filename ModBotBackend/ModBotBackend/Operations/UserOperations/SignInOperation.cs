@@ -13,7 +13,7 @@ using ModBotBackend.Users.Sessions;
 namespace ModBotBackend.Operations
 {
 	[Operation("signIn")]
-	public class SignInOperation : OperationBase
+	public class SignInOperation : JsonOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "username", "password" };
@@ -26,47 +26,40 @@ namespace ModBotBackend.Operations
 
 		resolve(e);";
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+        public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
+			ContentType = "text/plain";
 
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
-
-			SignInData request = Newtonsoft.Json.JsonConvert.DeserializeObject<SignInData>(json);
+			SignInData request = new SignInData()
+			{
+				password = arguments["password"],
+				username = arguments["username"]
+			};
 
 			if(!request.IsValidRequest())
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new SignInResponse()
+				return new SignInResponse()
 				{
-					error = "All fields were not filled out"
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = "All fields were not filled out"
+				};
 			}
 			
 			Session session = UserManager.Instance.SignInAsUser(request.username, request.password);
 
 			if (session == null)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new SignInResponse()
+				return new SignInResponse()
 				{
-					error = "Either the specified username or the password was wrong"
-				}.ToJson());
-				stream.Close();
-				return;
+					Error = "Either the specified username or the password was wrong"
+				};
 			}
 
 			OutputConsole.WriteLine(request.username + " signed in");
 
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(new SignInResponse()
+			return new SignInResponse()
 			{
 				sessionID = session.Key
-			}.ToJson());
-			httpStream.Close();
+			};
 		}
 
 		[Serializable]
@@ -81,15 +74,9 @@ namespace ModBotBackend.Operations
 			}
 		}
 		[Serializable]
-		private class SignInResponse
+		private class SignInResponse : JsonOperationResponseBase
 		{
 			public string sessionID;
-			public string error;
-
-			public string ToJson()
-			{
-				return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-			}
 		}
 	}
 }

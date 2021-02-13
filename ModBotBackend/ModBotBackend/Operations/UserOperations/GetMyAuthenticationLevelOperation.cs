@@ -9,17 +9,14 @@ using System.Threading.Tasks;
 namespace ModBotBackend.Operations
 {
 	[Operation("getMyAuth")]
-	public class GetMyAuthenticationLevelOperation : OperationBase
+	public class GetMyAuthenticationLevelOperation : PlainTextOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(((int)authentication.AuthenticationLevel).ToString());
-			httpStream.Close();
+			return ((int)authentication.AuthenticationLevel).ToString();
 		}
 	}
 }

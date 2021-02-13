@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ModBotBackend.Operations.TagsOperations
 {
 	[Operation("verifyTag")]
-	public class VerifyTagOperation : OperationBase
+	public class VerifyTagOperation : JsonOperationBase
 	{
 		public override string[] Arguments => new string[] { "tagID" };
 		public override bool ArgumentsInQuerystring => true;
@@ -18,65 +18,55 @@ namespace ModBotBackend.Operations.TagsOperations
 
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.Admin;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
 			if(!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.Admin))
 			{
-				context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-				Utils.Respond(context.Response, new Response()
+				StatusCode = HttpStatusCode.Unauthorized;
+				return new Response()
 				{
-					isError = true,
-					message = "You need to be an admin to do this"
-				});
-				return;
+					Error = "You need to be an admin to do this"
+				};
 			}
 
-			string tagID = context.Request.QueryString["tagID"];
+			string tagID = arguments["tagID"];
 			if (tagID == null)
 			{
-				Utils.Respond(context.Response, new Response()
+				StatusCode = HttpStatusCode.BadRequest;
+				return new Response()
 				{
-					isError = true,
-					message = "You need to provide a tagID"
-				});
-				return;
+					Error = "You need to provide a tagID"
+				};
 			}
 
 			TagInfo tag = TagsManager.Instance.GetTag(tagID);
 			if (tag == null)
 			{
-				Utils.Respond(context.Response, new Response()
+				return new Response()
 				{
-					isError = true,
-					message = "The provided tagID is not accociated with a tag"
-				});
-				return;
+					Error = "The provided tagID is not accociated with a tag"
+				};
 			}
 
 			if(tag.Verified)
 			{
-				Utils.Respond(context.Response, new Response()
+				return new Response()
 				{
-					isError = true,
-					message = "The provided tag is already verified."
-				});
-				return;
+					Error = "The provided tag is already verified."
+				};
 			}
 
 			tag.Verified = true;
 			TagsManager.Instance.SaveTag(tag);
 
-			Utils.Respond(context.Response, new Response()
+			return new Response()
 			{
-				isError = false,
-				message = "Verified tag."
-			});
-
+				Error = "Verified tag."
+			};
 		}
 
-		class Response
+		class Response : JsonOperationResponseBase
 		{
-			public bool isError;
 			public string message;
 		}
 	}

@@ -13,7 +13,7 @@ using System.Collections.Concurrent;
 namespace ModBotBackend.Operations
 {
 	[Operation("getProfilePicture")]
-	public class GetProfilePictureOperation : OperationBase
+	public class GetProfilePictureOperation : RawDataOperationBase
 	{
 		public override bool ParseAsJson => false;
 		public override string[] Arguments => new string[] { "element", "id" };
@@ -24,10 +24,20 @@ namespace ModBotBackend.Operations
 		public override string OverrideAPICallJavascript => "let destroy = () => { element.src = \"/api/?operation=getProfilePicture&size=\" + element.clientWidth + \"x\" + element.clientHeight + \"&id=\" + id; }; if(element.clientWidth == 0 || element.clientHeight == 0) { setTimeout(destroy,100); } else { destroy(); }";
 
 		static ConcurrentDictionary<string, byte[]> _rescaledImageCache = new ConcurrentDictionary<string, byte[]>();
+		/*
+        public override byte[] GetResponseForError(Exception e, out string contentType)
+        {
+			contentType = "image/png";
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+			ImageConverter converter = new ImageConverter();
+
+			byte[] data = (byte[])converter.ConvertTo(Properties.Resources.cross, typeof(byte[]));
+			return data;
+		}
+		*/
+        public override byte[] OnOperation(Arguments arguments, Authentication authentication)
 		{
-			string id = context.Request.QueryString["id"];
+			string id = arguments["id"];
 
 			User user = UserManager.Instance.GetUserFromId(id);
 
@@ -36,10 +46,7 @@ namespace ModBotBackend.Operations
 				ImageConverter converter = new ImageConverter();
 
 				byte[] data = (byte[])converter.ConvertTo(Properties.Resources.cross, typeof(byte[]));
-				context.Response.ContentLength64 = data.LongLength;
-				context.Response.OutputStream.Write(data, 0, data.Length);
-				context.Response.Close();
-				return;
+				return data;
 			}
 
 			string imageFilePath = UserManager.Instance.ProfilePicturesPath + id;
@@ -47,23 +54,23 @@ namespace ModBotBackend.Operations
 			if (File.Exists(imageFilePath + ".png"))
 			{
 				imageFilePath += ".png";
-				context.Response.ContentType = "image/png";
+				ContentType = "image/png";
 			}
 			else if(File.Exists(imageFilePath + ".jpg"))
 			{
 				imageFilePath += ".jpg";
-				context.Response.ContentType = "image/jpeg";
+				ContentType = "image/jpeg";
 			}
 			else if(File.Exists(imageFilePath + ".gif"))
 			{
 				imageFilePath += ".gif";
-				context.Response.ContentType = "image/gif";
+				ContentType = "image/gif";
 			} else
 			{
 				imageFilePath = UserManager.Instance.ProfilePicturesPath + "DefaultAvatar.png";
 			}
 
-			string size = context.Request.QueryString["size"];
+			string size = arguments["size"];
 			if (size == null)
 			{
 				size = "32x32";
@@ -74,16 +81,11 @@ namespace ModBotBackend.Operations
 				ImageConverter converter = new ImageConverter();
 
 				byte[] data = (byte[])converter.ConvertTo(Properties.Resources.cross, typeof(byte[]));
-				context.Response.ContentLength64 = data.LongLength;
-				context.Response.OutputStream.Write(data, 0, data.Length);
-				context.Response.Close();
-				return;
+				return data;
 			}
 
-			context.Response.ContentType = "image/png";
-			context.Response.ContentLength64 = imageData.LongLength;
-			context.Response.OutputStream.Write(imageData, 0, imageData.Length);
-			context.Response.Close();
+			ContentType = "image/png";
+			return imageData;
 		}
 
 	}

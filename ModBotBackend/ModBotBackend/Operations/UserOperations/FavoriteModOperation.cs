@@ -13,41 +13,40 @@ using Newtonsoft.Json;
 namespace ModBotBackend.Operations
 {
 	[Operation("favoriteMod")]
-	public class FavoriteModOperation : OperationBase
+	public class FavoriteModOperation : JsonOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "modID", "favorite" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "application/json";
-
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
-
-			Request request = JsonConvert.DeserializeObject<Request>(json);
+			Request request = new Request()
+			{
+				favorite = arguments["favorite"],
+				modID = arguments["modID"]
+			};
 
 			if (!request.IsValidRequest())
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new Response("The request wasn't valid.").ToJson());
-				stream.Close();
-				return;
+				return new Response()
+				{
+					Error = "The request wasn't valid."
+				};
 			}
 			if (!authentication.HasAtLeastAuthenticationLevel(AuthenticationLevel.BasicUser))
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new Response("You are not signed in").ToJson());
-				stream.Close();
-				return;
+				return new Response()
+				{
+					Error = "You are not signed in"
+				};
 			}
 			if (!UploadedModsManager.Instance.HasModWithIdBeenUploaded(request.modID))
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new Response("No mod with that id has been uploaded.").ToJson());
-				stream.Close();
-				return;
+				return new Response()
+				{
+					Error = "No mod with that id has been uploaded."
+				};
 			}
 
 			User user = UserManager.Instance.GetUserFromId(authentication.UserID);
@@ -55,10 +54,10 @@ namespace ModBotBackend.Operations
 			
 			if ((isFavorited && request.favorite) || (!isFavorited && !request.favorite))
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send(new Response(false, "favorited status not changed").ToJson());
-				stream.Close();
-				return;
+				return new Response()
+				{
+					message = "favorited status not changed"
+				};
 			}
 
 			if (request.favorite)
@@ -69,9 +68,10 @@ namespace ModBotBackend.Operations
 				user.FavoritedMods.Remove(request.modID);
 			}
 
-			HttpStream resultStream = new HttpStream(context.Response);
-			resultStream.Send(new Response(false, "Favorited status updated").ToJson());
-			resultStream.Close();
+			return new Response()
+			{
+				message = "Favorited status updated"
+			};
 		}
 
 		class Request
@@ -84,33 +84,9 @@ namespace ModBotBackend.Operations
 				return true;
 			}
 		}
-		class Response
+		class Response : JsonOperationResponseBase
 		{
-			public Response(string errorMessage = null)
-			{
-				if (errorMessage != null)
-				{
-					isError = true;
-					message = errorMessage;
-				} else
-				{
-					isError = false;
-					message = "";
-				}
-			}
-			public Response(bool isError, string message)
-			{
-				this.isError = isError;
-				this.message = message;
-			}
-
-			public bool isError;
 			public string message;
-
-			public string ToJson()
-			{
-				return JsonConvert.SerializeObject(this);
-			}
 		}
 
 	}

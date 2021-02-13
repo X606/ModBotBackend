@@ -14,52 +14,23 @@ using Newtonsoft.Json;
 namespace ModBotBackend.Operations
 {
 	[Operation("isValidSession")]
-	public class IsValidSessionOperation : OperationBase
+	public class IsValidSessionOperation : PlainTextOperationBase
 	{
 		public override bool ParseAsJson => false;
 		public override string[] Arguments => new string[] { "sessionId" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
+			string sessionId = arguments["sessionId"];
 
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
+			if (sessionId == null)
+				return "false";
 
-			IsValidSessionRequest request = JsonConvert.DeserializeObject<IsValidSessionRequest>(json);
+			if(!SessionsManager.Instance.VerifyKey(sessionId, out Session session))
+				return "false";
 
-			if(!request.IsValidRequest())
-			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send("false");
-				stream.Close();
-				return;
-			}
-
-			if(!SessionsManager.Instance.VerifyKey(request.sessionId, out Session session))
-			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send("false");
-				stream.Close();
-				return;
-			} else
-			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send("true");
-				stream.Close();
-				return;
-			}
+			return "true";
 		}
 
-		[Serializable]
-		private class IsValidSessionRequest
-		{
-			public string sessionId;
-
-			public bool IsValidRequest()
-			{
-				return !string.IsNullOrWhiteSpace(sessionId);
-			}
-		}
 	}
 }

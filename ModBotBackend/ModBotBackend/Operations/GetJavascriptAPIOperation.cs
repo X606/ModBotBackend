@@ -10,13 +10,13 @@ using ModBotBackend.Users.Sessions;
 namespace ModBotBackend.Operations
 {
 	[Operation("getAPI")]
-	public class GetJavascriptAPIOperation : OperationBase
+	public class GetJavascriptAPIOperation : PlainTextOperationBase
 	{
 		public override string[] Arguments => new string[] { };
 		public override bool ParseAsJson => false;
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments passedArguments, Authentication authentication)
 		{
 			StringBuilder javascriptBuilder = new StringBuilder();
 
@@ -110,10 +110,9 @@ namespace ModBotBackend.Operations
 
 			javascriptBuilder.Append("export { API };");
 
-			context.Response.ContentType = "application/javascript";
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(javascriptBuilder.ToString());
-			httpStream.Close();
+			ContentType = "application/javascript";
+
+			return javascriptBuilder.ToString();
 		}
 	}
 }

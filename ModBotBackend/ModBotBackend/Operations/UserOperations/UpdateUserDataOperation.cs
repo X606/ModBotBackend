@@ -14,47 +14,38 @@ using HttpUtils;
 namespace ModBotBackend.Operations
 {
 	[Operation("updateUserData")]
-	public class UpdateUserDataOperation : OperationBase
+	public class UpdateUserDataOperation : JsonOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "password", "username", "bio", "newPassword", "borderStyle", "showFull" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "application/json";
-
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
-
-			Request request = JsonConvert.DeserializeObject<Request>(json);
+			Request request = new Request()
+			{
+				bio = arguments["bio"],
+				borderStyle = arguments["borderStyle"] != null ? (BorderStyles?)(int)arguments["borderStyle"] : null,
+				newPassword = arguments["newPassword"],
+				password = arguments["password"],
+				showFull = arguments["showFull"],
+				username = arguments["username"]
+			};
 
 			if (!request.IsValidRequest())
 			{
-				HttpStream invalidRequestStream = new HttpStream(context.Response);
-				invalidRequestStream.Send(new Response(true, "The request wasn't valid").ToJson());
-				invalidRequestStream.Close();
-
-				return;
+				return new Response(true, "The request wasn't valid");
 			}
 
 			if (!authentication.IsSignedIn)
 			{
-				HttpStream invalidRequestStream = new HttpStream(context.Response);
-				invalidRequestStream.Send(new Response(true, "The provided session id was invalid or outdated").ToJson());
-				invalidRequestStream.Close();
-
-				return;
+				return new Response(true, "The provided session id was invalid or outdated");
 			}
 
 			User user = UserManager.Instance.GetUserFromId(authentication.UserID);
 
 			if (!user.VeryfyPassword(request.password))
 			{
-				HttpStream invalidRequestStream = new HttpStream(context.Response);
-				invalidRequestStream.Send(new Response(true, "The provided password was wrong").ToJson());
-				invalidRequestStream.Close();
-
-				return;
+				return new Response(true, "The provided password was wrong");
 			}
 
 			if(user.Username == request.username)
@@ -70,11 +61,7 @@ namespace ModBotBackend.Operations
 			{
 				if(!User.IsValidUsername(request.username, out string error))
 				{
-					HttpStream invalidRequestStream = new HttpStream(context.Response);
-					invalidRequestStream.Send(new Response(true, error).ToJson());
-					invalidRequestStream.Close();
-
-					return;
+					return new Response(true, error);
 				}
 				user.Username = request.username;
 			}
@@ -86,11 +73,7 @@ namespace ModBotBackend.Operations
 			{
 				if(!User.IsValidPassword(request.newPassword, out string error))
 				{
-					HttpStream invalidRequestStream = new HttpStream(context.Response);
-					invalidRequestStream.Send(new Response(true, error).ToJson());
-					invalidRequestStream.Close();
-
-					return;
+					return new Response(true, error);
 				}
 				user.SetPassword(request.newPassword);
 			}
@@ -100,16 +83,14 @@ namespace ModBotBackend.Operations
 			}
             if (request.showFull != null)
             {
-                user.ShowFull = request.showFull;
+                user.ShowFull = request.showFull.Value;
             }
 
 			user.Save();
 
 			OutputConsole.WriteLine(user.UserID + " (" + user.Username + ") updated their profile.");
 
-            HttpStream resopnseStream = new HttpStream(context.Response);
-			resopnseStream.Send(new Response().ToJson());
-			resopnseStream.Close();
+			return new Response();
 		}
 
 		public class Request
@@ -118,7 +99,7 @@ namespace ModBotBackend.Operations
 			public string bio;
 			public string newPassword;
 			public BorderStyles? borderStyle;
-            public bool showFull;
+            public bool? showFull;
 
 			public string password;
 
@@ -127,7 +108,7 @@ namespace ModBotBackend.Operations
 				return password != null;
 			}
 		}
-		public class Response
+		public class Response : JsonOperationResponseBase
 		{
 			
 			public bool isError;
@@ -135,8 +116,14 @@ namespace ModBotBackend.Operations
 
 			public Response(bool isError = false, string message = "")
 			{
-				this.isError=isError;
-				this.message=message;
+				if (isError)
+                {
+					Error = message;
+				}
+				else
+                {
+					this.message = message;
+				}
 			}
 
 			public string ToJson()

@@ -14,62 +14,46 @@ using Newtonsoft.Json;
 namespace ModBotBackend.Operations
 {
 	[Operation("isCommentMine")]
-	public class IsMyCommentOperation : OperationBase
+	public class IsMyCommentOperation : PlainTextOperationBase
 	{
 		public override bool ParseAsJson => true;
 		public override string[] Arguments => new string[] { "modId", "commentId" };
 		public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
-		public override void OnOperation(HttpListenerContext context, Authentication authentication)
+		public override string OnOperation(Arguments arguments, Authentication authentication)
 		{
-			context.Response.ContentType = "text/plain";
+			ContentType = "application/json";
 
-			byte[] data = Misc.ToByteArray(context.Request.InputStream);
-			string json = Encoding.UTF8.GetString(data);
+			string modId = arguments["modId"];
+			string commentId = arguments["commentId"];
 
-			IsMyCommentRequestData request = JsonConvert.DeserializeObject<IsMyCommentRequestData>(json);
-
-			if(!request.IsValidRequest())
+			if(modId == null || commentId == null)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send("false");
-				stream.Close();
-				return;
+				return "false";
 			}
 
 			if(!authentication.IsSignedIn)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send("false");
-				stream.Close();
-				return;
+				return "false";
 			}
 
-			if(!UploadedModsManager.Instance.HasModWithIdBeenUploaded(request.modId))
+			if(!UploadedModsManager.Instance.HasModWithIdBeenUploaded(modId))
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send("false");
-				stream.Close();
-				return;
+				return "false";
 			}
 
-			SpecialModData specialModData = UploadedModsManager.Instance.GetSpecialModInfoFromId(request.modId);
+			SpecialModData specialModData = UploadedModsManager.Instance.GetSpecialModInfoFromId(modId);
 
-			Comment comment = specialModData.GetCommentWithCommentID(request.commentId);
+			Comment comment = specialModData.GetCommentWithCommentID(commentId);
 			if(comment == null)
 			{
-				HttpStream stream = new HttpStream(context.Response);
-				stream.Send("false");
-				stream.Close();
-				return;
+				return "false";
 			}
 
 			string userId = authentication.UserID;
 
 			bool isUs = comment.PosterUserId == userId;
 
-			HttpStream httpStream = new HttpStream(context.Response);
-			httpStream.Send(isUs ? "true" : "false");
-			httpStream.Close();
+			return isUs ? "true" : "false";
 		}
 
 		[Serializable]
