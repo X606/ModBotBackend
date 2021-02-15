@@ -17,27 +17,29 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void FavoriteMod(string modID, string favorite, Action<JsonObject> callback)
-        {
+        public static void FavoriteMod(string modID, string favorite, Action<JsonObject> callback) {
             StaticCoroutineRunner.StartStaticCoroutine(_favoriteMod(modID, favorite, callback));
         }
 
-        private static IEnumerator _favoriteMod(string modID, string favorite, Action<JsonObject> callback)
-        {
-
+        private static IEnumerator _favoriteMod(string modID, string favorite, Action<JsonObject> callback) {
+            
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "favoriteMod";
-            JsonConstructor json = new JsonConstructor();
-            json.AppendValue("modID", modID);
-            json.AppendValue("favorite", favorite);
-            data = json.ToString();
+			JsonConstructor json = new JsonConstructor();
+			json.AppendValue("modID", modID);
+			json.AppendValue("favorite", favorite);
+			data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

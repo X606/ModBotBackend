@@ -17,25 +17,27 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void SignOut(Action<JsonObject> callback)
-        {
+        public static void SignOut(Action<JsonObject> callback) {
             StaticCoroutineRunner.StartStaticCoroutine(_signOut(callback));
         }
 
-        private static IEnumerator _signOut(Action<JsonObject> callback)
-        {
-
+        private static IEnumerator _signOut(Action<JsonObject> callback) {
+            
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "signOut";
-            JsonConstructor json = new JsonConstructor();
-            data = json.ToString();
+			JsonConstructor json = new JsonConstructor();
+			data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

@@ -17,28 +17,30 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void SignInFromGame(string username, string password, string playfabID, Action<JsonObject> callback)
-        {
+        public static void SignInFromGame(string username, string password, string playfabID, Action<JsonObject> callback) {
             StaticCoroutineRunner.StartStaticCoroutine(_signInFromGame(username, password, playfabID, callback));
         }
 
-        private static IEnumerator _signInFromGame(string username, string password, string playfabID, Action<JsonObject> callback)
-        {
-
+        private static IEnumerator _signInFromGame(string username, string password, string playfabID, Action<JsonObject> callback) {
+            
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "signInFromGame";
-            JsonConstructor json = new JsonConstructor();
-            json.AppendValue("username", username);
-            json.AppendValue("password", password);
-            json.AppendValue("playfabID", playfabID);
-            data = json.ToString();
+			JsonConstructor json = new JsonConstructor();
+			json.AppendValue("username", username);
+			json.AppendValue("password", password);
+			json.AppendValue("playfabID", playfabID);
+			data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

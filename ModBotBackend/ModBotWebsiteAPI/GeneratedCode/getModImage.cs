@@ -17,24 +17,26 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void GetModImage(string element, string id, Action<string> callback)
-        {
+        public static void GetModImage(string element, string id, Action<string> callback) {
             StaticCoroutineRunner.StartStaticCoroutine(_getModImage(element, id, callback));
         }
 
-        private static IEnumerator _getModImage(string element, string id, Action<string> callback)
-        {
-
+        private static IEnumerator _getModImage(string element, string id, Action<string> callback) {
+            
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "getModImage&element=" + element + "&id=" + id;
-            data = "{}";
+			data = "{}";
 
 
             yield return SendRequest(url, data, callback);

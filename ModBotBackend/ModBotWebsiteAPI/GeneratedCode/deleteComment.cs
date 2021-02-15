@@ -17,27 +17,29 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void DeleteComment(string targetModId, string targetCommentId, Action<JsonObject> callback)
-        {
+        public static void DeleteComment(string targetModId, string targetCommentId, Action<JsonObject> callback) {
             StaticCoroutineRunner.StartStaticCoroutine(_deleteComment(targetModId, targetCommentId, callback));
         }
 
-        private static IEnumerator _deleteComment(string targetModId, string targetCommentId, Action<JsonObject> callback)
-        {
-
+        private static IEnumerator _deleteComment(string targetModId, string targetCommentId, Action<JsonObject> callback) {
+            
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "deleteComment";
-            JsonConstructor json = new JsonConstructor();
-            json.AppendValue("targetModId", targetModId);
-            json.AppendValue("targetCommentId", targetCommentId);
-            data = json.ToString();
+			JsonConstructor json = new JsonConstructor();
+			json.AppendValue("targetModId", targetModId);
+			json.AppendValue("targetCommentId", targetCommentId);
+			data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

@@ -17,28 +17,30 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void GetModTemplate(string modName, string description, string tags, Action<JsonObject> callback)
-        {
+        public static void GetModTemplate(string modName, string description, string tags, Action<JsonObject> callback) {
             StaticCoroutineRunner.StartStaticCoroutine(_getModTemplate(modName, description, tags, callback));
         }
 
-        private static IEnumerator _getModTemplate(string modName, string description, string tags, Action<JsonObject> callback)
-        {
-
+        private static IEnumerator _getModTemplate(string modName, string description, string tags, Action<JsonObject> callback) {
+            
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "getModTemplate";
-            JsonConstructor json = new JsonConstructor();
-            json.AppendValue("modName", modName);
-            json.AppendValue("description", description);
-            json.AppendValue("tags", tags);
-            data = json.ToString();
+			JsonConstructor json = new JsonConstructor();
+			json.AppendValue("modName", modName);
+			json.AppendValue("description", description);
+			json.AppendValue("tags", tags);
+			data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

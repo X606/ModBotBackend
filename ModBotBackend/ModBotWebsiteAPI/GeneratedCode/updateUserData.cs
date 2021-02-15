@@ -17,31 +17,33 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void UpdateUserData(string password, string username, string bio, string newPassword, string borderStyle, string showFull, Action<JsonObject> callback)
-        {
+        public static void UpdateUserData(string password, string username, string bio, string newPassword, string borderStyle, string showFull, Action<JsonObject> callback) {
             StaticCoroutineRunner.StartStaticCoroutine(_updateUserData(password, username, bio, newPassword, borderStyle, showFull, callback));
         }
 
-        private static IEnumerator _updateUserData(string password, string username, string bio, string newPassword, string borderStyle, string showFull, Action<JsonObject> callback)
-        {
-
+        private static IEnumerator _updateUserData(string password, string username, string bio, string newPassword, string borderStyle, string showFull, Action<JsonObject> callback) {
+            
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "updateUserData";
-            JsonConstructor json = new JsonConstructor();
-            json.AppendValue("password", password);
-            json.AppendValue("username", username);
-            json.AppendValue("bio", bio);
-            json.AppendValue("newPassword", newPassword);
-            json.AppendValue("borderStyle", borderStyle);
-            json.AppendValue("showFull", showFull);
-            data = json.ToString();
+			JsonConstructor json = new JsonConstructor();
+			json.AppendValue("password", password);
+			json.AppendValue("username", username);
+			json.AppendValue("bio", bio);
+			json.AppendValue("newPassword", newPassword);
+			json.AppendValue("borderStyle", borderStyle);
+			json.AppendValue("showFull", showFull);
+			data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

@@ -17,26 +17,28 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void AdminCommand(string Message, Action<string> callback)
-        {
+        public static void AdminCommand(string Message, Action<string> callback) {
             StaticCoroutineRunner.StartStaticCoroutine(_adminCommand(Message, callback));
         }
 
-        private static IEnumerator _adminCommand(string Message, Action<string> callback)
-        {
-
+        private static IEnumerator _adminCommand(string Message, Action<string> callback) {
+            
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "adminCommand";
-            JsonConstructor json = new JsonConstructor();
-            json.AppendValue("Message", Message);
-            data = json.ToString();
+			JsonConstructor json = new JsonConstructor();
+			json.AppendValue("Message", Message);
+			data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

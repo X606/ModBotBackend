@@ -17,27 +17,29 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void Like(string likedModId, string likeState, Action<JsonObject> callback)
-        {
+        public static void Like(string likedModId, string likeState, Action<JsonObject> callback) {
             StaticCoroutineRunner.StartStaticCoroutine(_like(likedModId, likeState, callback));
         }
 
-        private static IEnumerator _like(string likedModId, string likeState, Action<JsonObject> callback)
-        {
-
+        private static IEnumerator _like(string likedModId, string likeState, Action<JsonObject> callback) {
+            
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "like";
-            JsonConstructor json = new JsonConstructor();
-            json.AppendValue("likedModId", likedModId);
-            json.AppendValue("likeState", likeState);
-            data = json.ToString();
+			JsonConstructor json = new JsonConstructor();
+			json.AppendValue("likedModId", likedModId);
+			json.AppendValue("likeState", likeState);
+			data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

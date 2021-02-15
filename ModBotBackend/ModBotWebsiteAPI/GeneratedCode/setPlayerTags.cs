@@ -17,26 +17,28 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ModBotWebsiteAPI
 {
     public static partial class API
     {
-        public static void SetPlayerTags(string tags, Action<JsonObject> callback)
-        {
+        public static void SetPlayerTags(string tags, Action<JsonObject> callback) {
             StaticCoroutineRunner.StartStaticCoroutine(_setPlayerTags(tags, callback));
         }
 
-        private static IEnumerator _setPlayerTags(string tags, Action<JsonObject> callback)
-        {
-
+        private static IEnumerator _setPlayerTags(string tags, Action<JsonObject> callback) {
+            
             string url = MODBOT_API_URL_BASE;
             string data = "";
 
             url += "setPlayerTags";
-            JsonConstructor json = new JsonConstructor();
-            json.AppendValue("tags", tags);
-            data = json.ToString();
+			JsonConstructor json = new JsonConstructor();
+			json.AppendValue("tags", tags);
+			data = json.ToString();
 
             yield return SendRequest(url, data, callback);
         }

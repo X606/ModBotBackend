@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -18,6 +19,8 @@ namespace ModBotBackend
     {
         static void Main(string[] args)
         {
+            ShutdownHandlerOverrider.Init();
+
             PopulateOperations();
             PopulateOwnFolderObjects();
 
@@ -36,15 +39,8 @@ namespace ModBotBackend
                 OutputConsole.WriteLine("Listening...");
                 OutputConsole.WriteLine("WARNING: You are currently running in http only mode, this is only intended for test use, do not do this in production.");
 
-                while (true)
-                {
-                    string read = Console.ReadLine();
-                    if (read == "quit")
-                    {
-                        OnProcessExit();
-                        Environment.Exit(0);
-                    }
-                }
+                while (ShutdownHandlerOverrider.ShouldKeepRunning)
+                    Thread.Sleep(10);
             }
 
 
@@ -61,22 +57,12 @@ namespace ModBotBackend
             httpListener.Start();
             listenHttp(httpListener);
 
-            while (true)
-            {
-                string read = Console.ReadLine();
-                if (read == "quit")
-                {
-                    OnProcessExit();
-                    Environment.Exit(0);
-                }
-            }
+            while (ShutdownHandlerOverrider.ShouldKeepRunning)
+                Thread.Sleep(10);
         }
 
         static async void listenMain(HttpListener httpListener)
         {
-#if !LOCAL
-            Task.Factory.StartNew(() => DeployerComunication());
-#endif
             while (true)
             {
                 var context = await httpListener.GetContextAsync();
@@ -274,33 +260,12 @@ namespace ModBotBackend
 
         }
 
-        static void OnProcessExit()
+        public static void OnProcessExit()
         {
             for (int i = 0; i < OwnFolderObjects.Count; i++)
             {
                 OwnFolderObjects[i].GetType().GetMethod("OnShutDown").Invoke(OwnFolderObjects[i], new object[] { });
             }
-
-        }
-        static void DeployerComunication()
-        {
-            IPHostEntry host = Dns.GetHostEntry("localhost");
-            IPAddress ipAddress = host.AddressList[0];
-            IPEndPoint remoteEP = new IPEndPoint(ipAddress, 12022);
-
-            // Create a TCP/IP  socket.    
-            Socket sender = new Socket(ipAddress.AddressFamily,
-                SocketType.Stream, ProtocolType.Tcp);
-
-            // Connect to Remote EndPoint  
-            sender.Connect(remoteEP);
-
-            byte[] buffer = new byte[4];
-            sender.Receive(buffer);
-            Console.WriteLine("Exiting....");
-
-            OnProcessExit();
-            Environment.Exit(0);
 
         }
 
