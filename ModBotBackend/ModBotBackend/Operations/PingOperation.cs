@@ -13,7 +13,7 @@ namespace ModBotBackend.Operations
 
         public override string OnOperation(Arguments arguments, Authentication authentication)
         {
-            return "pong!";
+            return "Pong!";
         }
     }
 }
