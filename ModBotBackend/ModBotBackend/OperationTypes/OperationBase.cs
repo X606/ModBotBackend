@@ -108,7 +108,7 @@ namespace ModBotBackend
         public static implicit operator double(Argument argument) => argument != null ? Convert.ToDouble(argument._value) : default(double);
         public static implicit operator decimal(Argument argument) => argument != null ? Convert.ToDecimal(argument._value) : default(decimal);
 
-        public static implicit operator string[](Argument argument) => argument != null ? (string[])argument._value : default(string[]);
+        public static implicit operator string[](Argument argument) => argument != null ? ((Newtonsoft.Json.Linq.JArray)argument._value).ToObject<string[]>() : default(string[]);
 
         public static bool operator ==(Argument left, Argument right)
         {
