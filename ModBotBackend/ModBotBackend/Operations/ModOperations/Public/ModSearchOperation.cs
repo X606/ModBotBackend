@@ -16,6 +16,7 @@ namespace ModBotBackend.Operations
 	this.userID = null;
 	this.modID = null;
 	this.sortOrder = 'liked';
+    this.includeUnchecked = false;    
 
 	this.Send = function () {
 		return new Promise(async resolve => {
@@ -26,7 +27,8 @@ namespace ModBotBackend.Operations
 					includeDescriptionsInSearch: this.includeDescriptionsInSearch,
 					userID: this.userID,
 					sortOrder: this.sortOrder,
-					modID: this.modID
+					modID: this.modID,
+                    includeUnchecked: this.includeUnchecked
 				});
 			result = JSON.parse(result);
 
@@ -129,6 +131,11 @@ namespace ModBotBackend.Operations
             {
                 if (((string)arguments["userID"]) != item.Key.ModId)
                     shouldIncludeItem = false;
+            }
+
+            if (arguments["includeUnchecked"] == false && !item.Key.Verified)
+            {
+                shouldIncludeItem = false;
             }
 
             return shouldIncludeItem;

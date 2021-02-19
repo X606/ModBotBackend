@@ -53,7 +53,7 @@ namespace ModBotBackend.Operations
             }
 
 
-            string imageFilePath = UploadedModsManager.Instance.GetModPathFromID(id) + modInfo.ImageFileName;
+            string imageFilePath = UploadedModsManager.Instance.GetModFolderPath(id) + modInfo.ImageFileName;
 
             string size = arguments["size"];
             if (size == null)

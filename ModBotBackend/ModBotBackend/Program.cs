@@ -133,12 +133,22 @@ namespace ModBotBackend
                     {
                         Stopwatch stopwatch = new Stopwatch();
                         stopwatch.Start();
-                        if (selectedOperation.ParseAsJson)
+
+                        if (authentication.HasAtLeastAuthenticationLevel(selectedOperation.MinimumAuthenticationLevelToCall))
                         {
-                            context.Response.ContentType = "application/json";
+                            selectedOperation.OnOperation(context, authentication);
+                        }
+                        else
+                        {
+                            byte[] data = selectedOperation.OnUnauthorized(authentication, out string contentType);
+
+                            context.Response.ContentType = contentType;
+                            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                            context.Response.ContentLength64 += data.Length;
+                            context.Response.OutputStream.Write(data, 0, data.Length);
+                            context.Response.Close();
                         }
 
-                        selectedOperation.OnOperation(context, authentication);
                         stopwatch.Stop();
                     }
                     catch (Exception e)
@@ -149,33 +159,17 @@ namespace ModBotBackend
 
                             context.Response.ContentType = contentType;
                             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                            /*string error = e.ToString();
-
-							error = error.Replace("\"", "\\\"");
-							*/
-
+                            context.Response.ContentLength64 += data.Length;
                             context.Response.OutputStream.Write(data, 0, data.Length);
-                            context.Response.ContentLength64 = data.Length;
                             context.Response.Close();
-
-                            /*
-							HttpStream httpStream = new HttpStream(context.Response);
-
-							//OutputConsole.WriteLine(e.ToString());
-
-							string errorJson = new InternalError(e.ToString()).ToJson();
-
-							httpStream.Send(errorJson);
-							httpStream.Close();*/
 
                         }
                         catch
                         {
-                            context.Response.Abort();
                             // At this point just forget it and move on
+                            context.Response.Abort();
                             return;
                         }
-                        //Utils.RederectToErrorPage(context, "an error occured");
                     }
                 }
                 else

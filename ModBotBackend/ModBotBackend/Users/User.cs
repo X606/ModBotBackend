@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ModBotBackend.Users.Sessions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -124,6 +125,8 @@ namespace ModBotBackend.Users
             string json = JsonConvert.SerializeObject(this);
 
             File.WriteAllText(path, json);
+
+            SessionsManager.Instance.OnUserInfoUpdated(this);
         }
         public static User GetFromFile(string path)
         {

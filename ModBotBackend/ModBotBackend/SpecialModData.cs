@@ -18,6 +18,8 @@ namespace ModBotBackend
         public ulong PostedDate;
         public ulong UpdatedDate;
 
+        public bool Verified = false;
+
         public List<Comment> Comments = new List<Comment>();
         public List<ModReport> Reports = new List<ModReport>();
 
@@ -69,6 +71,8 @@ namespace ModBotBackend
             specialModData.OwnerID = ownerID;
             specialModData.PostedDate = (ulong)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             specialModData.UpdatedDate = specialModData.PostedDate;
+
+            specialModData.Verified = false;
 
             specialModData.Comments = new List<Comment>();
             specialModData.Reports = new List<ModReport>();

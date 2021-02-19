@@ -1,4 +1,5 @@
 ﻿using InternalModBot;
+using ModBotBackend.Users;
 using ModBotBackend.Users.Sessions;
 using ModLibrary;
 using Newtonsoft.Json;
@@ -155,7 +156,7 @@ namespace ModBotBackend
                     }
                 }
 
-                string newFolderPath = GetOrCreateModsFolder() + loadedModInfo.UniqueID + "/";
+                string newFolderPath = GetModFolderPath(loadedModInfo.UniqueID);
                 if (Directory.Exists(newFolderPath))
                     Utils.RecursivelyDeleteFolder(newFolderPath);
 
@@ -230,15 +231,6 @@ namespace ModBotBackend
             return modData.ToJson();
         }
 
-        public string GetModPathFromID(string id)
-        {
-            return GetOrCreateModsFolder() + id + "/";
-        }
-        public string GetZippedModPathFromID(string id)
-        {
-            return GetOrCreateZippedModsFolder() + id + ".zip";
-        }
-
         public string[] GetAllUploadedIds()
         {
             string[] ids = new string[_loadedMods.Count];
@@ -265,12 +257,12 @@ namespace ModBotBackend
 
             ModInfo modInfo = GetModInfoFromId(id);
 
-            string zippedModPath = GetOrCreateZippedModsFolder() + id + ".zip";
+            string zippedModPath = GetZippedFileForMod(id);
 
             if (File.Exists(zippedModPath))
                 File.Delete(zippedModPath);
 
-            ZipFile.CreateFromDirectory(GetOrCreateModsFolder() + id, zippedModPath);
+            ZipFile.CreateFromDirectory(GetModFolderPath(id), zippedModPath);
         }
         public void CreateAndAddSpecialModDataFormMod(string modID, string ownerID)
         {
@@ -283,10 +275,40 @@ namespace ModBotBackend
         }
         public void SaveSpecialModData(SpecialModData data)
         {
-            string path = GetOrCreateSpecialModsDataFolder() + data.ModId + ".json";
+            string path = GetSpecialModDataJsonPath(data.ModId);
 
             File.WriteAllText(path, data.ToJson());
         }
+
+        public void DeleteMod(string modId)
+        {
+            if (!_loadedMods.ContainsKey(modId))
+                throw new Exception("Mod \"" + modId + "\" does not exist");
+
+            _loadedMods.Remove(modId);
+            _loadedModJsons.Remove(modId);
+            _loadedSpecialModData.Remove(modId);
+
+            Directory.Delete(GetModFolderPath(modId), true);
+            File.Delete(GetZippedFileForMod(modId));
+            File.Delete(GetSpecialModDataJsonPath(modId));
+
+            foreach(User user in UserManager.Instance.Users)
+            {
+                bool removedAny = false;
+
+                removedAny |= user.FavoritedMods.Remove(modId);
+                removedAny |= user.LikedMods.Remove(modId);
+                if (removedAny)
+                    user.Save();
+
+            }
+
+        }
+
+        public string GetModFolderPath(string modId) => GetOrCreateModsFolder() + modId + "/";
+        public string GetZippedFileForMod(string modId) => GetOrCreateZippedModsFolder() + modId + ".zip";
+        public string GetSpecialModDataJsonPath(string modId) => GetOrCreateSpecialModsDataFolder() + modId + ".json";
 
         public string GetOrCreateModsFolder()
         {

@@ -30,7 +30,7 @@ namespace ModBotBackend.Operations
                 return;
             }
 
-            string path = UploadedModsManager.Instance.GetZippedModPathFromID(id);
+            string path = UploadedModsManager.Instance.GetZippedFileForMod(id);
 
             byte[] data = File.ReadAllBytes(path);
 

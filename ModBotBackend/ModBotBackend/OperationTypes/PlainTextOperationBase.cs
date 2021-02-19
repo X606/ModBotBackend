@@ -7,6 +7,12 @@ namespace ModBotBackend
     public abstract class PlainTextOperationBase : OperationBase
     {
 
+        public override byte[] OnUnauthorized(Authentication authentication, out string contentType)
+        {
+            contentType = "text/plain";
+            return Encoding.UTF8.GetBytes("Unauthorized");
+        }
+
         public override void OnOperation(HttpListenerContext context, Authentication authentication)
         {
             Arguments arguments = GetArguments(context);

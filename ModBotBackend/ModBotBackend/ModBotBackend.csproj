@@ -108,9 +108,11 @@
     <Compile Include="Operations\AdminOnly\AdminCommands\SetUserDataCommand.cs" />
     <Compile Include="Operations\AdminOnly\OpenConsoleWebSocket.cs" />
     <Compile Include="Operations\AdminOnly\SetCustomConsoleCssOperation.cs" />
+    <Compile Include="Operations\AdminOnly\VerifyModOperation.cs" />
     <Compile Include="Operations\ModBotInfoOperations\GetCurrentModBotVersionOperation.cs" />
     <Compile Include="Operations\ModBotInfoOperations\GetModBotDownloadLinkOperation.cs" />
     <Compile Include="Operations\ModBotInfoOperations\GetModBotLauncherDownloadLinkOperation.cs" />
+    <Compile Include="Operations\AdminOnly\RemoveModOperation.cs" />
     <Compile Include="Operations\TagsOperations\EditTagOperation.cs" />
     <Compile Include="Operations\TagsOperations\GetMyTagsOperation.cs" />
     <Compile Include="Operations\TagsOperations\GetPrefixForPlayfabIdOperation.cs" />

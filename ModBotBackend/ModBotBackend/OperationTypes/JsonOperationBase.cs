@@ -7,6 +7,16 @@ namespace ModBotBackend
 {
     public abstract class JsonOperationBase : OperationBase
     {
+        public override byte[] OnUnauthorized(Authentication authentication, out string contentType)
+        {
+            contentType = "application/json";
+
+            return Encoding.UTF8.GetBytes(new JsonOperationResponseBase()
+            {
+                Error = "Unauthorized"
+            }.ToJson());
+        }
+
         public override void OnOperation(HttpListenerContext context, Authentication authentication)
         {
             Arguments arguments = GetArguments(context);

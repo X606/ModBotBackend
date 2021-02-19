@@ -56,7 +56,7 @@ namespace ModBotBackend.Operations.TagsOperations
 
             return new Response()
             {
-                Error = "Verified tag."
+                message = "Verified tag."
             };
         }
 

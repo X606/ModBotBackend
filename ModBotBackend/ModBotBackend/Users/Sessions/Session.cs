@@ -85,6 +85,6 @@ namespace ModBotBackend.Users.Sessions
         public readonly DateTime ExpieryTime;
         public readonly string Key;
         public readonly string OwnerUserID;
-        public readonly AuthenticationLevel AuthenticationLevel;
+        public AuthenticationLevel AuthenticationLevel;
     }
 }

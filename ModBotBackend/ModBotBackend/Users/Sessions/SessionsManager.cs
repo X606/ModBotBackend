@@ -116,5 +116,15 @@ namespace ModBotBackend.Users.Sessions
 
             return null;
         }
+
+        public void OnUserInfoUpdated(User user)
+        {
+            foreach (Session session in Sessions)
+            {
+                if (session.OwnerUserID == user.UserID)
+                    session.AuthenticationLevel = user.AuthenticationLevel;
+
+            }
+        }
     }
 }

@@ -15,6 +15,11 @@ namespace ModBotBackend
             contentType = "text/plain";
             return Encoding.UTF8.GetBytes("ERROR!\nError:\n" + e.ToString());
         }
+        public virtual byte[] OnUnauthorized(Authentication authentication, out string contentType)
+        {
+            contentType = "text/plain";
+            return Encoding.UTF8.GetBytes("Unauthorized");
+        }
 
         public abstract string[] Arguments { get; }
         public abstract bool ParseAsJson { get; }
