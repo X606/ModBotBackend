@@ -11,6 +11,8 @@ namespace ModBotBackend.Operations
         public override string[] Arguments => new string[] { "username", "password" };
         public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
 
+        public override BannedUserCallability AllowedForBannedUsers => BannedUserCallability.Never;
+
         public override string OverrideResolveJavascript =>
         @"if (e.Error != null) {
 			setCurrentSessionId(e.sessionID);

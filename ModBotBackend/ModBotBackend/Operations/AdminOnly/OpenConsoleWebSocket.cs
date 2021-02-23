@@ -15,7 +15,7 @@ namespace ModBotBackend.Operations.AdminOnly
         public override bool ParseAsJson => false;
         public override string[] Arguments => new string[] { };
         public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.Admin;
-        public override string OverrideAPICallJavascript => "return new WebSocket(\"wss://\" + location.host + \"/api?operation=openConsoleWebSocket\");";
+        public override string OverrideAPICallJavascript => "return new WebSocket((location.protocol == \"https:\" ? \"wss:\" : \"ws:\") + \"//\" + location.host + \"/api?operation=openConsoleWebSocket\");";
 
         public override byte[] GetResponseForError(Exception e, out string contentType)
         {

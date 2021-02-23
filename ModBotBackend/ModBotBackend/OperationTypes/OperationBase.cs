@@ -29,6 +29,14 @@ namespace ModBotBackend
         public virtual string OverrideResolveJavascript => null;
         public virtual string OverrideAPICallJavascript => null;
         public virtual bool HideInAPI => false;
+        public virtual BannedUserCallability AllowedForBannedUsers => BannedUserCallability.Default;
+        
+        public enum BannedUserCallability
+        {
+            Default,
+            Never,
+            Always
+        }
 
         public Arguments GetArguments(HttpListenerContext context)
         {

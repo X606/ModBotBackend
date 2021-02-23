@@ -37,6 +37,12 @@ namespace ModBotBackend.Operations
 
             string usernameStyle = "color: " + user.DisplayColor;
 
+            if (user.IsBanned)
+            {
+                username = "[Banned User]";
+                usernameStyle = "color: red";
+            }
+
             string formatedString = Utils.FormatString(html, linkUrl, avatarUrl, username, icon, avatarStyle, usernameStyle);
 
             return formatedString;

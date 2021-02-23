@@ -8,6 +8,7 @@ namespace ModBotBackend.Operations
         public override bool ParseAsJson => false;
         public override string[] Arguments => new string[] { };
         public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.BasicUser;
+        public override BannedUserCallability AllowedForBannedUsers => BannedUserCallability.Always;
 
         public override string OnOperation(Arguments arguments, Authentication authentication)
         {

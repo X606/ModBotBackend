@@ -30,7 +30,7 @@
 		var websocket;
 
 		window.onload = async function() {
-			API = (await import("https://" + location.host + "/api?operation=getAPI")).API;
+			API = (await import(location.origin + "/api?operation=getAPI")).API;
 
 			const input = document.getElementById('input');
 

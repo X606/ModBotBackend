@@ -1,4 +1,5 @@
-﻿using ModBotBackend.Users.Sessions;
+﻿using ModBotBackend.Managers;
+using ModBotBackend.Users.Sessions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,8 @@ namespace ModBotBackend.Users
         public List<string> FavoritedMods = new List<string>();
         public List<string> LikedMods = new List<string>();
         public List<UserReport> Reports = new List<UserReport>();
+
+        public List<string> Ips = new List<string>();
 
         public void SetPassword(string password)
         {
@@ -128,6 +131,9 @@ namespace ModBotBackend.Users
 
             SessionsManager.Instance.OnUserInfoUpdated(this);
         }
+
+        public bool IsBanned => BannedUsersManager.Instance.IsUserBanned(UserID);
+
         public static User GetFromFile(string path)
         {
             string json = File.ReadAllText(path);

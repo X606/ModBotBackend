@@ -2,6 +2,7 @@
 using ModBotBackend.Users.Sessions;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -17,6 +18,8 @@ namespace ModBotBackend
 {
     static class Program
     {
+        static ConcurrentBag<string> TrackedIps = new ConcurrentBag<string>();
+
         static void Main(string[] args)
         {
             ShutdownHandlerOverrider.Init();
@@ -110,16 +113,35 @@ namespace ModBotBackend
 
             string sessionID = GetCookie(request, "SessionID");
 
-            //OutputConsole.WriteLine("sessionID: " + sessionID);
+            string clientIP = context.Request.RemoteEndPoint.Address.ToString();
 
             Authentication authentication;
             if (SessionsManager.Instance.VerifyKey(sessionID, out Session session))
             {
-                authentication = new Authentication(session.AuthenticationLevel, session.OwnerUserID, sessionID);
+                authentication = new Authentication(session.AuthenticationLevel, session.OwnerUserID, sessionID, clientIP);
+
+                if (!TrackedIps.Contains(clientIP))
+                {
+                    TrackedIps.Add(clientIP);
+
+                    User user = UserManager.Instance.GetUserFromId(session.OwnerUserID);
+
+                    if (!user.Ips.Contains(clientIP))
+                    {
+                        user.Ips.Add(clientIP);
+                        user.Save();
+                    }
+                }
             }
             else
             {
-                authentication = new Authentication(AuthenticationLevel.None, "", "");
+                authentication = new Authentication(AuthenticationLevel.None, "", "", clientIP);
+            }
+
+            if (authentication.IsHardBanned) // if the user is hard banned, just close the connection
+            {
+                context.Response.Abort();
+                return;
             }
 
             string operation = request.QueryString.Get("operation");
@@ -134,7 +156,20 @@ namespace ModBotBackend
                         Stopwatch stopwatch = new Stopwatch();
                         stopwatch.Start();
 
-                        if (authentication.HasAtLeastAuthenticationLevel(selectedOperation.MinimumAuthenticationLevelToCall))
+                        bool isAllowedToCall = authentication.HasAtLeastAuthenticationLevel(selectedOperation.MinimumAuthenticationLevelToCall);
+
+                        if (selectedOperation.AllowedForBannedUsers == OperationBase.BannedUserCallability.Never)
+                            isAllowedToCall = false;
+
+                        if (selectedOperation.AllowedForBannedUsers == OperationBase.BannedUserCallability.Default)
+                        {
+                            if (selectedOperation.MinimumAuthenticationLevelToCall != AuthenticationLevel.None && authentication.IsBanned)
+                            {
+                                isAllowedToCall = false;
+                            }
+                        }
+
+                        if (isAllowedToCall)
                         {
                             selectedOperation.OnOperation(context, authentication);
                         }

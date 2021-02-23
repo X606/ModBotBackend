@@ -10,6 +10,8 @@ namespace ModBotBackend.Operations
         public override bool ParseAsJson => true;
         public override string[] Arguments => new string[] { "username", "password", "playfabID" };
         public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
+        
+        public override BannedUserCallability AllowedForBannedUsers => BannedUserCallability.Never;
 
         public override JsonOperationResponseBase OnOperation(Arguments arguments, Authentication authentication)
         {

@@ -2,8 +2,8 @@
 
 namespace ModBotBackend.Operations.AdminOnly.AdminCommands
 {
-    [AdminCommand("usernameToUserId")]
-    public class UsernameToUserIdCommand : AdminCommand
+    [AdminCommand("getuserid")]
+    public class GetUserIdCommand : AdminCommand
     {
         public override void ProcessCommand(string[] arguments, Authentication authentication, User caller)
         {
