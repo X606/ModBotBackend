@@ -11,6 +11,8 @@ namespace ModBotBackend.Operations
         public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
         public override string OnOperation(Arguments arguments, Authentication authentication)
         {
+            ContentType = "application/json";
+
             string id = arguments["id"];
 
             return UploadedModsManager.Instance.GetSpecialModInfoJsonFromId(id);
