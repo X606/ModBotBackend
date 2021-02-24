@@ -53,11 +53,11 @@ namespace ModBotBackend.Operations
             switch (user.AuthenticationLevel)
             {
                 case AuthenticationLevel.Admin:
-                    return "<i id='icon' style='color: var(--tertiaryRed)' title='Admin' class='material-icons'>miscellaneous_services</i>";
+                    return "<img class='icon' title='Admin' src='/Assets/Icons/admin.png'>";
                 case AuthenticationLevel.Modder:
-                    return "<i id='icon' style='color: var(--tertiaryOrange)' title='Modder' class='material-icons'>construction</i>";
+                    return "<img class='icon' title='Modder' src='/Assets/Icons/modder.png'>";
                 case AuthenticationLevel.VerifiedUser:
-                    return "<i id='icon' style='color: var(--tertiaryBlue)' title='Verified' class='material-icons'>verified</i>";
+                    return "<img class='icon' title='Verified' src='/Assets/Icons/verified.png'>";
             }
             return "";
         }
