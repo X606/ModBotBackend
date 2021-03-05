@@ -108,6 +108,7 @@
     <Compile Include="Operations\AdminOnly\AdminCommands\LogsCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\SetModBotDownloadLinkCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\SetModBotLauncherDownloadLinkCommand.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\SetModBotLauncherVersionCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\SetModBotVersionCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\GetUserIdCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\PrintCommand.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Operations\AdminOnly\SetCustomConsoleCssOperation.cs" />
     <Compile Include="Operations\AdminOnly\VerifyModOperation.cs" />
     <Compile Include="Operations\GetMyIpOperation.cs" />
+    <Compile Include="Operations\ModBotInfoOperations\GetCurrentModBotLauncherVersionOperation.cs" />
     <Compile Include="Operations\ModBotInfoOperations\GetCurrentModBotVersionOperation.cs" />
     <Compile Include="Operations\ModBotInfoOperations\GetModBotDownloadLinkOperation.cs" />
     <Compile Include="Operations\ModBotInfoOperations\GetModBotLauncherDownloadLinkOperation.cs" />

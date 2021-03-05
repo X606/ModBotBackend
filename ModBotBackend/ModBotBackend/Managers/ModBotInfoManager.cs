@@ -56,6 +56,15 @@ namespace ModBotBackend.Managers
             return _saveData.ModBotLauncherDownloadLink;
         }
 
+        public void SetModBotLauncherVersion(string launcherVersion)
+        {
+            _saveData.ModBotLauncherVersion = launcherVersion;
+            Save();
+        }
+        public string GetModBotLauncherVersion()
+        {
+            return _saveData.ModBotLauncherVersion;
+        }
 
     }
 
@@ -65,5 +74,6 @@ namespace ModBotBackend.Managers
         public string ModBotVersion = null;
         public string ModBotDownloadLink = null;
         public string ModBotLauncherDownloadLink = null;
+        public string ModBotLauncherVersion = null;
     }
 }
