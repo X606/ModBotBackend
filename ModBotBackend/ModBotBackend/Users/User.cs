@@ -34,8 +34,6 @@ namespace ModBotBackend.Users
         public List<string> LikedMods = new List<string>();
         public List<UserReport> Reports = new List<UserReport>();
 
-        public List<string> Ips = new List<string>();
-
         public void SetPassword(string password)
         {
             byte[] salt;

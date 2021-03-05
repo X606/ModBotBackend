@@ -24,13 +24,8 @@ namespace ModBotBackend.Operations.AdminOnly.AdminCommands.BanningCommands
             User user = UserManager.Instance.GetUserFromId(userId);
             if (user == null)
             {
-                user = UserManager.Instance.GetUserFromUsername(userId);
-                if (user == null)
-                {
-                    BannedUsersManager.Instance.UnbanIp(userId);
-                    OutputConsole.WriteLine("Tried to unban ip \"" + userId + "\".");
-                    return;
-                }
+                OutputConsole.WriteLine("Could not find user with id \"" + userId +  "\"");
+                return;
             }
 
             BannedUsersManager.Instance.UnbanUser(userId);

@@ -17,8 +17,7 @@ namespace ModBotBackend
 
         public bool IsSignedIn => HasAtLeastAuthenticationLevel(AuthenticationLevel.BasicUser);
 
-        public bool IsBanned => BannedUsersManager.Instance.IsUserBanned(UserID) || BannedUsersManager.Instance.IsIpBanned(IP) || IsHardBanned;
-        public bool IsHardBanned => BannedUsersManager.Instance.IsIpHardBanned(IP);
+        public bool IsBanned => BannedUsersManager.Instance.IsUserBanned(UserID);
 
         public readonly AuthenticationLevel AuthenticationLevel;
         public readonly string UserID;

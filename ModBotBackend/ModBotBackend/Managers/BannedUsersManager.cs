@@ -37,26 +37,6 @@ namespace ModBotBackend.Managers
 
             _database.Set(BANNED_USERS_NAME, bannedUsers);
         }
-        public void BanIp(string ip)
-        {
-            HashSet<string> bannedIps = _database.Get<HashSet<string>>(BANNED_IPS_NAME);
-            if (bannedIps == null)
-                bannedIps = new HashSet<string>();
-
-            bannedIps.Add(ip);
-
-            _database.Set(BANNED_IPS_NAME, bannedIps);
-        }
-        public void HardBanIp(string ip)
-        {
-            HashSet<string> hardBannedIps = _database.Get<HashSet<string>>(HARD_BANNED_IPS_NAME);
-            if (hardBannedIps == null)
-                hardBannedIps = new HashSet<string>();
-
-            hardBannedIps.Add(ip);
-
-            _database.Set(HARD_BANNED_IPS_NAME, hardBannedIps);
-        }
 
         public void UnbanUser(string userId)
         {
@@ -70,28 +50,6 @@ namespace ModBotBackend.Managers
                 _database.Set(BANNED_USERS_NAME, bannedUsers);
             }
         }
-        public void UnbanIp(string ip)
-        {
-            HashSet<string> bannedIps = _database.Get<HashSet<string>>(BANNED_IPS_NAME);
-            HashSet<string> hardBannedIps = _database.Get<HashSet<string>>(HARD_BANNED_IPS_NAME);
-
-            if (bannedIps != null)
-            {
-                if (bannedIps.Contains(ip))
-                {
-                    bannedIps.Remove(ip);
-                    _database.Set(BANNED_IPS_NAME, bannedIps);
-                }
-            }
-            if (hardBannedIps != null)
-            {
-                if (hardBannedIps.Contains(ip))
-                {
-                    hardBannedIps.Remove(ip);
-                    _database.Set(HARD_BANNED_IPS_NAME, hardBannedIps);
-                }
-            }
-        }
 
         public bool IsUserBanned(string userId)
         {
@@ -100,22 +58,6 @@ namespace ModBotBackend.Managers
                 return false;
 
             return bannedUsers.Contains(userId);
-        }
-        public bool IsIpBanned(string ip)
-        {
-            HashSet<string> bannedIps = _database.Get<HashSet<string>>(BANNED_IPS_NAME);
-            if (bannedIps == null)
-                return false;
-
-            return bannedIps.Contains(ip);
-        }
-        public bool IsIpHardBanned(string ip)
-        {
-            HashSet<string> hardBannedIps = _database.Get<HashSet<string>>(HARD_BANNED_IPS_NAME);
-            if (hardBannedIps == null)
-                return false;
-
-            return hardBannedIps.Contains(ip);
         }
 
 

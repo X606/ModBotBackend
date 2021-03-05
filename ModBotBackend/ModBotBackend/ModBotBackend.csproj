@@ -99,12 +99,9 @@
     <Compile Include="ModReport.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommandOperation.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\BanningCommands\BanCommand.cs" />
-    <Compile Include="Operations\AdminOnly\AdminCommands\BanningCommands\BanIpCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\BanningCommands\UnbanCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\DisplayAllUsersCommand.cs" />
-    <Compile Include="Operations\AdminOnly\AdminCommands\GetIpsCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\GetSessionsCommand.cs" />
-    <Compile Include="Operations\AdminOnly\AdminCommands\BanningCommands\HardIpBanCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\LogsCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\SetModBotDownloadLinkCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\SetModBotLauncherDownloadLinkCommand.cs" />

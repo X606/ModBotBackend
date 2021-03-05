@@ -18,8 +18,6 @@ namespace ModBotBackend
 {
     static class Program
     {
-        static ConcurrentBag<string> TrackedIps = new ConcurrentBag<string>();
-
         static void Main(string[] args)
         {
             ShutdownHandlerOverrider.Init();
@@ -119,29 +117,10 @@ namespace ModBotBackend
             if (SessionsManager.Instance.VerifyKey(sessionID, out Session session))
             {
                 authentication = new Authentication(session.AuthenticationLevel, session.OwnerUserID, sessionID, clientIP);
-
-                if (!TrackedIps.Contains(clientIP))
-                {
-                    TrackedIps.Add(clientIP);
-
-                    User user = UserManager.Instance.GetUserFromId(session.OwnerUserID);
-
-                    if (!user.Ips.Contains(clientIP))
-                    {
-                        user.Ips.Add(clientIP);
-                        user.Save();
-                    }
-                }
             }
             else
             {
                 authentication = new Authentication(AuthenticationLevel.None, "", "", clientIP);
-            }
-
-            if (authentication.IsHardBanned) // if the user is hard banned, just close the connection
-            {
-                context.Response.Abort();
-                return;
             }
 
             string operation = request.QueryString.Get("operation");
@@ -158,14 +137,17 @@ namespace ModBotBackend
 
                         bool isAllowedToCall = authentication.HasAtLeastAuthenticationLevel(selectedOperation.MinimumAuthenticationLevelToCall);
 
-                        if (selectedOperation.AllowedForBannedUsers == OperationBase.BannedUserCallability.Never)
-                            isAllowedToCall = false;
-
-                        if (selectedOperation.AllowedForBannedUsers == OperationBase.BannedUserCallability.Default)
+                        if (authentication.IsBanned)
                         {
-                            if (selectedOperation.MinimumAuthenticationLevelToCall != AuthenticationLevel.None && authentication.IsBanned)
-                            {
+                            if (selectedOperation.AllowedForBannedUsers == OperationBase.BannedUserCallability.Never)
                                 isAllowedToCall = false;
+
+                            if (selectedOperation.AllowedForBannedUsers == OperationBase.BannedUserCallability.Default)
+                            {
+                                if (selectedOperation.MinimumAuthenticationLevelToCall != AuthenticationLevel.None)
+                                {
+                                    isAllowedToCall = false;
+                                }
                             }
                         }
 
