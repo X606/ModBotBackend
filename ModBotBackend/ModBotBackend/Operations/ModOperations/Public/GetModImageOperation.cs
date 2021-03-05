@@ -20,12 +20,14 @@ namespace ModBotBackend.Operations
 
         public override byte[] GetResponseForError(Exception e, out string contentType)
         {
-            contentType = "image/png";
+            contentType = "text/plain";
+            return System.Text.Encoding.UTF8.GetBytes("CRASH:\n" + e.ToString());
+            /*contentType = "image/png";
 
             ImageConverter converter = new ImageConverter();
 
             byte[] data = (byte[])converter.ConvertTo(Properties.Resources.cross, typeof(byte[]));
-            return data;
+            return data;*/
         }
 
         public override byte[] OnOperation(Arguments arguments, Authentication authentication)
