@@ -32,7 +32,7 @@ namespace ModBotBackend.Operations
 
             string linkUrl = "userPage.html?userID=" + user.UserID;
             string avatarUrl = GetAvatarUrl(user, out string avatarStyle);
-            string username = user.Username;
+            string username = System.Web.HttpUtility.HtmlEncode(user.Username);
             string icon = GetIconHtml(user);
 
             string usernameStyle = "color: " + user.DisplayColor;

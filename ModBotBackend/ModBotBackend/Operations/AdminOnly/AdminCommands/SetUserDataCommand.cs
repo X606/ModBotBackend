@@ -68,6 +68,7 @@ namespace ModBotBackend.Operations.AdminOnly.AdminCommands
             else if (targetData == "password")
             {
                 targetUser.SetPassword(newData);
+                targetUser.Save();
                 OutputConsole.WriteLine("Updated " + targetUser.Username + " password.");
             }
             else

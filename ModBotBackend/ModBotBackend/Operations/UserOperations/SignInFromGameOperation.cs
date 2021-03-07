@@ -41,11 +41,11 @@ namespace ModBotBackend.Operations
             }
 
             User user = UserManager.Instance.GetUserFromId(session.OwnerUserID);
-            if (user.PlayfabID != null && user.PlayfabID != request.playfabID)
+            if (!string.IsNullOrWhiteSpace(user.PlayfabID) && user.PlayfabID != request.playfabID)
             {
                 return new SignInResponse() { Error = "The provided playfabID did not match the one associated with this account" };
             }
-            else if (user.PlayfabID == null)
+            else if (string.IsNullOrWhiteSpace(user.PlayfabID))
             {
                 if (UserManager.Instance.GetUserFromPlayfabID(request.playfabID) != null)
                 {

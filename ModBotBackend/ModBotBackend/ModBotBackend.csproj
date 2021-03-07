@@ -98,8 +98,13 @@
     <Compile Include="Managers\TagsManager.cs" />
     <Compile Include="ModReport.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommandOperation.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\AccountTags\GetAccountTagsCommand.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\AccountTags\RemoveAccountTagCommand.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\AccountTags\AddAccountTagCommand.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\AccountTags\SetRequiredAccountTagOnTagCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\BanningCommands\BanCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\BanningCommands\UnbanCommand.cs" />
+    <Compile Include="Operations\AdminOnly\AdminCommands\DeleteUserCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\DisplayAllUsersCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\GetSessionsCommand.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommands\LogsCommand.cs" />

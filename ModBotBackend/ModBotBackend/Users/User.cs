@@ -29,10 +29,18 @@ namespace ModBotBackend.Users
 
         public AuthenticationLevel AuthenticationLevel = AuthenticationLevel.BasicUser;
 
+        public List<string> AccoutTags = new List<string>();
+
         public List<string> FollowedUsers = new List<string>();
         public List<string> FavoritedMods = new List<string>();
         public List<string> LikedMods = new List<string>();
         public List<UserReport> Reports = new List<UserReport>();
+
+        const int MIN_USERNAME_LENGTH = 3;
+        const int MAX_USERNAME_LENGTH = 40;
+        const string DISALLOWED_CHARACTERS_IN_USERNAMES = "";
+
+        string UserJsonFilePath => UserManager.Instance.FolderPath + UserID + ".json";
 
         public void SetPassword(string password)
         {
@@ -47,8 +55,6 @@ namespace ModBotBackend.Users
             Array.Copy(hash, 0, hashBytes, 16, 20);
 
             PasswordHash = Convert.ToBase64String(hashBytes);
-
-            Save();
         }
         public bool VeryfyPassword(string password)
         {
@@ -67,10 +73,6 @@ namespace ModBotBackend.Users
             return true;
         }
 
-        const int MIN_USERNAME_LENGTH = 3;
-        const int MAX_USERNAME_LENGTH = 40;
-
-        const string ALLOWED_CHARACTERS_IN_USERNAMES = "abcdefghijklmnopqrstuvwxyzåäöABCDEFGIJKLMNOPQRSTUVWXYZÅÄÖ1234567890";
         public static bool IsValidUsername(string username, out string error)
         {
             if (username.Length < MIN_USERNAME_LENGTH)
@@ -86,7 +88,7 @@ namespace ModBotBackend.Users
 
             for (int i = 0; i < username.Length; i++)
             {
-                if (!ALLOWED_CHARACTERS_IN_USERNAMES.Contains(username[i]))
+                if (char.IsControl(username[i]) || DISALLOWED_CHARACTERS_IN_USERNAMES.Contains(username[i]))
                 {
                     error = "the character \"" + username[i] + "\" is not allowed in usernames";
                     return false;
@@ -121,13 +123,24 @@ namespace ModBotBackend.Users
 
         public void Save()
         {
-            string path = UserManager.Instance.FolderPath + UserID + ".json";
+            string path = UserJsonFilePath;
 
             string json = JsonConvert.SerializeObject(this);
 
             File.WriteAllText(path, json);
 
             SessionsManager.Instance.OnUserInfoUpdated(this);
+        }
+
+        public void DeleteUser()
+        {
+            UserManager.Instance.Users.Remove(this);
+
+            string path = UserJsonFilePath;
+
+            if (File.Exists(path))
+                File.Delete(path);
+
         }
 
         public bool IsBanned => BannedUsersManager.Instance.IsUserBanned(UserID);
@@ -146,10 +159,12 @@ namespace ModBotBackend.Users
             user.Bio = "";
             user.BorderStyle = BorderStyles.Runded;
             user.ShowFull = false;
-            user.SetPassword(password);
             user.DisplayColor = "#ffffff";
             user.AuthenticationLevel = AuthenticationLevel.BasicUser;
             user.PlayfabID = "";
+            user.SetPassword(password);
+
+            user.Save();
 
             UserManager.Instance.Users.Add(user);
             return user;

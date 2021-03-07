@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModBotBackend.Users;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -142,11 +143,20 @@ namespace ModBotBackend.Managers
         public TagInfo(byte[] data) => BitCompressor.FillObj(this, data);
         public byte[] GetData() => BitCompressor.GetBytes(this);
 
+        public bool CanUseTag(User user)
+        {
+            if (RequiredAccountTag == null)
+                return true;
+
+            return user.AccoutTags.Contains(RequiredAccountTag);
+        }
+
         public bool Verified = false;
 
         public readonly string TagID;
         public readonly string TagName;
         public readonly string CreatorId;
+        public string RequiredAccountTag = null;
         public string Body;
     }
 }

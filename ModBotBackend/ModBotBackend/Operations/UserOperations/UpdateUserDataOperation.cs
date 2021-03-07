@@ -66,6 +66,7 @@ namespace ModBotBackend.Operations
                     return new Response(true, error);
                 }
                 user.SetPassword(request.newPassword);
+                user.Save();
             }
             if (request.borderStyle != null)
             {

@@ -39,7 +39,15 @@ namespace ModBotBackend.Users.Sessions
             index += ownerIDLength;
             OwnerUserID = Encoding.UTF8.GetString(ownerUserID);
 
-            AuthenticationLevel = UserManager.Instance.GetUserFromId(OwnerUserID).AuthenticationLevel;
+            User user = UserManager.Instance.GetUserFromId(OwnerUserID);
+
+            if (user == null)
+            {
+                AuthenticationLevel = AuthenticationLevel.None;
+                return;
+            }
+
+            AuthenticationLevel = user.AuthenticationLevel;
 
             AddToSessionsManager(OwnerUserID);
         }

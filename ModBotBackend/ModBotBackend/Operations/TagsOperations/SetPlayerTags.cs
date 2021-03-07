@@ -31,6 +31,9 @@ namespace ModBotBackend.Operations.TagsOperations
                     Error = "You need to be verified to set your player tags"
                 };
             }
+
+            User user = UserManager.Instance.GetUserFromId(authentication.UserID);
+
             for (int i = 0; i < request.tags.Length; i++)
             {
                 TagInfo tag = TagsManager.Instance.GetTag(request.tags[i]);
@@ -39,6 +42,13 @@ namespace ModBotBackend.Operations.TagsOperations
                     return new Response()
                     {
                         Error = "The tag \"" + tag.TagID + "\" is not verified, so you cant use it yet."
+                    };
+                }
+                if (!tag.CanUseTag(user))
+                {
+                    return new Response()
+                    {
+                        Error = "You're not authorized to use the \"" + tag.TagName + "\" tag."
                     };
                 }
             }
@@ -50,8 +60,6 @@ namespace ModBotBackend.Operations.TagsOperations
                     Error = "You can only have a max of " + maxTags + " tags"
                 };
             }
-
-            User user = UserManager.Instance.GetUserFromId(authentication.UserID);
 
             TagsManager.Instance.SaveUserTags(user.PlayfabID, new PlayerTagsInfo(request.tags));
 

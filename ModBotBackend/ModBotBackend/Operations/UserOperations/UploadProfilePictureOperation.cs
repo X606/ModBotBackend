@@ -66,6 +66,7 @@ namespace ModBotBackend.Operations
             }
 
             File.WriteAllBytes(path + extension, imageData);
+            GetProfilePictureOperation.ClearImageCache();
             Utils.SendErrorPage(context.Response, "Uploaded profile picture!", false, HttpStatusCode.OK);
         }
     }

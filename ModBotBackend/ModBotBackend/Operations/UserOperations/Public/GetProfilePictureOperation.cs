@@ -17,6 +17,12 @@ namespace ModBotBackend.Operations
         public override string OverrideAPICallJavascript => "let destroy = () => { element.src = \"/api/?operation=getProfilePicture&size=\" + element.clientWidth + \"x\" + element.clientHeight + \"&id=\" + id; }; if(element.clientWidth == 0 || element.clientHeight == 0) { setTimeout(destroy,100); } else { destroy(); }";
 
         static ConcurrentDictionary<string, byte[]> _rescaledImageCache = new ConcurrentDictionary<string, byte[]>();
+
+        public static void ClearImageCache()
+        {
+            _rescaledImageCache.Clear();
+        }
+
         /*
         public override byte[] GetResponseForError(Exception e, out string contentType)
         {
