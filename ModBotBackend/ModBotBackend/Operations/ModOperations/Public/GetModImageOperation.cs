@@ -3,6 +3,7 @@ using ModLibrary;
 using System;
 using System.Collections.Concurrent;
 using System.Drawing;
+using System.IO;
 
 namespace ModBotBackend.Operations
 {
@@ -11,10 +12,10 @@ namespace ModBotBackend.Operations
     public class GetModImageOperation : RawDataOperationBase
     {
         public override bool ParseAsJson => false;
-        public override string[] Arguments => new string[] { "element", "id" };
+        public override string[] Arguments => new string[] { "element", "id", "dontScale" };
         public override bool ArgumentsInQuerystring => true;
         public override AuthenticationLevel MinimumAuthenticationLevelToCall => AuthenticationLevel.None;
-        public override string OverrideAPICallJavascript => "let destroy = () => { element.src = \"/api/?operation=getModImage&size=\" + element.clientWidth + \"x\" + element.clientHeight + \"&id=\" + id; }; if(element.clientWidth == 0 || element.clientHeight == 0) { setTimeout(destroy,100); } else { destroy(); }";
+        public override string OverrideAPICallJavascript => "let destroy = () => { element.src = \"/api/?operation=getModImage&size=\" + element.clientWidth + \"x\" + element.clientHeight + \"&id=\" + id + \"&dontScale=\" + dontScale; }; if(element.clientWidth == 0 || element.clientHeight == 0) { setTimeout(destroy,100); } else { destroy(); }";
 
         static ConcurrentDictionary<string, byte[]> _rescaledImageCache = new ConcurrentDictionary<string, byte[]>();
 
@@ -56,6 +57,13 @@ namespace ModBotBackend.Operations
 
 
             string imageFilePath = UploadedModsManager.Instance.GetModFolderPath(id) + modInfo.ImageFileName;
+
+            string dontScale = arguments["dontScale"];
+
+            if (dontScale == "true")
+            {
+                return File.ReadAllBytes(imageFilePath);
+            }
 
             string size = arguments["size"];
             if (size == null)
