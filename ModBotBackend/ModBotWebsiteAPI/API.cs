@@ -36,6 +36,11 @@ namespace ModBotWebsiteAPI
 
             yield return webRequest.SendWebRequest();
 
+            if (webRequest.error == "Cannot connect to destination host")
+            {
+                yield break;
+            }
+
             callback(webRequest.downloadHandler.text);
             yield return null;
         }
@@ -51,6 +56,11 @@ namespace ModBotWebsiteAPI
                 webRequest.SetRequestHeader("Cookie", "SessionID=" + _sessionID);
 
             yield return webRequest.SendWebRequest();
+
+            if (webRequest.error == "Cannot connect to destination host")
+            {
+                yield break;
+            }
 
             callback(new JsonObject(webRequest.downloadHandler.text));
             yield return null;
