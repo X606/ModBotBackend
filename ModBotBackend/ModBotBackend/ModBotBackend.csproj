@@ -95,6 +95,7 @@
     <Compile Include="Managers\ConsoleCustomCssManager.cs" />
     <Compile Include="Managers\LogsManager.cs" />
     <Compile Include="Managers\ModBotInfoManager.cs" />
+    <Compile Include="Managers\NotesManager.cs" />
     <Compile Include="Managers\TagsManager.cs" />
     <Compile Include="ModReport.cs" />
     <Compile Include="Operations\AdminOnly\AdminCommandOperation.cs" />
@@ -125,6 +126,8 @@
     <Compile Include="Operations\ModBotInfoOperations\GetModBotDownloadLinkOperation.cs" />
     <Compile Include="Operations\ModBotInfoOperations\GetModBotLauncherDownloadLinkOperation.cs" />
     <Compile Include="Operations\AdminOnly\RemoveModOperation.cs" />
+    <Compile Include="Operations\NoteOperation.cs" />
+    <Compile Include="Operations\OnFrontendPushedOperation.cs" />
     <Compile Include="Operations\TagsOperations\EditTagOperation.cs" />
     <Compile Include="Operations\TagsOperations\GetMyTagsOperation.cs" />
     <Compile Include="Operations\TagsOperations\GetPrefixForPlayfabIdOperation.cs" />

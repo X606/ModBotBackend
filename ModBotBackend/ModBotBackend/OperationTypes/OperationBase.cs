@@ -82,6 +82,9 @@ namespace ModBotBackend
 
         public Argument GetArgument(string argument)
         {
+            if (_values == null)
+                return null;
+
             if (_values.TryGetValue(argument, out object value))
             {
                 return new Argument(value);

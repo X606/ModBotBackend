@@ -55,7 +55,7 @@ namespace ModBotBackend.Operations
             HttpStream httpStream = new HttpStream(context.Response);
             httpStream.Send(new SignOutResponse()
             {
-                Error = "signed out!"
+                message = "signed out!"
             }.ToJson());
             httpStream.Close();
         }
