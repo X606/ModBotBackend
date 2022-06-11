@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>ModBotBackend</RootNamespace>
     <AssemblyName>ModBotBackend</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -126,8 +126,10 @@
     <Compile Include="Operations\ModBotInfoOperations\GetModBotDownloadLinkOperation.cs" />
     <Compile Include="Operations\ModBotInfoOperations\GetModBotLauncherDownloadLinkOperation.cs" />
     <Compile Include="Operations\AdminOnly\RemoveModOperation.cs" />
+    <Compile Include="Operations\ModOperations\Public\IsModVerifiedOperation.cs" />
     <Compile Include="Operations\NoteOperation.cs" />
     <Compile Include="Operations\OnFrontendPushedOperation.cs" />
+    <Compile Include="Operations\PrintPostBodyOperation.cs" />
     <Compile Include="Operations\TagsOperations\EditTagOperation.cs" />
     <Compile Include="Operations\TagsOperations\GetMyTagsOperation.cs" />
     <Compile Include="Operations\TagsOperations\GetPrefixForPlayfabIdOperation.cs" />
