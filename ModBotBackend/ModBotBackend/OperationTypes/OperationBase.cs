@@ -30,6 +30,8 @@ namespace ModBotBackend
         public virtual string OverrideAPICallJavascript => null;
         public virtual bool HideInAPI => false;
         public virtual BannedUserCallability AllowedForBannedUsers => BannedUserCallability.Default;
+
+        public bool AllowCaching = false;
         
         public enum BannedUserCallability
         {

@@ -36,6 +36,8 @@ namespace ModBotBackend.Operations
 		*/
         public override byte[] OnOperation(Arguments arguments, Authentication authentication)
         {
+            AllowCaching = true;
+
             string id = arguments["id"];
 
             User user = UserManager.Instance.GetUserFromId(id);

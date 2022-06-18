@@ -41,6 +41,9 @@ namespace ModBotBackend
                 };
             }
 
+            if (AllowCaching)
+                Utils.AddCacheHeaders(context.Response);
+
             if (operationResponseBase != null)
             {
                 HttpStream stream = new HttpStream(context.Response);

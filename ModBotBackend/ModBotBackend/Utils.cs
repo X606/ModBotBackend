@@ -16,6 +16,15 @@ namespace ModBotBackend
 {
     public static class Utils
     {
+        public static void AddCacheHeaders(HttpListenerResponse response)
+        {
+            string now = DateTime.Now.ToString("ddd, dd MMM yyyy HH:mm:ss G\\MT");
+            string expires = DateTime.Now.AddDays(1).ToString("ddd, dd MMM yyyy HH:mm:ss G\\MT");
+
+            response.AppendHeader("Cache-Control", "public, max-age: 86400");
+            response.AppendHeader("Expires", expires);
+            response.AppendHeader("Last-Modified", now);
+        }
         public static int GetMaxPlayerTags(Authentication auth)
         {
             return 3;

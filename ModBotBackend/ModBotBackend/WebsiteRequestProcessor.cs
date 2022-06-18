@@ -16,6 +16,8 @@ namespace ModBotBackend
             int statusCode = 200;
             byte[] data = OnRequest(path, out string contentType, ref statusCode);
 
+            Utils.AddCacheHeaders(context.Response);
+
             context.Response.StatusCode = statusCode;
             context.Response.ContentType = contentType;
             if (context.Response.OutputStream.CanWrite)

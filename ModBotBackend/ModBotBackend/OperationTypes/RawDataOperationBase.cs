@@ -25,6 +25,12 @@ namespace ModBotBackend
                 data = new byte[0];
             }
 
+            if (AllowCaching)
+                Utils.AddCacheHeaders(context.Response);
+
+
+
+
             context.Response.ContentLength64 += data.Length;
             context.Response.OutputStream.Write(data, 0, data.Length);
             context.Response.Close();

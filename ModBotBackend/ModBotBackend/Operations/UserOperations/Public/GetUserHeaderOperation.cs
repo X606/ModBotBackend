@@ -45,6 +45,7 @@ namespace ModBotBackend.Operations
 
             string formatedString = Utils.FormatString(html, linkUrl, avatarUrl, username, icon, avatarStyle, usernameStyle);
 
+            AllowCaching = true;
             return formatedString;
         }
 

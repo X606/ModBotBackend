@@ -26,6 +26,10 @@ namespace ModBotBackend
 
                 context.Response.ContentType = ContentType;
                 context.Response.StatusCode = (int)StatusCode;
+
+                if (AllowCaching)
+                    Utils.AddCacheHeaders(context.Response);
+
             }
             else
             {
